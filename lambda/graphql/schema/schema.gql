@@ -1,0 +1,12 @@
+schema {
+    query: Query
+    mutatio: Mutation
+}
+
+type Query {
+    user: User
+}
+
+type Mutation {
+    createUser(name: String!): USer
+}

@@ -10,7 +10,7 @@ type GraphqlResponse struct {
 
 // GraphqlBody Request Body
 type GraphqlBody struct {
-	Query         string                 `json:"query,omitempty"`
-	OperationName string                 `json:"operationName,omitempty"`
-	Variables     map[string]interface{} `json:"variables,omitempty"`
+	Query         string                 `json:"query"`
+	OperationName string                 `json:"operationName"`
+	Variables     map[string]interface{} `json:"variables"`
 }

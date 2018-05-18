@@ -22,5 +22,5 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /graphqli
+            Path: /playground
             Method: get

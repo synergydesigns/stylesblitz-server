@@ -1,61 +1,44 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+
+	graphql "github.com/graph-gophers/graphql-go"
+	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/resolver"
+	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/util"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/graphql-go/graphql"
 	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/models"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/schema"
 )
 
-// Schema  holds the gra[hql schema object]\
-var Schema graphql.Schema
+// Schema object
+var Schema *graphql.Schema
 
 func init() {
-	s, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: schema.QueryType,
-	})
-
-	if err != nil {
-		log.Fatalf("Failed to create graphql schema, error: %v", err)
-	}
-
-	Schema = s
+	Schema = graphql.MustParseSchema(util.GetSchema(), &resolver.Resolver{})
 }
 
 // GraphqlHandler handles all qraphql queries
-func GraphqlHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	var params models.GraphqlBody
 
 	if err := json.Unmarshal([]byte(request.Body), &params); err != nil {
 		log.Printf("Could not decode body errors %v", err)
 	}
+	fmt.Println(params.Query, params.OperationName, params.Variables)
 
-	result := graphql.Do(graphql.Params{
-		Schema:        Schema,
-		RequestString: params.Query,
-	})
-
-	if len(result.Errors) > 0 {
-		data := models.GraphqlResponse{
-			Data:   result.Data,
-			Errors: result.Errors,
-		}
-		resp, _ := json.Marshal(data)
-		return events.APIGatewayProxyResponse{
-			Body: string(resp),
-		}, nil
+	response := Schema.Exec(ctx, params.Query, params.OperationName, params.Variables)
+	resp, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err, "===========")
 	}
 
-	data := models.GraphqlResponse{
-		Data:   result.Data,
-		Errors: result.Errors,
-	}
-	resp, _ := json.Marshal(data)
+	fmt.Println(string(resp))
 
 	return events.APIGatewayProxyResponse{
 		Body:       string(resp),
