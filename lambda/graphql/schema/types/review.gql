@@ -1,0 +1,7 @@
+type Review {
+	ID: 		ID!
+	user: 		User
+	shopID: 	ID!
+	rating: 	Int
+	review: 	String
+}

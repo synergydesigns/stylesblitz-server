@@ -1,4 +1,13 @@
 type User {
-    id: ID!
-    name: String
+    # This is the user id. This id is a unique idetifer
+    # Of the user that owns this resource
+    id:             ID!
+    name:           String
+    email:          String
+    name:           String
+    phone:          String
+    password:       String
+    ProfileImage:   String
+    WallImage:      String
+    Bio:            String
 }
