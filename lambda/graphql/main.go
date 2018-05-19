@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	graphql "github.com/graph-gophers/graphql-go"
 	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/resolver"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/util"
+	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/utils"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -19,7 +18,8 @@ import (
 var Schema *graphql.Schema
 
 func init() {
-	Schema = graphql.MustParseSchema(util.GetSchema(), &resolver.Resolver{})
+	f := utils.GetSchema()
+	Schema = graphql.MustParseSchema(f, &resolver.Resolver{})
 }
 
 // GraphqlHandler handles all qraphql queries
@@ -30,15 +30,12 @@ func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) 
 	if err := json.Unmarshal([]byte(request.Body), &params); err != nil {
 		log.Printf("Could not decode body errors %v", err)
 	}
-	fmt.Println(params.Query, params.OperationName, params.Variables)
 
 	response := Schema.Exec(ctx, params.Query, params.OperationName, params.Variables)
 	resp, err := json.Marshal(response)
 	if err != nil {
-		fmt.Println(err, "===========")
+		log.Printf("unable to unmarshal response %v", err)
 	}
-
-	fmt.Println(string(resp))
 
 	return events.APIGatewayProxyResponse{
 		Body:       string(resp),
