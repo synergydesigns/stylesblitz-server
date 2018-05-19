@@ -13,6 +13,12 @@
   version = "v1.0.1"
 
 [[projects]]
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  revision = "a0583e0143b1624142adab07e0e97fe106d99561"
+  version = "v1.3.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/graph-gophers/graphql-go"
   packages = [
@@ -63,6 +69,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "06d56b96ac78a39269f8978b7af5b60339b02083f016feb495324285b2ee45e4"
+  inputs-digest = "82de3a8d146d6a9eb0ebee3632267da97a1be8531b015e36c261561cf6b93d39"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,0 +1,19 @@
+changeSet:
+  - id: '1526726690966'
+    author: Enaho Murphy
+    description: Table creation
+    changes:
+      - sql: "CREATE TABLE `user` (
+          `id` int(11) unsigned NOT NULL,
+          `username` varchar(100) NOT NULL,
+          `email` varchar(100) NOT NULL,
+          `password` varchar(100) NOT NULL,
+          `phone` int(11),
+          `profile_image` varchar(255),
+          `wall_image` varchar(255),
+          `bio` text,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `username` (`username`),
+          KEY `email_username` (`email`, `username`)
+        );"

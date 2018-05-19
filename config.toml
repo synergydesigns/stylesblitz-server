@@ -1,0 +1,18 @@
+app-name = "style-blitz"
+version = 1.0
+
+[db]
+host = "localhost"
+port = "3077"
+user = "mysql"
+password = "mysal"
+dbname = "styleblitz"
+
+[log]
+debug-mode = true
+
+[auth]
+#jwt sign secret
+jwt-secret = "1234"
+#jwt expired time in second
+jwt-expire-in = "40000s"
