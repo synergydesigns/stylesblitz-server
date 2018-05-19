@@ -8,7 +8,7 @@ type Service struct {
 	ID       graphql.ID
 	Name     string
 	Duration string
-	Price    string
+	Price    int
 	Status   string
 	Trend    string
 	ShopID   graphql.ID

@@ -22,6 +22,36 @@ func (r *userResolver) Name() *string {
 	return &r.u.Name
 }
 
+// Email user name
+func (r *userResolver) Email() *string {
+	return &r.u.Email
+}
+
+// Email user name
+func (r *userResolver) Phone() *string {
+	return &r.u.Phone
+}
+
+// Email user name
+func (r *userResolver) Password() *string {
+	return &r.u.Email
+}
+
+// Email user name
+func (r *userResolver) ProfileImage() *string {
+	return &r.u.ProfileImage
+}
+
+// Email user name
+func (r *userResolver) WallImage() *string {
+	return &r.u.WallImage
+}
+
+// Email user name
+func (r *userResolver) Bio() *string {
+	return &r.u.Bio
+}
+
 // User user
 func (r *Resolver) User(ctx context.Context) *userResolver {
 	return &userResolver{&models.User{

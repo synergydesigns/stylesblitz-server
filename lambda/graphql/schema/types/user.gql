@@ -1,5 +1,5 @@
 type User {
-    # This is the user id. This id is a unique idetifer
+    # ID is a unique idetifer
     # Of the user that owns this resource
     id:             ID!
     name:           String
