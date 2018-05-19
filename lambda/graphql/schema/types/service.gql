@@ -1,0 +1,9 @@
+type Service {
+    ID: ID!
+    name: String
+    dutration: String
+    price: Int
+    status: Boolean
+    Trend: String
+    shopID: ID
+}

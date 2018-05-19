@@ -1,0 +1,9 @@
+type Provider {
+    ID: ID!
+    name: String
+    description:  String
+    about: String
+    phone: String
+    user: User
+    adresss: Address
+}
