@@ -22,7 +22,7 @@ func ImportJSONDataFromFile(fileName string, result interface{}) (isOK bool) {
 		isOK = false
 		fmt.Print("Error:", err)
 	}
-	return
+	return true
 }
 
 // LoadSchema recursively loads graphql schema
@@ -35,8 +35,8 @@ func LoadSchema(buf *bytes.Buffer, dir string) error {
 
 	files, error := ioutil.ReadDir(dir)
 	if error != nil {
-		return error
 		log.Printf("An error occurred reading file: %v", error)
+		return error
 	}
 
 	for _, file := range files {

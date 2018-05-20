@@ -11,7 +11,7 @@ type Provider struct {
 	Name        string
 	Description string
 	About       string
-	Phone       string
+	Phone       int
 	User        User
 	Address     Address
 }

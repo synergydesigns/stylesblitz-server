@@ -14,7 +14,6 @@ func main() {
 	config := utils.LoadConfig()
 	migrations := utils.GenarateDarwinMigrations(config)
 
-	fmt.Println(config, migrations)
 	dbURL := fmt.Sprintf("%s:@/styleblitz", config.DBUser)
 	database, err := sql.Open("mysql", dbURL)
 	if err != nil {

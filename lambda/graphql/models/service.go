@@ -7,7 +7,7 @@ import graphql "github.com/graph-gophers/graphql-go"
 type Service struct {
 	ID       graphql.ID
 	Name     string
-	Duration string
+	Duration int
 	Price    int
 	Status   string
 	Trend    string
