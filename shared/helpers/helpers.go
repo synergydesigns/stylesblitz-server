@@ -1,4 +1,4 @@
-package shared
+package helpers
 
 import (
 	"bytes"
@@ -32,7 +32,6 @@ func ImportJSONDataFromFile(fileName string, result interface{}) (isOK bool) {
 // @params buf := pointer to a buffer
 // @params dir := directory to read from
 func LoadSchema(buf *bytes.Buffer, dir string) error {
-
 	files, error := ioutil.ReadDir(dir)
 	if error != nil {
 		log.Printf("An error occurred reading file: %v", error)
