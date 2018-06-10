@@ -1,0 +1,40 @@
+version: "3"
+services:
+  styleblitz-shared:
+    container_name: styleblitz-shared
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - "MYSQL_ROOT_PASSWORD=styleblitz"
+      - "MYSQL_DATABASE=styleblitz"
+      - "MYSQL_USER=root"
+      - "MYSQL_PASSWORD=styleblitz"
+      - "DATABASE_HOST=styleblitz-mysql"
+    volumes:
+      - ./:/go/src/gitlab.com/synergy-designs/style-blitz/shared
+    # restart: always
+    expose:
+      - 80
+    ports:
+      - "8083:8090"
+    depends_on:
+      - styleblitz-mysql
+    # command: sleep 9999999
+    networks:
+      styleblitz_default:
+  styleblitz-mysql:
+    container_name: styleblitz-mysql
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: styleblitz
+      MYSQL_DATABASE: styleblitz
+      MYSQL_USER: root
+      MYSQL_PASSWORD: styleblitz
+    networks:
+      styleblitz_default:
+
+networks:
+  styleblitz_default:
+    driver: bridge
