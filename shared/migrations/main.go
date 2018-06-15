@@ -7,10 +7,11 @@ import (
 
 	"github.com/GuiaBolso/darwin"
 	_ "github.com/go-sql-driver/mysql"
-	"gitlab.com/synergy-designs/style-blitz/migrations/utils"
+	"gitlab.com/synergy-designs/style-blitz/shared/migrations/utils"
 )
 
-func main() {
+// Migrate migrates db
+func Migrate() {
 	config := utils.LoadConfig()
 	migrations := utils.GenarateDarwinMigrations(config)
 
@@ -27,4 +28,8 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func main() {
+	Migrate()
 }

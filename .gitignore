@@ -1,2 +1,8 @@
-# editor config #
-.vscode
+# Serverless directories
+.serverless
+
+# golang output binary directory
+lambda/bin
+
+# golang vendor (dependencies) directory
+vendor
