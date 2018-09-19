@@ -14,7 +14,7 @@ changeSet:
           `wall_image` varchar(255),
           `bio` text,
           `created_at` datetime,
-          'updated_at' datetime,
+          `updated_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
           KEY `username` (`username`),

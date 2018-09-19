@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/GuiaBolso/darwin"
+	"gitlab.com/synergy-designs/style-blitz/shared/config"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -30,7 +31,7 @@ type Query struct {
 
 // GenarateDarwinMigrations reads the json files in the query folder
 // and generates migrations out of the json files found
-func GenarateDarwinMigrations(config *Config) []darwin.Migration {
+func GenarateDarwinMigrations(config *config.Config) []darwin.Migration {
 	var migrations []darwin.Migration
 	dir, err := os.Getwd()
 

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"log"
+
+	"context"
 
 	graphql "github.com/graph-gophers/graphql-go"
 	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/resolver"
@@ -11,7 +12,9 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/config"
 	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/models"
+	services "gitlab.com/synergy-designs/style-blitz/shared/services"
 )
 
 // Schema object
@@ -26,6 +29,10 @@ func init() {
 func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	var params models.GraphqlBody
+	svc := services.New()
+
+	// set context
+	ctx = context.WithValue(ctx, config.CTXKeyservices, svc)
 
 	if err := json.Unmarshal([]byte(request.Body), &params); err != nil {
 		log.Printf("Could not decode body errors %v", err)

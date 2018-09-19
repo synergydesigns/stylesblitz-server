@@ -3,10 +3,10 @@ version = 1.0
 migration-path = './query'
 
 [db]
-host = "localhost"
+host = "styleblitz-mysql"
 port = "3306"
 user = "root"
-password = "root"
+password = "styleblitz"
 dbname = "styleblitz"
 
 [log]

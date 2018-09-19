@@ -6,4 +6,5 @@ type Provider {
     phone: String
     user: User
     adresss: Address
+    services: [Service]
 }

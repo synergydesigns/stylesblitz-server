@@ -6,3 +6,7 @@ lambda/bin
 
 # golang vendor (dependencies) directory
 vendor
+
+# ignore all env variables
+.env
+env.json

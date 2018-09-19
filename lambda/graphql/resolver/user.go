@@ -53,9 +53,9 @@ func (r *userResolver) Bio() *string {
 }
 
 // User user
-func (r *Resolver) User(ctx context.Context) *userResolver {
-	return &userResolver{&models.User{
-		ID:   "1",
-		Name: "Enaho Murphy",
-	}}
+func (r *Resolver) User(ctx context.Context, args struct {
+	ID   string
+	Name string
+}) *userResolver {
+	return &userResolver{&models.User{}}
 }
