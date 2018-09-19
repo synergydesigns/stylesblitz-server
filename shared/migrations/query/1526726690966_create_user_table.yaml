@@ -9,7 +9,7 @@ changeSet:
           `username` varchar(100) NOT NULL,
           `email` varchar(100) NOT NULL,
           `password` varchar(100) NOT NULL,
-          `phone` int(11),
+          `phone` int(20),
           `profile_image` varchar(255),
           `wall_image` varchar(255),
           `bio` text,

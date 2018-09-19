@@ -2,9 +2,12 @@ package resolver
 
 import (
 	"context"
+	"log"
 
 	graphql "github.com/graph-gophers/graphql-go"
+	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/config"
 	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/models"
+	service "gitlab.com/synergy-designs/style-blitz/shared/services"
 )
 
 // userResolver struct for resolving users
@@ -57,5 +60,7 @@ func (r *Resolver) User(ctx context.Context, args struct {
 	ID   string
 	Name string
 }) *userResolver {
+	svc := ctx.Value(config.CTXKeyservices).(service.Services)
+	log.Println(svc)
 	return &userResolver{&models.User{}}
 }
