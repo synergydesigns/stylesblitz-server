@@ -2,11 +2,11 @@ package resolver
 
 import (
 	"context"
-	"log"
+	"strconv"
 
 	graphql "github.com/graph-gophers/graphql-go"
 	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/config"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/models"
+	"gitlab.com/synergy-designs/style-blitz/shared/models"
 	service "gitlab.com/synergy-designs/style-blitz/shared/services"
 )
 
@@ -17,7 +17,9 @@ type userResolver struct {
 
 // ID user id
 func (r *userResolver) ID() graphql.ID {
-	return graphql.ID(r.u.ID)
+	ID := strconv.Itoa(int(r.u.ID))
+
+	return graphql.ID(ID)
 }
 
 // Name user name
@@ -31,7 +33,7 @@ func (r *userResolver) Email() *string {
 }
 
 // Email user name
-func (r *userResolver) Phone() *string {
+func (r *userResolver) Phone() *int32 {
 	return &r.u.Phone
 }
 
@@ -59,8 +61,13 @@ func (r *userResolver) Bio() *string {
 func (r *Resolver) User(ctx context.Context, args struct {
 	ID   string
 	Name string
-}) *userResolver {
-	svc := ctx.Value(config.CTXKeyservices).(service.Services)
-	log.Println(svc)
-	return &userResolver{&models.User{}}
+}) (*userResolver, error) {
+	svc := ctx.Value(config.CTXKeyservices).(*service.Services)
+	userID, _ := strconv.ParseUint(args.ID, 10, 64)
+	user, err := svc.Datastore.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userResolver{user}, nil
 }

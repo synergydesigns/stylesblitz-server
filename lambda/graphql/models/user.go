@@ -9,7 +9,7 @@ type User struct {
 	Username     string
 	Email        string
 	Name         string
-	Phone        string
+	Phone        int32
 	Password     string
 	ProfileImage string
 	WallImage    string

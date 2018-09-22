@@ -11,7 +11,7 @@ services:
       - "MYSQL_USER=root"
       - "MYSQL_PASSWORD=styleblitz"
       - "DATABASE_HOST=styleblitz-mysql"
-      - "MYSQL_PORT=3306"
+      - "MYSQL_PORT=3307"
       - "MIGRATION_PATH=./query"
       - "APP_NAME=styleblitz"
     volumes:
@@ -40,7 +40,7 @@ services:
     networks:
       styleblitz_default:
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
 networks:
   styleblitz_default:

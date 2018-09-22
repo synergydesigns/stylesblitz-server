@@ -7,6 +7,16 @@ Resources:
     Properties:
       Handler: bin/graphql
       Runtime: go1.x
+      Environment:
+        Variables:
+          MYSQL_ROOT_PASSWORD: test
+          MYSQL_DATABASE: test
+          MYSQL_USER: root
+          MYSQL_PASSWORD: 
+          DATABASE_HOST: localhost
+          MYSQL_PORT: 3306
+          MIGRATION_PATH: ../query
+          APP_NAME: styleblitz
       Events:
         Api:
           Type: Api

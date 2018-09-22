@@ -8,13 +8,13 @@ import (
 // Services Holds all methods that futher abstract
 // database integration
 type Services struct {
-	datastore models.Datastore
+	Datastore models.Datastore
 }
 
 // New initializes all services
 func New() *Services {
 	conf := config.LoadConfig()
 	return &Services{
-		datastore: models.NewDB(conf),
+		Datastore: models.NewDB(conf),
 	}
 }

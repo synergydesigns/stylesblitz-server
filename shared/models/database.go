@@ -14,20 +14,24 @@ type DB struct {
 	*gorm.DB
 }
 
+var database *gorm.DB
+
 // Connect connects to the database connection
 func Connect(conf *config.Config) *DB {
 	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName)
-	fmt.Println(dbURL, "=========")
 	db, err := gorm.Open("mysql", dbURL)
-
-	// disable database pluralization
-	db.SingularTable(true)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &DB{db}
+	// we want to cache db connection
+	database = db
+
+	// disable database pluralization
+	database.SingularTable(true)
+
+	return &DB{database}
 }
 
 // NewDB initializes the database instance
@@ -38,5 +42,5 @@ func NewDB(config *config.Config) *DB {
 // Datastore defines all the methods used to
 // interface with the database
 type Datastore interface {
-	GetUserByID(id uint) (User, error)
+	GetUserByID(id uint64) (*User, error)
 }
