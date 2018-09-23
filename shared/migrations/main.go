@@ -19,8 +19,10 @@ func Migrate() {
 	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser,
 		config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 
-	fmt.Println(dbURL)
 	database, err := sql.Open("mysql", dbURL)
+
+	defer database.Close()
+
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -9,7 +9,7 @@ test:
 	@go test -v -cover $(TEST_PACKAGES)
 
 migrate:
-	@go run shared/migrations/main.go
+ $(shell cd shared/migrations && go run main.go)
 
 recompile:
 	env GOOS=linux go build -ldflags="-s -w -v" -o lambda/bin/graphql lambda/graphql/main.go
@@ -23,3 +23,6 @@ dev-recompile:
 
 supervise:
 	supervisor --no-restart-on exit -e go -i bin --exec make -- dev-recompile
+
+start-local:
+	aws-sam-local local start-api

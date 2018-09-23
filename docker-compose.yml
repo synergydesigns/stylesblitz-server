@@ -11,7 +11,7 @@ services:
       - "MYSQL_USER=root"
       - "MYSQL_PASSWORD=styleblitz"
       - "DATABASE_HOST=styleblitz-mysql"
-      - "MYSQL_PORT=3307"
+      - "MYSQL_PORT=3306"
       - "MIGRATION_PATH=./query"
       - "APP_NAME=styleblitz"
     volumes:
@@ -24,10 +24,11 @@ services:
     depends_on:
       - styleblitz-mysql
     # command: sleep 9999999
-    command: >
-      bash -c "cd ./shared/migrations && go run main.go"
+    # command: >
+    #   bash -c "make migrate && make supervise"
     networks:
       styleblitz_default:
+
   styleblitz-mysql:
     container_name: styleblitz-mysql
     image: mysql:5.7.22
@@ -41,7 +42,8 @@ services:
       styleblitz_default:
     ports:
       - "3307:3306"
-
+    expose:
+      - "3306"
 networks:
   styleblitz_default:
     driver: bridge

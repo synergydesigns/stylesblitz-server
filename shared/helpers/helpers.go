@@ -39,7 +39,6 @@ func LoadSchema(buf *bytes.Buffer, dir string) error {
 	}
 
 	for _, file := range files {
-		fmt.Println(file.Name())
 		filePath := path.Join(dir, file.Name())
 		if !file.IsDir() {
 			fileBytes, _ := ioutil.ReadFile(filePath)
