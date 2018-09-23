@@ -35,4 +35,12 @@ When you're done move to the migrations folder root and run
 1. ```dep ensure```: this is on ran ones. it pulls all required dependencies
 2. ```go run main.go```
 
-**NOTE:** All changes/features to the shared folder must be tested/
+**NOTE:** All changes/features to the shared folder must be tested
+
+## DOCKER
+this is the simplest and the bestway to work on this project.
+Follow the **GOLANG** && **LAMBDA** installation procedure, then.
+1. clone project
+2. install docker 
+3. run `docker-compose build`
+4. run `docker-compose up`

@@ -1,15 +1,17 @@
 package models
 
-import graphql "github.com/graph-gophers/graphql-go"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 // Service defines the service models for graphql
 // for getting a single service
 type Service struct {
-	ID       graphql.ID
+	gorm.Model
 	Name     string
 	Duration int
 	Price    int
 	Status   string
 	Trend    string
-	ShopID   graphql.ID
+	ShopID   uint
 }

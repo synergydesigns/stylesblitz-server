@@ -2,5 +2,5 @@ schema {
     query: Query
 }
 type Query {
-    user: User
+    user(id: String!): User
 }

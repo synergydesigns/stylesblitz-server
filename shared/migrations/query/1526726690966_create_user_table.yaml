@@ -1,0 +1,99 @@
+changeSet:
+  - id: '1526726690966'
+    author: Enaho Murphy
+    description: Table creation
+    changes:
+      - sql: "CREATE TABLE `user` (
+          `id` int(11) unsigned NOT NULL,
+          `name` varchar(255) NOT NULL,
+          `username` varchar(100) NOT NULL,
+          `email` varchar(100) NOT NULL,
+          `password` varchar(100) NOT NULL,
+          `phone` int(20),
+          `profile_image` varchar(255),
+          `wall_image` varchar(255),
+          `bio` text,
+          `created_at` datetime,
+          `updated_at` datetime,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `username` (`username`),
+          KEY `email_username` (`email`, `username`)
+        );"
+
+      - sql: "CREATE TABLE `service` (
+          `id` int(11) unsigned NOT NULL,
+          `name` varchar(100) NOT NULL,
+          `duration` int(255) NOT NULL,
+          `price` int(100) NOT NULL,
+          `status` tinyint(1) DEFAULT 0,
+          `trend` varchar(255),
+          `shop_id` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `id_shop_id` (`id`, `shop_id`)
+        );"
+
+      - sql: "CREATE TABLE `category` (
+          `id` int(11) unsigned NOT NULL,
+          `name` varchar(100) NOT NULL,
+          `description` text,
+          `image` varchar(255),
+          `shop_id` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `id_shop_id` (`id`, `shop_id`)
+        );"
+
+      - sql: "CREATE TABLE `addresss` (
+          `id` int(11) unsigned NOT NULL,
+          `country` varchar(100) NOT NULL,
+          `state` varchar(100) NOT NULL,
+          `city` varchar(100) NOT NULL,
+          `zipcode` int(10),
+          `shop_id` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `id_shop_id` (`id`, `shop_id`)
+        );"
+
+      - sql: "CREATE TABLE `opening` (
+          `id` int(11) unsigned NOT NULL,
+          `from` DATETIME,
+          `to` DATETIME,
+          `day` enum(
+            'moday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday'),
+          `shop_id` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `id_shop_id` (`id`, `shop_id`)
+        );"
+      
+      - sql: "CREATE TABLE `provider` (
+          `id` int(11) unsigned NOT NULL,
+          `name` varchar(100) NOT NULL,
+          `description` text,
+          `about` varchar(255),
+          `phone` int(15),
+          `shop_id` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `id_shop_id` (`id`, `shop_id`)
+        );"
+
+      - sql: "CREATE TABLE `review` (
+          `id` int(11) unsigned NOT NULL,
+          `review` text,
+          `rating` int(5),
+          `shop_id` int(11) unsigned NOT NULL,
+          `user_id` int(11) unsigned NOT NULL,
+          PRIMARY KEY (`id`),
+          KEY `id` (`id`),
+          KEY `id_shop_id_user_id` (`id`, `shop_id`, `user_id`)
+        );"

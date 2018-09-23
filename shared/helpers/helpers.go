@@ -1,4 +1,4 @@
-package shared
+package helpers
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ func ImportJSONDataFromFile(fileName string, result interface{}) (isOK bool) {
 		isOK = false
 		fmt.Print("Error:", err)
 	}
-	return
+	return true
 }
 
 // LoadSchema recursively loads graphql schema
@@ -32,15 +32,13 @@ func ImportJSONDataFromFile(fileName string, result interface{}) (isOK bool) {
 // @params buf := pointer to a buffer
 // @params dir := directory to read from
 func LoadSchema(buf *bytes.Buffer, dir string) error {
-
 	files, error := ioutil.ReadDir(dir)
 	if error != nil {
-		return error
 		log.Printf("An error occurred reading file: %v", error)
+		return error
 	}
 
 	for _, file := range files {
-		fmt.Println(file.Name())
 		filePath := path.Join(dir, file.Name())
 		if !file.IsDir() {
 			fileBytes, _ := ioutil.ReadFile(filePath)

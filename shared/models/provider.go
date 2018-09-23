@@ -1,17 +1,18 @@
 package models
 
 import (
-	graphql "github.com/graph-gophers/graphql-go"
+	"github.com/jinzhu/gorm"
 )
 
 // Provider defines the provider models for graphql
 // for getting a single provider
 type Provider struct {
-	ID          graphql.ID
+	gorm.Model
 	Name        string
 	Description string
 	About       string
-	Phone       int
+	Phone       uint
 	User        User
 	Address     Address
+	Opening     Opening
 }

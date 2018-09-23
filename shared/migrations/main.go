@@ -7,16 +7,22 @@ import (
 
 	"github.com/GuiaBolso/darwin"
 	_ "github.com/go-sql-driver/mysql"
-	"gitlab.com/synergy-designs/style-blitz/migrations/utils"
+	"gitlab.com/synergy-designs/style-blitz/shared/config"
+	"gitlab.com/synergy-designs/style-blitz/shared/migrations/utils"
 )
 
-func main() {
-	config := utils.LoadConfig()
+// Migrate migrates db
+func Migrate() {
+	config := config.LoadConfig()
 	migrations := utils.GenarateDarwinMigrations(config)
 
-	fmt.Println(config, migrations)
-	dbURL := fmt.Sprintf("%s:@/styleblitz", config.DBUser)
+	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser,
+		config.DBPassword, config.DBHost, config.DBPort, config.DBName)
+
 	database, err := sql.Open("mysql", dbURL)
+
+	defer database.Close()
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,5 +33,11 @@ func main() {
 
 	if err != nil {
 		log.Println(err)
+	} else {
+		log.Println("Migration completed")
 	}
+}
+
+func main() {
+	Migrate()
 }
