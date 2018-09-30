@@ -42,5 +42,10 @@ this is the simplest and the bestway to work on this project.
 Follow the **GOLANG** && **LAMBDA** installation procedure, then.
 1. clone project
 2. install docker 
+3. turn the env.json.example to `env.json` and the the `.env` to `.env`
 3. run `docker-compose build`
 4. run `docker-compose up`
+5. run `sam local start-api --env-vars env.json`
+
+## NOTE
+if you're finding graphqli request going past 2s you can quite sam-cli and use this command instead `sam local start-api --skip-pull-image --env-vars=env.json --profile=<aws-credentials>`

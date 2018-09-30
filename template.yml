@@ -7,6 +7,7 @@ Resources:
     Properties:
       Handler: bin/graphql
       Runtime: go1.x
+      MemorySize: 256
       Environment:
         Variables:
           MYSQL_ROOT_PASSWORD: test
