@@ -20,7 +20,7 @@ type Config struct {
 
 // LoadConfig loads all configuration
 func LoadConfig() *Config {
-	env.Load()
+	env.Load("../../.env")
 
 	return &Config{
 		AppName:       os.Getenv("APP_NAME"),

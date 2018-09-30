@@ -48,6 +48,9 @@ func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) 
 	return events.APIGatewayProxyResponse{
 		Body:       string(resp),
 		StatusCode: 200,
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
 	}, nil
 }
 
