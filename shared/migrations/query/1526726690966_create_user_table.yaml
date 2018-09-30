@@ -45,7 +45,7 @@ changeSet:
           KEY `id_shop_id` (`id`, `shop_id`)
         );"
 
-      - sql: "CREATE TABLE `addresss` (
+      - sql: "CREATE TABLE `address` (
           `id` int(11) unsigned NOT NULL,
           `country` varchar(100) NOT NULL,
           `state` varchar(100) NOT NULL,
@@ -81,7 +81,7 @@ changeSet:
           `description` text,
           `about` varchar(255),
           `phone` int(15),
-          `shop_id` int(11) unsigned NOT NULL,
+          `shop_id` int(11) unsigned NULL,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
           KEY `id_shop_id` (`id`, `shop_id`)
