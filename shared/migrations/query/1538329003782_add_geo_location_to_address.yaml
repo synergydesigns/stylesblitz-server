@@ -9,5 +9,5 @@ changeSet:
           ADD
             COLUMN `latitude` double DEFAULT NULL,
           ADD
-            COLUMN `longitude` double DEFAULT NULL,
+            COLUMN `longitude` double DEFAULT NULL;
         " 
