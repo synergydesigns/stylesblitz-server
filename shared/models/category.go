@@ -11,5 +11,5 @@ type Category struct {
 	Name        string
 	Description string
 	Image       string
-	ShopID      uint
+	ProviderID  uint
 }

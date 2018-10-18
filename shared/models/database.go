@@ -43,4 +43,5 @@ func NewDB(config *config.Config) *DB {
 // interface with the database
 type Datastore interface {
 	GetUserByID(id uint64) (*User, error)
+	GetServices() ([]*Service, error)
 }

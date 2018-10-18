@@ -8,8 +8,8 @@ import (
 // for getting a single opening
 type Opening struct {
 	gorm.Model
-	shopID uint
-	From   string
-	To     string
-	Day    string
+	ProviderID uint
+	From       string
+	To         string
+	Day        string
 }

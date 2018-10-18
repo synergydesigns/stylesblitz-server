@@ -28,6 +28,7 @@ changeSet:
           `price` int(100) NOT NULL,
           `status` tinyint(1) DEFAULT 0,
           `trend` varchar(255),
+          `category_id` int(11),
           `provider_id` int(11) unsigned NOT NULL,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
@@ -50,7 +51,7 @@ changeSet:
           `country` varchar(100) NOT NULL,
           `state` varchar(100) NOT NULL,
           `city` varchar(100) NOT NULL,
-          `zipcode` int(10),
+          `zipcode` int(10) NULL,
           `provider_id` int(11) unsigned NOT NULL,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
@@ -79,9 +80,8 @@ changeSet:
           `id` int(11) unsigned NOT NULL,
           `name` varchar(100) NOT NULL,
           `description` text,
-          `about` varchar(255),
-          `phone` int(20),
-          `address_id` int(11) unsigned NOT NULL,
+          `about` text,
+          `phone` varchar(20),
           PRIMARY KEY (`id`),
           KEY `id` (`id`)
         );"

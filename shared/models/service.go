@@ -8,10 +8,15 @@ import (
 // for getting a single service
 type Service struct {
 	gorm.Model
-	Name     string
-	Duration int
-	Price    int
-	Status   string
-	Trend    string
-	ShopID   uint
+	Name       string
+	Duration   int
+	Price      int
+	Status     string
+	Trend      string
+	ProviderID uint
+}
+
+func (db *DB) GetServices() ([]*Service, error) {
+
+	return []*Service{}, nil
 }
