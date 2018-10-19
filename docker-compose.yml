@@ -38,6 +38,8 @@ services:
       MYSQL_DATABASE: styleblitz
       MYSQL_USER: root
       MYSQL_PASSWORD: styleblitz
+    volumes:
+     - ./:/var/lib/postgresql
     networks:
       styleblitz_default:
     ports:
