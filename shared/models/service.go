@@ -1,22 +1,82 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"fmt"
 )
 
 // Service defines the service models for graphql
 // for getting a single service
 type Service struct {
-	gorm.Model
+	ID         uint64 `gorm:"primary_key"`
 	Name       string
-	Duration   int
-	Price      int
-	Status     string
+	Duration   int32
+	Price      int32
+	Status     bool
 	Trend      string
-	ProviderID uint
+	ProviderID int32
 }
 
-func (db *DB) GetServices() ([]*Service, error) {
+// ServiceQuery used for extracting user query
+type ServiceQuery struct {
+	Longitude bool
+	Latitude  bool
+}
 
-	return []*Service{}, nil
+// GetServices gets all services by query
+func (db *DB) GetServices(serviceName string, lat float64, long float64, radius float64) ([]*Service, error) {
+	var services []*Service
+
+	sql := `SELECT
+		*,
+		p.distance_unit * DEGREES(
+			ACOS(
+				COS(RADIANS(p.latpoint)) * COS(RADIANS(a.latitude)) * COS(RADIANS(p.longpoint) - RADIANS(a.longitude)) + SIN(RADIANS(p.latpoint)) * SIN(RADIANS(a.latitude))
+			)
+		) AS distance_in_km
+	FROM
+		service AS s
+		JOIN address a on s.provider_id = a.provider_id
+		JOIN (
+			SELECT
+				? AS latpoint,
+				? AS longpoint,
+				? AS radius,
+				111.045 AS distance_unit
+		) AS p ON 1 = 1
+	WHERE
+		a.latitude BETWEEN p.latpoint - (p.radius / p.distance_unit)
+		AND p.latpoint + (p.radius / p.distance_unit)
+		AND a.longitude BETWEEN p.longpoint - (
+			p.radius / (p.distance_unit * COS(RADIANS(p.latpoint)))
+		)
+		AND p.longpoint + (
+			p.radius / (p.distance_unit * COS(RADIANS(p.latpoint)))
+		)
+	ORDER BY
+		distance_in_km
+	LIMIT
+		15`
+
+	rows, err := db.Raw(sql, lat, long, radius).Rows()
+
+	if err != nil {
+		return nil, fmt.Errorf("An error occurred getting services: %v", err.Error())
+	}
+
+	for rows.Next() {
+		var service Service
+
+		db.ScanRows(rows, &service)
+
+		services = append(services, &service)
+	}
+
+	// filter products by
+	// service name
+	// geolocation
+	// category
+	// date
+	// accept online payments
+
+	return services, nil
 }
