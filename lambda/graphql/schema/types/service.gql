@@ -1,9 +1,9 @@
 type Service {
     ID: ID!
     name: String
-    dutration: String
+    duration: Int
     price: Int
     status: Boolean
     Trend: String
-    shopID: ID
+    providerID: ID
 }

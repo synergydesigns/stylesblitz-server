@@ -80,7 +80,7 @@ changeSet:
           `id` int(11) unsigned NOT NULL,
           `name` varchar(100) NOT NULL,
           `description` text,
-          `about` text,
+          `about` textw,
           `phone` varchar(20),
           PRIMARY KEY (`id`),
           KEY `id` (`id`)

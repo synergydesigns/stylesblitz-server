@@ -3,4 +3,10 @@ schema {
 }
 type Query {
     user(id: String!): User
+    services(
+        name: String!,
+        latitude: Float,
+        longitude: Float,
+        radius: Float
+    ): [Service!]
 }
