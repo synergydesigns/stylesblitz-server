@@ -11,39 +11,39 @@ import (
 )
 
 // ServiceResolver struct for resolving services
-type ServiceResolver struct {
+type serviceResolver struct {
 	service *models.Service
 }
 
 // ID service id
-func (r *ServiceResolver) ID() graphql.ID {
+func (r *serviceResolver) ID() graphql.ID {
 	ID := strconv.Itoa(int(r.service.ID))
 
 	return graphql.ID(ID)
 }
 
 // Name service name
-func (r *ServiceResolver) Name() *string {
+func (r *serviceResolver) Name() *string {
 	return &r.service.Name
 }
 
 // Duration service duration
-func (r *ServiceResolver) Duration() *int32 {
+func (r *serviceResolver) Duration() *int32 {
 	return &r.service.Duration
 }
 
 // Price service name
-func (r *ServiceResolver) Price() *int32 {
+func (r *serviceResolver) Price() *int32 {
 	return &r.service.Price
 }
 
 // Trend service trend
-func (r *ServiceResolver) Trend() *string {
+func (r *serviceResolver) Trend() *string {
 	return &r.service.Trend
 }
 
 // ProviderID service name
-func (r *ServiceResolver) ProviderID() *graphql.ID {
+func (r *serviceResolver) ProviderID() *graphql.ID {
 	ID := strconv.Itoa(int(r.service.ProviderID))
 
 	providerID := graphql.ID(ID)
@@ -51,18 +51,30 @@ func (r *ServiceResolver) ProviderID() *graphql.ID {
 }
 
 // Status service name
-func (r *ServiceResolver) Status() *bool {
+func (r *serviceResolver) Status() *bool {
 	return &r.service.Status
 }
 
-type getServiceQuery struct {
-	Longitude, Latitude, Radius *float64
-	Name                        string
-}
-
 // Services base on user query
-func (r *Resolver) Services(ctx context.Context, args getServiceQuery) (*[]*ServiceResolver, error) {
+func (r *Resolver) Services(ctx context.Context, args getServiceQuery) (*[]*serviceResolver, error) {
 	svc := ctx.Value(config.CTXKeyservices).(*service.Services)
+
+	// set default limit and offset
+	var limit int32
+	var offset int32 = 1
+
+	if args.Limit == nil || (args.Limit != nil && *args.Limit == 0) {
+		limit = config.ServicesLimit
+	} else {
+		limit = *args.Limit
+	}
+
+	if args.Page != nil && *args.Page > 0 {
+		offset = *args.Page
+	}
+
+	offset = limit * (offset - 1)
+
 	services, err := svc.Datastore.GetServices(
 		args.Name,
 		*args.Latitude,
@@ -73,10 +85,10 @@ func (r *Resolver) Services(ctx context.Context, args getServiceQuery) (*[]*Serv
 		return nil, err
 	}
 
-	var results []*ServiceResolver
+	var results []*serviceResolver
 
 	for _, service := range services {
-		results = append(results, &ServiceResolver{service})
+		results = append(results, &serviceResolver{service})
 	}
 	return &results, nil
 }

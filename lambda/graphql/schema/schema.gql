@@ -7,6 +7,17 @@ type Query {
         name: String!,
         latitude: Float,
         longitude: Float,
-        radius: Float
+        radius: Float,
+        limit: Int,
+        page: Int
     ): [Service!]
+    GetProvidersByServiceAndLocation(
+        name: String!,
+        latitude: Float,
+        longitude: Float,
+        radius: Float,
+        limit: Int,
+        page: Int
+    ): [Provider!]
+    GetAddress(id: Int!): Address
 }

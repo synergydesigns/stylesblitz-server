@@ -1,8 +1,8 @@
 type Address {
-    ID:         ID!
-    shopID:     String
-    country:    String
-    state:      String
-    city:       String
-    zipcode:    String
+    ID:             ID!
+    providerID:     ID!
+    country:        String
+    state:          String
+    city:           String
+    zipcode:        String
 }
