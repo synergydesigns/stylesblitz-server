@@ -33,6 +33,7 @@ services:
     container_name: styleblitz-mysql
     image: mysql:5.7.22
     restart: always
+    command: --sql_mode=""
     environment:
       MYSQL_ROOT_PASSWORD: styleblitz
       MYSQL_DATABASE: styleblitz
