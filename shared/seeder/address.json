@@ -1,0 +1,91 @@
+[{
+  "id": 1,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57961216,
+  "longitude": 3.35756456,
+  "provider_id": 1
+}, {
+  "id": 2,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.56803897,
+  "longitude": 3.36609155,
+  "provider_id": 2
+}, {
+  "id": 3,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57035687,
+  "longitude": 3.36652346,
+  "provider_id": 3
+}, {
+  "id": 4,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.58194872,
+  "longitude": 3.37073305,
+  "provider_id": 4
+}, {
+  "id": 5,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57302072,
+  "longitude": 3.36468914,
+  "provider_id": 5
+}, {
+  "id": 6,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57145949,
+  "longitude": 3.36598251,
+  "provider_id": 6
+}, {
+  "id": 7,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57415526,
+  "longitude": 3.36090473,
+  "provider_id": 7
+}, {
+  "id": 8,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57463773,
+  "longitude": 3.36685732,
+  "provider_id": 8
+}, {
+  "id": 9,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.57717936,
+  "longitude": 3.35899219,
+  "provider_id": 9
+}, {
+  "id": 10,
+  "country": "nigeria",
+  "state": "lagos",
+  "zipcode": null,
+  "city": "maryland",
+  "latitude": 6.58363223,
+  "longitude": 3.36750578,
+  "provider_id": 10
+}]
