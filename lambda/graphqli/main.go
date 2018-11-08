@@ -19,7 +19,11 @@ func Handler(request interface{}) (events.APIGatewayProxyResponse, error) {
 	}
 
 	// read template file
-	index, _ := ioutil.ReadFile(path.Join(dir, "graphqli/template/index.html"))
+	index, err := ioutil.ReadFile(path.Join(dir, "lambda/graphqli/template/index.html"))
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	headers := map[string]string{
 		"Content-Type": "text/html",

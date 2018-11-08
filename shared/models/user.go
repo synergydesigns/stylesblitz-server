@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"log"
+
+	"github.com/jinzhu/gorm"
 )
 
 // User defines the user models for graphql
@@ -21,12 +23,20 @@ type User struct {
 	// UpdatedAt    time.Time
 }
 
+type UserDbService struct {
+	DB *gorm.DB
+}
+
+type UserDB interface {
+	GetUserByID(id uint64) (*User, error)
+}
+
 // GetUserByID gets a single user by ID
 // @params {userID} userID is an integer
-func (db *DB) GetUserByID(id uint64) (*User, error) {
+func (service *UserDbService) GetUserByID(id uint64) (*User, error) {
 	var user User
 
-	result := db.First(&user, id)
+	result := service.DB.First(&user, id)
 
 	if result.Error != nil {
 		log.Printf("Could not find User: %v", result.Error)

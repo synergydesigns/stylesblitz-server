@@ -94,7 +94,7 @@ func (r *Resolver) GetProvidersByServiceAndLocation(ctx context.Context, args ge
 
 	offset = limit * (offset - 1)
 
-	providers, err := svc.Datastore.GetProvidersByServiceAndLocation(
+	providers, err := svc.Datastore.ProviderDB.GetProvidersByServiceAndLocation(
 		args.Name,
 		*args.Latitude,
 		*args.Longitude,

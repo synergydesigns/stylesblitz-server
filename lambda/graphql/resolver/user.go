@@ -64,7 +64,7 @@ func (r *Resolver) User(ctx context.Context, args struct {
 }) (*userResolver, error) {
 	svc := ctx.Value(config.CTXKeyservices).(*service.Services)
 	userID, _ := strconv.ParseUint(args.ID, 10, 64)
-	user, err := svc.Datastore.GetUserByID(userID)
+	user, err := svc.Datastore.UserDB.GetUserByID(userID)
 	if err != nil {
 		return nil, err
 	}

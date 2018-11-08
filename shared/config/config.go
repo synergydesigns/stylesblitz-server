@@ -2,8 +2,6 @@ package config
 
 import (
 	"os"
-
-	env "github.com/joho/godotenv"
 )
 
 // Config struct holds all configuration
@@ -20,7 +18,7 @@ type Config struct {
 
 // LoadConfig loads all configuration
 func LoadConfig() *Config {
-	env.Load("../../.env")
+	// log.Println(os.Getenv("DATABASE_HOST"), "=========")
 
 	return &Config{
 		AppName:       os.Getenv("APP_NAME"),

@@ -17,9 +17,10 @@ type DB struct {
 var database *gorm.DB
 
 // Connect connects to the database connection
-func Connect(conf *config.Config) *DB {
+func Connect(conf *config.Config) *gorm.DB {
 	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName)
 	db, err := gorm.Open("mysql", dbURL)
+	log.Println(dbURL)
 
 	if err != nil {
 		log.Fatal(err)
@@ -31,18 +32,22 @@ func Connect(conf *config.Config) *DB {
 	// disable database pluralization
 	database.SingularTable(true)
 
-	return &DB{database}
+	return database
 }
 
 // NewDB initializes the database instance
-func NewDB(config *config.Config) *DB {
-	return Connect(config)
+func NewDB(config *config.Config) *Datastore {
+	DB := Connect(config)
+
+	return &Datastore {
+		ProviderDB: &ProviderDbService{DB},
+		UserDB: &UserDbService{DB},
+		ServiceDB: &ServiceDBService{DB},
+	}
 }
 
-// Datastore defines all the methods used to
-// interface with the database
-type Datastore interface {
-	GetUserByID(id uint64) (*User, error)
-	GetServices(name string, lat float64, long float64, radius float64) ([]*Service, error)
-	GetProvidersByServiceAndLocation(serviceName string, lat float64, long float64, radius float64) ([]*Provider, error)
+type Datastore struct {
+	ProviderDB ProviderDB
+	UserDB UserDB
+	ServiceDB ServiceDB
 }

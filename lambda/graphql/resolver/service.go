@@ -75,7 +75,7 @@ func (r *Resolver) Services(ctx context.Context, args getServiceQuery) (*[]*serv
 
 	offset = limit * (offset - 1)
 
-	services, err := svc.Datastore.GetServices(
+	services, err := svc.Datastore.ServiceDB.GetServices(
 		args.Name,
 		*args.Latitude,
 		*args.Longitude,

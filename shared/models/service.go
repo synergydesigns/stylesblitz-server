@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+
+	"github.com/jinzhu/gorm"
 )
 
 // Service defines the service models for graphql
@@ -16,6 +18,14 @@ type Service struct {
 	ProviderID int32
 }
 
+type ServiceDBService struct {
+	DB *gorm.DB
+}
+
+type ServiceDB interface {
+	GetServices(serviceName string, lat, long, radius float64) ([]*Service, error)
+}
+
 // ServiceQuery used for extracting user query
 type ServiceQuery struct {
 	Longitude bool
@@ -23,7 +33,7 @@ type ServiceQuery struct {
 }
 
 // GetServices gets all services by query
-func (db *DB) GetServices(serviceName string, lat float64, long float64, radius float64) ([]*Service, error) {
+func (service *ServiceDBService) GetServices(serviceName string, lat float64, long float64, radius float64) ([]*Service, error) {
 	var services []*Service
 
 	sql := `SELECT
@@ -57,26 +67,19 @@ func (db *DB) GetServices(serviceName string, lat float64, long float64, radius 
 	LIMIT
 		15`
 
-	rows, err := db.Raw(sql, lat, long, radius).Rows()
+	rows, err := service.DB.Raw(sql, lat, long, radius).Rows()
 
 	if err != nil {
 		return nil, fmt.Errorf("An error occurred getting services: %v", err.Error())
 	}
 
 	for rows.Next() {
-		var service Service
+		var svc Service
 
-		db.ScanRows(rows, &service)
+		service.DB.ScanRows(rows, &svc)
 
-		services = append(services, &service)
+		services = append(services, &svc)
 	}
-
-	// filter products by
-	// service name
-	// geolocation
-	// category
-	// date
-	// accept online payments
 
 	return services, nil
 }

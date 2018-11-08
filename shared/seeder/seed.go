@@ -10,12 +10,13 @@ import (
 
 	"gitlab.com/synergy-designs/style-blitz/shared/config"
 	"gitlab.com/synergy-designs/style-blitz/shared/models"
+	"github.com/jinzhu/gorm"
 )
 
 // Seeder Struct that handles databse seeding
 type Seeder struct {
 	Table string
-	DB    *models.DB
+	DB    *gorm.DB
 	File  []byte
 }
 
@@ -30,7 +31,7 @@ func (s *Seeder) LoadData(file string) *Seeder {
 func (s *Seeder) Init() *Seeder {
 	conf := config.LoadConfig()
 
-	s.DB = models.NewDB(conf)
+	s.DB = models.Connect(conf)
 
 	return s
 }

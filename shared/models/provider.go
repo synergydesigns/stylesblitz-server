@@ -20,8 +20,16 @@ type Provider struct {
 	Opening     Opening
 }
 
+type ProviderDbService struct {
+	DB *gorm.DB
+}
+
+type ProviderDB interface {
+	GetProvidersByServiceAndLocation(serviceName string, lat, long, radius float64) ([]*Provider, error) 
+}
+
 // GetProvidersByServiceAndLocation gets all services by query
-func (db *DB) GetProvidersByServiceAndLocation(serviceName string, lat float64, long float64, radius float64) ([]*Provider, error) {
+func (service *ProviderDbService) GetProvidersByServiceAndLocation(serviceName string, lat float64, long float64, radius float64) ([]*Provider, error) {
 	var providers []*Provider
 
 	sql := `SELECT DISTINCT
@@ -62,7 +70,7 @@ func (db *DB) GetProvidersByServiceAndLocation(serviceName string, lat float64, 
 		ORDER BY
 			distance_in_km`
 
-	rows, err := db.Raw(sql, lat, long, radius, serviceName).Rows()
+	rows, err := service.DB.Raw(sql, lat, long, radius, serviceName).Rows()
 
 	if err != nil {
 		return nil, fmt.Errorf("An error occurred getting services: %v", err.Error())
@@ -71,7 +79,7 @@ func (db *DB) GetProvidersByServiceAndLocation(serviceName string, lat float64, 
 	for rows.Next() {
 		var provider Provider
 
-		db.ScanRows(rows, &provider)
+		service.DB.ScanRows(rows, &provider)
 
 		providers = append(providers, &provider)
 	}
