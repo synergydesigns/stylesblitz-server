@@ -25,4 +25,4 @@ supervise:
 	supervisor --no-restart-on exit -e go -i bin --exec make -- dev-recompile
 
 start-local:
-	aws-sam-local local start-api
+	sam local start-api --profile serverless-pm --env-vars env.json

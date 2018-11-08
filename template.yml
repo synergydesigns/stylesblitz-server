@@ -5,7 +5,7 @@ Resources:
   GraphqlFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: bin/graphql
+      Handler: lambda/bin/graphql
       Runtime: go1.x
       MemorySize: 256
       Environment:
@@ -27,7 +27,7 @@ Resources:
   GraphqliFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: bin/graphqli
+      Handler: lambda/bin/graphqli
       Runtime: go1.x
       Events:
         Api:
