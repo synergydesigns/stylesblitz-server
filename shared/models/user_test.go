@@ -7,10 +7,11 @@ import (
 	"gitlab.com/synergy-designs/style-blitz/shared/models"
 )
 
-func TestGetUserByID(t *testing.T) {
-	db := models.NewDB(config.LoadConfig())
+var userService = models.UserDbService{models.Connect(config.LoadConfig())}
 
-	defer db.Close()
+func TestGetUserByID(t *testing.T) {
+
+	defer userService.DB.Close()
 	user := models.User{
 		ID:       1,
 		Name:     "Enaho Murphy",
@@ -19,30 +20,30 @@ func TestGetUserByID(t *testing.T) {
 		Password: "testing",
 	}
 
-	db.Create(&user)
+	userService.DB.Create(&user)
 
 	testCases := []struct {
 		Title    string
-		ID       uint
-		Response models.User
+		ID       uint64
+		Response *models.User
 		Error    string
 	}{
 		{
 			Title:    "When a user does not exist",
 			ID:       44,
-			Response: models.User{},
+			Response: &models.User{},
 			Error:    "User with id 44 cannot be found",
 		},
 		{
 			Title:    "When a user exist",
 			ID:       1,
-			Response: models.User{},
+			Response: &models.User{},
 			Error:    "",
 		},
 	}
 
 	for _, testCase := range testCases {
-		user, err := db.GetUserByID(testCase.ID)
+		user, err := userService.GetUserByID(uint64(testCase.ID))
 
 		if err != nil {
 			if testCase.Error != err.Error() {
@@ -50,7 +51,7 @@ func TestGetUserByID(t *testing.T) {
 				t.Error("actual", err.Error())
 			}
 		} else {
-			if user != testCase.Response {
+			if user.ID != testCase.ID {
 				t.Errorf("expected %d to equal %d", user.ID, testCase.Response.ID)
 				t.Errorf("expected %s to equal %s", user.Name, testCase.Response.Name)
 				t.Errorf("expected %s to equal %s", user.Username, testCase.Response.Username)
@@ -58,4 +59,6 @@ func TestGetUserByID(t *testing.T) {
 			}
 		}
 	}
+
+	userService.DB.Exec("Truncate table user")
 }
