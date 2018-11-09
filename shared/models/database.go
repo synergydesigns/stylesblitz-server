@@ -19,7 +19,7 @@ var database *gorm.DB
 // Connect connects to the database connection
 func Connect(conf *config.Config) *gorm.DB {
 	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName)
-	db, err := gorm.Open("mysql", dbURL)
+	db, err := gorm.Open("mysql", dbURL+"?parseTime=true")
 	log.Println(dbURL)
 
 	if err != nil {
@@ -39,15 +39,15 @@ func Connect(conf *config.Config) *gorm.DB {
 func NewDB(config *config.Config) *Datastore {
 	DB := Connect(config)
 
-	return &Datastore {
+	return &Datastore{
 		ProviderDB: &ProviderDbService{DB},
-		UserDB: &UserDbService{DB},
-		ServiceDB: &ServiceDBService{DB},
+		UserDB:     &UserDbService{DB},
+		ServiceDB:  &ServiceDBService{DB},
 	}
 }
 
 type Datastore struct {
 	ProviderDB ProviderDB
-	UserDB UserDB
-	ServiceDB ServiceDB
+	UserDB     UserDB
+	ServiceDB  ServiceDB
 }
