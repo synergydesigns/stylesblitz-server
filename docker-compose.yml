@@ -14,6 +14,7 @@ services:
       - "MYSQL_PORT=3306"
       - "MIGRATION_PATH=./query"
       - "APP_NAME=styleblitz"
+      - "ROOT_DIRECTORY=/go/src/gitlab.com/synergy-designs/style-blitz"
     volumes:
       - ./:/go/src/gitlab.com/synergy-designs/style-blitz
     # restart: always

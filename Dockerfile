@@ -19,4 +19,6 @@ RUN apk add --no-cache curl \
 
 RUN make build && make migrate
 
+ENV ROOT_DIRECTORY=/go/src/gitlab.com/synergy-designs/style-blitz
+
 CMD [ "make", "supervise" ]
