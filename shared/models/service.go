@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -14,8 +15,11 @@ type Service struct {
 	Duration   int32
 	Price      int32
 	Status     bool
-	Trend      string
-	ProviderID int32
+	Trend      int
+	ProviderID int32 `json:"provider_id"`
+	CategoryID int32 `json:"category_id"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type ServiceDBService struct {

@@ -14,6 +14,7 @@ type Config struct {
 	DBPassword    string
 	DBName        string
 	MigrationPath string
+	RootDirectory string
 }
 
 // LoadConfig loads all configuration
@@ -28,5 +29,6 @@ func LoadConfig() *Config {
 		DBPassword:    os.Getenv("MYSQL_PASSWORD"),
 		DBName:        os.Getenv("MYSQL_DATABASE"),
 		MigrationPath: os.Getenv("MIGRATION_PATH"),
+		RootDirectory: os.Getenv("ROOT_DIRECTORY"),
 	}
 }

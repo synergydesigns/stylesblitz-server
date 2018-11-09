@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -19,8 +20,8 @@ type User struct {
 	ProfileImage string
 	WallImage    string
 	Bio          string
-	// CreatedAt    time.Time
-	// UpdatedAt    time.Time
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 type UserDbService struct {

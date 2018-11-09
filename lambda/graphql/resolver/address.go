@@ -43,7 +43,7 @@ func (r *addressResolver) City() *string {
 
 // City the provider shop/service center can be found
 func (r *addressResolver) ZipCode() *string {
-	return &r.address.ZipCode
+	return &r.address.Zipcode
 }
 
 // Latitude is the first half of the geo point of this address
@@ -53,7 +53,7 @@ func (r *addressResolver) Latitude() *float64 {
 
 // Longitude is the second half of the geo point of this address
 func (r *addressResolver) Longitute() *float64 {
-	return &r.address.Longitute
+	return &r.address.Longitude
 }
 
 func (r *Resolver) Addresses(ctx context.Context, args struct {

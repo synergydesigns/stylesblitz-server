@@ -12,7 +12,7 @@ type Address struct {
 	Country    string
 	State      string
 	City       string
-	ZipCode    string `json:"zip_code"`
-	Longitute  float64
+	Zipcode    string
+	Longitude  float64
 	Latitude   float64
 }

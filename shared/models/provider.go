@@ -14,10 +14,11 @@ type Provider struct {
 	Description string
 	About       string
 	Phone       string
-	AddressID   string `gorm:"column:address_id"`
 	User        User
 	Addresses   []Address
 	Opening     Opening
+	// CreatedAt   time.Time
+	// UpdatedAt   time.Time
 }
 
 type ProviderDbService struct {
@@ -25,7 +26,7 @@ type ProviderDbService struct {
 }
 
 type ProviderDB interface {
-	GetProvidersByServiceAndLocation(serviceName string, lat, long, radius float64) ([]*Provider, error) 
+	GetProvidersByServiceAndLocation(serviceName string, lat, long, radius float64) ([]*Provider, error)
 }
 
 // GetProvidersByServiceAndLocation gets all services by query
@@ -83,13 +84,6 @@ func (service *ProviderDbService) GetProvidersByServiceAndLocation(serviceName s
 
 		providers = append(providers, &provider)
 	}
-
-	// filter products by
-	// service name
-	// geolocation
-	// category
-	// date
-	// accept online payments
 
 	return providers, nil
 }

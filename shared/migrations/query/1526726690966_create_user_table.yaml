@@ -31,9 +31,6 @@ changeSet:
           `trend` varchar(255),
           `category_id` int(11),
           `provider_id` int(11) unsigned NOT NULL,
-          `created_at` datetime,
-          `updated_at` datetime,
-          `deleted_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
           KEY `id_provider_id` (`id`, `provider_id`)

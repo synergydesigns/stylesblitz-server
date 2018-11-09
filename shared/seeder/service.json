@@ -108,7 +108,7 @@
   "category_id": 8
 }, {
   "id": 13,
-  "name": "Roller Set",
+  "name": "Extensions",
   "duration": 52,
   "price": 679,
   "status": "closed",
@@ -207,7 +207,7 @@
   "category_id": 11
 }, {
   "id": 24,
-  "name": "Brow Tint",
+  "name": "Extensions",
   "duration": 94,
   "price": 938,
   "status": "closed",
@@ -261,7 +261,7 @@
   "category_id": 16
 }, {
   "id": 30,
-  "name": "Brow Trim",
+  "name": "Extensions",
   "duration": 84,
   "price": 710,
   "status": "closed",
