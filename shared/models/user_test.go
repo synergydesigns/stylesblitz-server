@@ -3,8 +3,8 @@ package models_test
 import (
 	"testing"
 
-	config "gitlab.com/synergy-designs/style-blitz/shared/config"
-	"gitlab.com/synergy-designs/style-blitz/shared/models"
+	config "github.com/synergydesigns/stylesblitz-server/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/models"
 )
 
 var userService = models.UserDbService{models.Connect(config.LoadConfig())}

@@ -9,7 +9,7 @@ test:
 	@go test -v -cover $(TEST_PACKAGES)
 
 migrate:
- $(shell cd shared/migrations && go run main.go)
+	$(shell go run shared/migrations/main.go)
 
 recompile:
 	env GOOS=linux go build -ldflags="-s -w -v" -o lambda/bin/graphql lambda/graphql/main.go
@@ -25,4 +25,4 @@ supervise:
 	supervisor --no-restart-on exit -e go -i bin --exec make -- dev-recompile
 
 start-local:
-	sam local start-api --profile serverless-pm --env-vars env.json
+	sam local start-api --profile serverless-pm --env-vars env.json -p 3001

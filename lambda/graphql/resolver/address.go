@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	graphql "github.com/graph-gophers/graphql-go"
-	"gitlab.com/synergy-designs/style-blitz/shared/models"
+	"github.com/synergydesigns/stylesblitz-server/shared/models"
 )
 
 type addressResolver struct {

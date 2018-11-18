@@ -8,8 +8,8 @@ import (
 	"path"
 
 	"github.com/jinzhu/gorm"
-	"gitlab.com/synergy-designs/style-blitz/shared/config"
-	"gitlab.com/synergy-designs/style-blitz/shared/models"
+	"github.com/synergydesigns/stylesblitz-server/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/models"
 )
 
 var conf = config.LoadConfig()
@@ -94,7 +94,6 @@ func (s *Seeder) Clean() *Seeder {
 	for _, value := range s.Tables {
 
 		if s.DB.HasTable(value) {
-			fmt.Println(value, "==========")
 			s.DB.Exec("TRUNCATE TABLE " + value)
 		}
 	}
@@ -122,15 +121,3 @@ func (s *Seeder) SetTables(tables []string) *Seeder {
 
 	return s
 }
-
-// func main() {
-// 	seed := Seeder{}
-
-// 	seed.SetTables([]string{"provider", "address", "category", "service"})
-
-// 	seed.Init().Clean()
-// 	// seed.LoadData("provider").Seed("provider")
-// 	// seed.LoadData("address").Seed("address")
-// 	// seed.LoadData("category").Seed("category")
-// 	seed.LoadData("service").Seed("service")
-// }

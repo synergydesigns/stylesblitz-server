@@ -1,8 +1,8 @@
 package service
 
 import (
-	config "gitlab.com/synergy-designs/style-blitz/shared/config"
-	models "gitlab.com/synergy-designs/style-blitz/shared/models"
+	config "github.com/synergydesigns/stylesblitz-server/shared/config"
+	models "github.com/synergydesigns/stylesblitz-server/shared/models"
 )
 
 // Services Holds all methods that futher abstract

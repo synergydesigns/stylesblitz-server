@@ -4,6 +4,6 @@ type Service {
     duration: Int
     price: Int
     status: Boolean
-    Trend: String
+    Trend: Int
     providerID: ID
 }

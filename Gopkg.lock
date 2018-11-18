@@ -3,14 +3,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d8494da300984663e9f09b54b1f83509cf144404a95b8ca65c77a0933402372c"
+  digest = "1:b198ea4788caf0a196463ade203d90bdd6955e09ec635a84d60eca57010b5e69"
   name = "github.com/GuiaBolso/darwin"
   packages = ["."]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "86919dfcf80873d58ea2e527c15b1e02a5636ead"
 
 [[projects]]
-  digest = "1:6c8d51660e50d38116fe8c29eefc00ce856300329993980f7ce7333a522a6a99"
+  digest = "1:29401894b0873ce84bca18ddb3d614300851999478cc2ce4de6fe473db4842b6"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
@@ -18,21 +18,21 @@
     "lambda/messages",
     "lambdacontext",
   ]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "4d30d0ff60440c2d0480a15747c96ee71c3c53d4"
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:adea5a94903eb4384abef30f3d878dc9ff6b6b5b0722da25b82e5169216dfb61"
+  digest = "1:c07de423ca37dc2765396d6971599ab652a339538084b9b58c9f7fc533b28525"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "d523deb1b23d913de5bdada721a6071e71283618"
   version = "v1.4.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:522c23b6f019a4cc3a5aee0e44c9ce268b9930e9362c75c7df91e4b14f02ecef"
+  digest = "1:a672610e4997c56dddf23afe8c4fed0b6961725885fec78f36498ea86947bf63"
   name = "github.com/graph-gophers/graphql-go"
   packages = [
     ".",
@@ -49,11 +49,11 @@
     "log",
     "trace",
   ]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "bb9738501bd42a6536227b96068349b814379d6e"
 
 [[projects]]
-  digest = "1:c5c021f6d813011a09b34e373c7a02464cae764f4a92bbbc63d2431ee46887d8"
+  digest = "1:9585c6cb8c6916510b009e386214ae05e0821fb620d740ad7c751c389584237f"
   name = "github.com/graphql-go/graphql"
   packages = [
     "gqlerrors",
@@ -62,59 +62,59 @@
     "language/location",
     "language/source",
   ]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "1e23489041ba90a66f317fe0deccb236a2fff3cb"
   version = "v0.7.5"
 
 [[projects]]
-  digest = "1:235ae01f32fb5f12c5f6d2e0e05ab48e651ab31c126e45a4efc4f510810941ac"
+  digest = "1:d269638dbd514822446c3c818b6389c880058af79ec54d97731818b34fe66921"
   name = "github.com/jinzhu/gorm"
   packages = ["."]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
 
 [[projects]]
   branch = "master"
-  digest = "1:fd97437fbb6b7dce04132cf06775bd258cce305c44add58eb55ca86c6c325160"
+  digest = "1:d9a7385b84d8187fd94e0357045c6fa1147ca94caa56fdd539336c7c102fc728"
   name = "github.com/jinzhu/inflection"
   packages = ["."]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
-  digest = "1:450b7623b185031f3a456801155c8320209f75d0d4c4e633c6b1e59d44d6e392"
+  digest = "1:78fb99d6011c2ae6c72f3293a83951311147b12b06a5ffa43abf750c4fab6ac5"
   name = "github.com/opentracing/opentracing-go"
   packages = [
     ".",
     "ext",
     "log",
   ]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
   version = "v1.0.2"
 
 [[projects]]
   branch = "master"
-  digest = "1:76ee51c3f468493aff39dbacc401e8831fbb765104cbf613b89bef01cf4bad70"
+  digest = "1:c9bd77463c992cdec2514ada56f8cd78d9013aa6933b43f16d9c97fd0931659e"
   name = "golang.org/x/net"
   packages = ["context"]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "1e491301e022f8f977054da4c2d852decd59571f"
 
 [[projects]]
-  digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
+  digest = "1:934fb8966f303ede63aa405e2c8d7f0a427a05ea8df335dfdc1833dd4d40756f"
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
+  digest = "1:f0620375dd1f6251d9973b5f2596228cc8042e887cd7f827e4220bc1ce8c30e2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  pruneopts = "UT"
+  pruneopts = ""
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 

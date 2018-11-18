@@ -3,9 +3,9 @@ package models_test
 import (
 	"testing"
 
-	config "gitlab.com/synergy-designs/style-blitz/shared/config"
-	"gitlab.com/synergy-designs/style-blitz/shared/models"
-	"gitlab.com/synergy-designs/style-blitz/shared/seeder"
+	config "github.com/synergydesigns/stylesblitz-server/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/models"
+	"github.com/synergydesigns/stylesblitz-server/shared/seeder"
 )
 
 var providerService = models.ProviderDbService{models.Connect(config.LoadConfig())}

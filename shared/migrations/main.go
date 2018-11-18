@@ -7,8 +7,8 @@ import (
 
 	"github.com/GuiaBolso/darwin"
 	_ "github.com/go-sql-driver/mysql"
-	"gitlab.com/synergy-designs/style-blitz/shared/config"
-	"gitlab.com/synergy-designs/style-blitz/shared/migrations/utils"
+	"github.com/synergydesigns/stylesblitz-server/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/migrations/utils"
 )
 
 // Migrate migrates db

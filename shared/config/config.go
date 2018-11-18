@@ -19,8 +19,6 @@ type Config struct {
 
 // LoadConfig loads all configuration
 func LoadConfig() *Config {
-	// log.Println(os.Getenv("DATABASE_HOST"), "=========")
-
 	return &Config{
 		AppName:       os.Getenv("APP_NAME"),
 		DBHost:        os.Getenv("DATABASE_HOST"),

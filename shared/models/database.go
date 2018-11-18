@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	"gitlab.com/synergy-designs/style-blitz/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/config"
 )
 
 // DB database abstraction

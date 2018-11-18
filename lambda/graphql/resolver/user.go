@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	graphql "github.com/graph-gophers/graphql-go"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/config"
-	"gitlab.com/synergy-designs/style-blitz/shared/models"
-	service "gitlab.com/synergy-designs/style-blitz/shared/services"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/models"
+	service "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
 // userResolver struct for resolving users
