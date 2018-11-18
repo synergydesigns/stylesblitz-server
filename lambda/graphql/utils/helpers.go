@@ -13,7 +13,7 @@ func GetSchema() string {
 	dir, _ := os.Getwd()
 	schemaBytes := &bytes.Buffer{}
 
-	loadError := LoadSchema(schemaBytes, path.Join(dir, "graphql/schema"))
+	loadError := LoadSchema(schemaBytes, path.Join(dir, "lambda/graphql/schema"))
 
 	if loadError != nil {
 		log.Println(loadError)

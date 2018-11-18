@@ -5,6 +5,6 @@ type Provider {
     about: String
     phone: String
     user: User
-    adresss: Address
+    addresses: [Address]
     services: [Service]
 }

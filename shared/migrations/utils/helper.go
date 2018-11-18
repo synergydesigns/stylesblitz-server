@@ -1,12 +1,12 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 
 	"github.com/GuiaBolso/darwin"
-	"gitlab.com/synergy-designs/style-blitz/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/config"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -33,13 +33,8 @@ type Query struct {
 // and generates migrations out of the json files found
 func GenarateDarwinMigrations(config *config.Config) []darwin.Migration {
 	var migrations []darwin.Migration
-	dir, err := os.Getwd()
 
-	if err != nil {
-		panic(err)
-	}
-
-	filePath := path.Join(dir, config.MigrationPath)
+	filePath := path.Join(config.RootDirectory, config.MigrationPath)
 	files, err := ioutil.ReadDir(filePath)
 
 	if err != nil {
@@ -52,7 +47,10 @@ func GenarateDarwinMigrations(config *config.Config) []darwin.Migration {
 
 		fileBytes, _ := ioutil.ReadFile(path.Join(filePath, file.Name()))
 
+		fmt.Println(string(fileBytes))
+
 		if err := yaml.Unmarshal(fileBytes, &migration); err != nil {
+
 			panic(err)
 		}
 

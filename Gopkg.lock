@@ -3,29 +3,36 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:b198ea4788caf0a196463ade203d90bdd6955e09ec635a84d60eca57010b5e69"
   name = "github.com/GuiaBolso/darwin"
   packages = ["."]
+  pruneopts = ""
   revision = "86919dfcf80873d58ea2e527c15b1e02a5636ead"
 
 [[projects]]
+  digest = "1:29401894b0873ce84bca18ddb3d614300851999478cc2ce4de6fe473db4842b6"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
     "lambda",
     "lambda/messages",
-    "lambdacontext"
+    "lambdacontext",
   ]
+  pruneopts = ""
   revision = "4d30d0ff60440c2d0480a15747c96ee71c3c53d4"
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:c07de423ca37dc2765396d6971599ab652a339538084b9b58c9f7fc533b28525"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
+  pruneopts = ""
   revision = "d523deb1b23d913de5bdada721a6071e71283618"
   version = "v1.4.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:a672610e4997c56dddf23afe8c4fed0b6961725885fec78f36498ea86947bf63"
   name = "github.com/graph-gophers/graphql-go"
   packages = [
     ".",
@@ -40,71 +47,89 @@
     "internal/validation",
     "introspection",
     "log",
-    "trace"
+    "trace",
   ]
+  pruneopts = ""
   revision = "bb9738501bd42a6536227b96068349b814379d6e"
 
 [[projects]]
+  digest = "1:9585c6cb8c6916510b009e386214ae05e0821fb620d740ad7c751c389584237f"
   name = "github.com/graphql-go/graphql"
   packages = [
     "gqlerrors",
     "language/ast",
     "language/kinds",
     "language/location",
-    "language/source"
+    "language/source",
   ]
+  pruneopts = ""
   revision = "1e23489041ba90a66f317fe0deccb236a2fff3cb"
   version = "v0.7.5"
 
 [[projects]]
+  digest = "1:d269638dbd514822446c3c818b6389c880058af79ec54d97731818b34fe66921"
   name = "github.com/jinzhu/gorm"
   packages = ["."]
+  pruneopts = ""
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:d9a7385b84d8187fd94e0357045c6fa1147ca94caa56fdd539336c7c102fc728"
   name = "github.com/jinzhu/inflection"
   packages = ["."]
+  pruneopts = ""
   revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
-  name = "github.com/joho/godotenv"
-  packages = ["."]
-  revision = "23d116af351c84513e1946b527c88823e476be13"
-  version = "v1.3.0"
-
-[[projects]]
+  digest = "1:78fb99d6011c2ae6c72f3293a83951311147b12b06a5ffa43abf750c4fab6ac5"
   name = "github.com/opentracing/opentracing-go"
   packages = [
     ".",
     "ext",
-    "log"
+    "log",
   ]
+  pruneopts = ""
   revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
   version = "v1.0.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:c9bd77463c992cdec2514ada56f8cd78d9013aa6933b43f16d9c97fd0931659e"
   name = "golang.org/x/net"
   packages = ["context"]
+  pruneopts = ""
   revision = "1e491301e022f8f977054da4c2d852decd59571f"
 
 [[projects]]
+  digest = "1:934fb8966f303ede63aa405e2c8d7f0a427a05ea8df335dfdc1833dd4d40756f"
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
+  pruneopts = ""
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:f0620375dd1f6251d9973b5f2596228cc8042e887cd7f827e4220bc1ce8c30e2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = ""
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "144e8a90139888e7286149486d0c86ea4bdd911e876d5bfcbbaa609c60b1c307"
+  input-imports = [
+    "github.com/GuiaBolso/darwin",
+    "github.com/aws/aws-lambda-go/events",
+    "github.com/aws/aws-lambda-go/lambda",
+    "github.com/go-sql-driver/mysql",
+    "github.com/graph-gophers/graphql-go",
+    "github.com/graphql-go/graphql/gqlerrors",
+    "github.com/jinzhu/gorm",
+    "gopkg.in/yaml.v2",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

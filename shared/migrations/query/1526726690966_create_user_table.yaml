@@ -15,6 +15,7 @@ changeSet:
           `bio` text,
           `created_at` datetime,
           `updated_at` datetime,
+          `deleted_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
           KEY `username` (`username`),
@@ -28,10 +29,11 @@ changeSet:
           `price` int(100) NOT NULL,
           `status` tinyint(1) DEFAULT 0,
           `trend` varchar(255),
-          `shop_id` int(11) unsigned NOT NULL,
+          `category_id` int(11),
+          `provider_id` int(11) unsigned NOT NULL,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
-          KEY `id_shop_id` (`id`, `shop_id`)
+          KEY `id_provider_id` (`id`, `provider_id`)
         );"
 
       - sql: "CREATE TABLE `category` (
@@ -39,22 +41,28 @@ changeSet:
           `name` varchar(100) NOT NULL,
           `description` text,
           `image` varchar(255),
-          `shop_id` int(11) unsigned NOT NULL,
+          `provider_id` int(11) unsigned NOT NULL,
+          `created_at` datetime,
+          `updated_at` datetime,
+          `deleted_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
-          KEY `id_shop_id` (`id`, `shop_id`)
+          KEY `id_provider_id` (`id`, `provider_id`)
         );"
 
-      - sql: "CREATE TABLE `addresss` (
+      - sql: "CREATE TABLE `address` (
           `id` int(11) unsigned NOT NULL,
           `country` varchar(100) NOT NULL,
           `state` varchar(100) NOT NULL,
           `city` varchar(100) NOT NULL,
-          `zipcode` int(10),
-          `shop_id` int(11) unsigned NOT NULL,
+          `zipcode` int(10) NULL,
+          `provider_id` int(11) unsigned NOT NULL,
+          `created_at` datetime,
+          `updated_at` datetime,
+          `deleted_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
-          KEY `id_shop_id` (`id`, `shop_id`)
+          KEY `id_provider_id` (`id`, `provider_id`)
         );"
 
       - sql: "CREATE TABLE `opening` (
@@ -69,31 +77,38 @@ changeSet:
             'friday',
             'saturday',
             'sunday'),
-          `shop_id` int(11) unsigned NOT NULL,
+          `provider_id` int(11) unsigned NOT NULL,
+          `created_at` datetime,
+          `updated_at` datetime,
+          `deleted_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
-          KEY `id_shop_id` (`id`, `shop_id`)
+          KEY `id_provider_id` (`id`, `provider_id`)
         );"
       
       - sql: "CREATE TABLE `provider` (
           `id` int(11) unsigned NOT NULL,
           `name` varchar(100) NOT NULL,
           `description` text,
-          `about` varchar(255),
-          `phone` int(15),
-          `shop_id` int(11) unsigned NOT NULL,
+          `about` text,
+          `phone` varchar(20),
+          `created_at` datetime,
+          `updated_at` datetime,
+          `deleted_at` datetime,
           PRIMARY KEY (`id`),
-          KEY `id` (`id`),
-          KEY `id_shop_id` (`id`, `shop_id`)
+          KEY `id` (`id`)
         );"
 
       - sql: "CREATE TABLE `review` (
           `id` int(11) unsigned NOT NULL,
           `review` text,
           `rating` int(5),
-          `shop_id` int(11) unsigned NOT NULL,
+          `provider_id` int(11) unsigned NOT NULL,
           `user_id` int(11) unsigned NOT NULL,
+          `created_at` datetime,
+          `updated_at` datetime,
+          `deleted_at` datetime,
           PRIMARY KEY (`id`),
           KEY `id` (`id`),
-          KEY `id_shop_id_user_id` (`id`, `shop_id`, `user_id`)
+          KEY `id_provider_id_user_id` (`id`, `provider_id`, `user_id`)
         );"

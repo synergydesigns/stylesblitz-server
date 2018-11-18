@@ -7,14 +7,14 @@ import (
 	"context"
 
 	graphql "github.com/graph-gophers/graphql-go"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/config"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/resolver"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/utils"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/config"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/resolver"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/utils"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"gitlab.com/synergy-designs/style-blitz/lambda/graphql/models"
-	svc "gitlab.com/synergy-designs/style-blitz/shared/services"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/models"
+	svc "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
 // Schema object

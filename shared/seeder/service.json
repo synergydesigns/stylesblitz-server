@@ -1,0 +1,271 @@
+[{
+  "id": 1,
+  "name": "Full Sew In",
+  "duration": 91,
+  "price": 655,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 8,
+  "category_id": 1
+}, {
+  "id": 2,
+  "name": "Closure Sew In",
+  "duration": 26,
+  "price": 583,
+  "status": "closed",
+  "trend": 1,
+  "provider_id": 6,
+  "category_id": 2
+}, {
+  "id": 3,
+  "name": "Lace Closure Sew In",
+  "duration": 89,
+  "price": 615,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 1,
+  "category_id": 2
+}, {
+  "id": 4,
+  "name": "Silk Closure Sew In",
+  "duration": 75,
+  "price": 894,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 1,
+  "category_id": 11
+}, {
+  "id": 5,
+  "name": "Extensions",
+  "duration": 69,
+  "price": 799,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 6,
+  "category_id": 5
+}, {
+  "id": 6,
+  "name": "Havana",
+  "duration": 74,
+  "price": 862,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 6,
+  "category_id": 3
+}, {
+  "id": 7,
+  "name": "Marley",
+  "duration": 59,
+  "price": 887,
+  "status": "closed",
+  "trend": 1,
+  "provider_id": 10,
+  "category_id": 18
+}, {
+  "id": 8,
+  "name": "Kinky",
+  "duration": 44,
+  "price": 518,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 5,
+  "category_id": 4
+}, {
+  "id": 9,
+  "name": "Senegalese",
+  "duration": 28,
+  "price": 521,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 6,
+  "category_id": 13
+}, {
+  "id": 10,
+  "name": "Shampoo",
+  "duration": 76,
+  "price": 647,
+  "status": "closed",
+  "trend": 1,
+  "provider_id": 1,
+  "category_id": 9
+}, {
+  "id": 11,
+  "name": "Relaxer",
+  "duration": 94,
+  "price": 707,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 7,
+  "category_id": 2
+}, {
+  "id": 12,
+  "name": "Silk Wrap",
+  "duration": 79,
+  "price": 653,
+  "status": "closed",
+  "trend": 1,
+  "provider_id": 5,
+  "category_id": 8
+}, {
+  "id": 13,
+  "name": "Extensions",
+  "duration": 52,
+  "price": 679,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 2,
+  "category_id": 4
+}, {
+  "id": 14,
+  "name": "Silk Press",
+  "duration": 20,
+  "price": 770,
+  "status": "active",
+  "trend": 1,
+  "provider_id": 2,
+  "category_id": 17
+}, {
+  "id": 15,
+  "name": "Natural Style",
+  "duration": 92,
+  "price": 823,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 6,
+  "category_id": 9
+}, {
+  "id": 16,
+  "name": "Manicure",
+  "duration": 82,
+  "price": 745,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 3,
+  "category_id": 11
+}, {
+  "id": 17,
+  "name": "Pedicure",
+  "duration": 47,
+  "price": 859,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 5,
+  "category_id": 18
+}, {
+  "id": 18,
+  "name": "Gel Manicure",
+  "duration": 63,
+  "price": 608,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 3,
+  "category_id": 16
+}, {
+  "id": 19,
+  "name": "Acrylic Nails",
+  "duration": 91,
+  "price": 968,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 4,
+  "category_id": 5
+}, {
+  "id": 20,
+  "name": "Shellac Manicure",
+  "duration": 68,
+  "price": 879,
+  "status": "active",
+  "trend": 1,
+  "provider_id": 2,
+  "category_id": 18
+}, {
+  "id": 21,
+  "name": "Acrylic Fill",
+  "duration": 99,
+  "price": 891,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 8,
+  "category_id": 15
+}, {
+  "id": 22,
+  "name": "Gel Fill",
+  "duration": 34,
+  "price": 577,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 8,
+  "category_id": 9
+}, {
+  "id": 23,
+  "name": "Nail Art",
+  "duration": 64,
+  "price": 578,
+  "status": "active",
+  "trend": 1,
+  "provider_id": 8,
+  "category_id": 11
+}, {
+  "id": 24,
+  "name": "Extensions",
+  "duration": 94,
+  "price": 938,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 8,
+  "category_id": 4
+}, {
+  "id": 25,
+  "name": "Brow Threading",
+  "duration": 47,
+  "price": 771,
+  "status": "active",
+  "trend": 1,
+  "provider_id": 2,
+  "category_id": 17
+}, {
+  "id": 26,
+  "name": "Brow Tattooing",
+  "duration": 29,
+  "price": 954,
+  "status": "active",
+  "trend": 1,
+  "provider_id": 1,
+  "category_id": 10
+}, {
+  "id": 27,
+  "name": "Brow Shaping",
+  "duration": 45,
+  "price": 870,
+  "status": "active",
+  "trend": 0,
+  "provider_id": 3,
+  "category_id": 10
+}, {
+  "id": 28,
+  "name": "Brow Tweeze",
+  "duration": 74,
+  "price": 850,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 2,
+  "category_id": 2
+}, {
+  "id": 29,
+  "name": "Brow Wax",
+  "duration": 29,
+  "price": 646,
+  "status": "active",
+  "trend": 1,
+  "provider_id": 9,
+  "category_id": 16
+}, {
+  "id": 30,
+  "name": "Extensions",
+  "duration": 84,
+  "price": 710,
+  "status": "closed",
+  "trend": 0,
+  "provider_id": 4,
+  "category_id": 3
+}]

@@ -8,8 +8,8 @@ import (
 // for getting a single review
 type Review struct {
 	gorm.Model
-	UserID uint
-	ShopID uint
-	Rating string
-	Review string
+	UserID     uint
+	ProviderID uint
+	Rating     string
+	Review     string
 }

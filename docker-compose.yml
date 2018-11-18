@@ -12,10 +12,11 @@ services:
       - "MYSQL_PASSWORD=styleblitz"
       - "DATABASE_HOST=styleblitz-mysql"
       - "MYSQL_PORT=3306"
-      - "MIGRATION_PATH=./query"
+      - "MIGRATION_PATH=shared/migrations/query"
       - "APP_NAME=styleblitz"
+      - "ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server"
     volumes:
-      - ./:/go/src/gitlab.com/synergy-designs/style-blitz
+      - ./:/go/src/github.com/synergydesigns/stylesblitz-server
     # restart: always
     expose:
       - 80
@@ -24,8 +25,8 @@ services:
     depends_on:
       - styleblitz-mysql
     # command: sleep 9999999
-    # command: >
-    #   bash -c "make migrate && make supervise"
+    command: >
+      bash -c "make build && make supervise"
     networks:
       styleblitz_default:
 
@@ -33,11 +34,14 @@ services:
     container_name: styleblitz-mysql
     image: mysql:5.7.22
     restart: always
+    command: --sql_mode=""
     environment:
       MYSQL_ROOT_PASSWORD: styleblitz
       MYSQL_DATABASE: styleblitz
       MYSQL_USER: root
       MYSQL_PASSWORD: styleblitz
+    volumes:
+     - ./:/var/lib/postgresql
     networks:
       styleblitz_default:
     ports:

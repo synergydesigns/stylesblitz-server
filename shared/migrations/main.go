@@ -7,8 +7,8 @@ import (
 
 	"github.com/GuiaBolso/darwin"
 	_ "github.com/go-sql-driver/mysql"
-	"gitlab.com/synergy-designs/style-blitz/shared/config"
-	"gitlab.com/synergy-designs/style-blitz/shared/migrations/utils"
+	"github.com/synergydesigns/stylesblitz-server/shared/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/migrations/utils"
 )
 
 // Migrate migrates db
@@ -19,7 +19,7 @@ func Migrate() {
 	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser,
 		config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 
-	database, err := sql.Open("mysql", dbURL)
+	database, err := sql.Open("mysql", dbURL+"?parseTime=true")
 
 	defer database.Close()
 

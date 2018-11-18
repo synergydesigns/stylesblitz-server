@@ -1,11 +1,11 @@
 FROM golang:1.9.0-alpine
 
 ENV CGO_ENABLED=0 GOOS=linux
+ENV GIT_TERMINAL_PROMPT=1
 
-WORKDIR /go/src/gitlab.com/synergy-designs/style-blitz
+WORKDIR /go/src/github.com/synergydesigns/stylesblitz-server
 
-COPY . /go/src/gitlab.com/synergy-designs/style-blitz
-ADD . /go/src/gitlab.com/synergy-designs/style-blitz
+COPY . /go/src/github.com/synergydesigns/stylesblitz-server
 
 RUN apk add --no-cache curl \
     make \
@@ -14,9 +14,8 @@ RUN apk add --no-cache curl \
     nodejs \
     yarn  \
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-    && /go/bin/dep ensure \
     && yarn global add supervisor
 
-RUN make build && make migrate
+ENV ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server
 
-CMD [ "make", "supervise" ]
+RUN /go/bin/dep ensure
