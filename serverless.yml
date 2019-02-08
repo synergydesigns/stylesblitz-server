@@ -21,9 +21,7 @@ package:
  exclude:
    - ./**
  include:
-   - ./bin/**
-   - ./graphqli
-
+   - ./lambda/bin/**
 functions:
   graphql:
     handler: bin/graphql

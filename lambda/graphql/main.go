@@ -9,21 +9,20 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/config"
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/resolver"
-	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/utils"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/models"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/schema"
 	svc "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
 // Schema object
-var schema *graphql.Schema
+var Schema *graphql.Schema
 var services *svc.Services
 
 func init() {
-	f := utils.GetSchema()
-	schema = graphql.MustParseSchema(f, &resolver.Resolver{})
+	Schema = graphql.MustParseSchema(schema.String(), &resolver.Resolver{})
 	services = svc.New()
 }
 
@@ -39,7 +38,7 @@ func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) 
 		log.Printf("Could not decode body errors %v", err)
 	}
 
-	response := schema.Exec(ctx, params.Query, params.OperationName, params.Variables)
+	response := Schema.Exec(ctx, params.Query, params.OperationName, params.Variables)
 	resp, err := json.Marshal(response)
 	if err != nil {
 		log.Printf("unable to unmarshal response %v", err)

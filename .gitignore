@@ -10,3 +10,6 @@ vendor
 # ignore all env variables
 .env
 env.json
+
+# bin-data file
+lambda/graphql/schema/bindata.go

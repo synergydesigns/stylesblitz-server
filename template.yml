@@ -10,12 +10,13 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          MYSQL_ROOT_PASSWORD: test
-          MYSQL_DATABASE: test
-          MYSQL_USER: root
-          MYSQL_PASSWORD: 
-          DATABASE_HOST: localhost
-          MYSQL_PORT: 3306
+          PG_ROOT_PASSWORD: test
+          PG_DATABASE: test
+          PG_USER: root
+          PG_PASSWORD: 
+          PG_HOST: localhost
+          PG_PORT: 3306
+          PG_SSL: false
           MIGRATION_PATH: ../query
           APP_NAME: styleblitz
       Events:

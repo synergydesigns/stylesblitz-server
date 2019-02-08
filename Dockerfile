@@ -18,4 +18,5 @@ RUN apk add --no-cache curl \
 
 ENV ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server
 
+RUN go get -u github.com/jteeuwen/go-bindata/...
 RUN /go/bin/dep ensure
