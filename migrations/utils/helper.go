@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -46,8 +45,6 @@ func GenarateDarwinMigrations(config *config.Config) []darwin.Migration {
 		migration := Migration{}
 
 		fileBytes, _ := ioutil.ReadFile(path.Join(filePath, file.Name()))
-
-		fmt.Println(string(fileBytes))
 
 		if err := yaml.Unmarshal(fileBytes, &migration); err != nil {
 

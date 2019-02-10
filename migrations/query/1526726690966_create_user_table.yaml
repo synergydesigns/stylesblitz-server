@@ -1,0 +1,108 @@
+changeSet:
+  - id: '1526726690966'
+    author: Enaho Murphy
+    description: Table creation
+    changes:
+      - sql: "CREATE TABLE IF NOT EXISTS users
+        (
+            id            INTEGER       NOT NULL,
+            name          VARCHAR (255) NOT NULL,
+            username      VARCHAR (100) NOT NULL,
+            email         VARCHAR (100) NOT NULL,
+            password      VARCHAR (100) NOT NULL,
+            phone         VARCHAR (20),
+            profile_image VARCHAR (255),
+            wall_image    VARCHAR (255),
+            bio           TEXT,
+            created_at    TIMESTAMP,
+            updated_at    TIMESTAMP,
+            deleted_at    TIMESTAMP,
+            PRIMARY KEY (id)
+        );
+      "
+
+      - sql: "CREATE TABLE IF NOT EXISTS services
+        (
+            id            INTEGER                 NOT NULL,
+            name          VARCHAR   (100)         NOT NULL,
+            duration      INTEGER                 NOT NULL,
+            price         INTEGER                 NOT NULL,
+            status        BOOLEAN                 DEFAULT FALSE,
+            trend         VARCHAR   (255),
+            category_id   INTEGER,
+            provider_id   INTEGER                 NOT NULL,
+            PRIMARY KEY (id)
+        );
+        "
+
+      - sql: "CREATE TABLE IF NOT EXISTS categories (
+          id              INTEGER       NOT NULL,
+          name            VARCHAR(100)  NOT NULL,
+          description     TEXT,
+          image           VARCHAR(255),
+          provider_id     INTEGER       NOT NULL,
+          created_at      TIMESTAMP,
+          updated_at      TIMESTAMP,
+          deleted_at      TIMESTAMP,
+          PRIMARY KEY (id)
+        );"
+
+      - sql: "CREATE TABLE IF NOT EXISTS addresses 
+      (
+          id          INTEGER           NOT NULL,
+          country     VARCHAR   (100)   NOT NULL,
+          state       VARCHAR   (100)   NOT NULL,
+          city        VARCHAR   (100)   NOT NULL,
+          zipcode     INTEGER,
+          provider_id INTEGER         NOT NULL,
+          created_at  TIMESTAMP,
+          updated_at  TIMESTAMP,
+          deleted_at  TIMESTAMP,
+          PRIMARY KEY (id)
+        );"
+
+      - sql: "
+        CREATE TYPE DAYS AS enum(
+          'moday',
+          'tuesday',
+          'wednesday',
+          'thursday',
+          'friday',
+          'saturday',
+          'sunday'
+        );
+        CREATE TABLE IF NOT EXISTS openings (
+          id            INTEGER       NOT NULL,
+          beginAt       TIMESTAMP,
+          endAt         TIMESTAMP,
+          day           DAYS,
+          provider_id   INTEGER       NOT NULL,
+          created_at    TIMESTAMP,
+          updated_at    TIMESTAMP,
+          deleted_at    TIMESTAMP,
+          PRIMARY KEY (id)
+        );"
+      
+      - sql: "CREATE TABLE IF NOT EXISTS provider (
+          id          INTEGER         NOT NULL,
+          name        VARCHAR   (100) NOT NULL,
+          description TEXT,
+          about       TEXT,
+          phone       VARCHAR   (20),
+          created_at  TIMESTAMP,
+          updated_at  TIMESTAMP,
+          deleted_at  TIMESTAMP,
+          PRIMARY KEY (id)
+        );"
+
+      - sql: "CREATE TABLE IF NOT EXISTS reviews (
+          id            INTEGER       NOT NULL,
+          review        TEXT,
+          rating        INTEGER,
+          provider_id   INTEGER       NOT NULL,
+          user_id       INTEGER       NOT NULL,
+          created_at    TIMESTAMP,
+          updated_at    TIMESTAMP,
+          deleted_at    TIMESTAMP,
+          PRIMARY KEY (id)
+        );"

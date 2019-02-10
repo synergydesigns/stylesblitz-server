@@ -1,0 +1,13 @@
+changeSet:
+  - id: '1538329003782'
+    author: Enaho Murphy
+    description: Add geolocation to lat and long to the address table
+    changes:
+      - sql: "
+          ALTER TABLE
+          addresses
+          ADD
+            COLUMN latitude DECIMAL DEFAULT NULL,
+          ADD
+            COLUMN longitude DECIMAL DEFAULT NULL;
+        " 

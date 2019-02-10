@@ -2,7 +2,6 @@ package seeder
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
@@ -48,7 +47,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Category) {
-				fmt.Println(v)
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
@@ -59,7 +57,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Provider) {
-				fmt.Println(v)
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
@@ -70,7 +67,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Address) {
-				fmt.Println(v)
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
@@ -80,7 +76,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Service) {
-				fmt.Println(v)
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}

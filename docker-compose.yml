@@ -6,13 +6,14 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      - "MYSQL_ROOT_PASSWORD=styleblitz"
-      - "MYSQL_DATABASE=styleblitz"
-      - "MYSQL_USER=root"
-      - "MYSQL_PASSWORD=styleblitz"
-      - "DATABASE_HOST=styleblitz-mysql"
-      - "MYSQL_PORT=3306"
-      - "MIGRATION_PATH=shared/migrations/query"
+      - "PG_ROOT_PASSWORD=styleblitz"
+      - "PG_DATABASE=styleblitz"
+      - "PG_USER=root"
+      - "PG_PASSWORD=styleblitz"
+      - "PG_HOST=styleblitz-pg"
+      - "PG_PORT=5432"
+      - "PG_SSL=disable"
+      - "MIGRATION_PATH=migrations/query"
       - "APP_NAME=styleblitz"
       - "ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server"
     volumes:
@@ -23,31 +24,34 @@ services:
     ports:
       - "8083:8090"
     depends_on:
-      - styleblitz-mysql
+      # - styleblitz-mysql
+      - styleblitz-pg
     # command: sleep 9999999
     command: >
-      bash -c "make build && make supervise"
+      bash -c "make migrate"
+      # bash -c "make build && make supervise"
     networks:
       styleblitz_default:
 
-  styleblitz-mysql:
-    container_name: styleblitz-mysql
-    image: mysql:5.7.22
+  styleblitz-pg:
+    container_name: styleblitz-pg
+    image: postgres:latest
     restart: always
-    command: --sql_mode=""
     environment:
-      MYSQL_ROOT_PASSWORD: styleblitz
-      MYSQL_DATABASE: styleblitz
-      MYSQL_USER: root
-      MYSQL_PASSWORD: styleblitz
+      POSTGRES_PASSWORD: styleblitz
+      POSTGRES_USER: root
+      POSTGRES_DB: styleblitz
+      FATHOM_DATABASE_SSLMODE: disable
     volumes:
-     - ./:/var/lib/postgresql
+     - styleblitze-pg:/var/lib/postgresql
     networks:
       styleblitz_default:
     ports:
-      - "3307:3306"
-    expose:
-      - "3306"
+      - "5432:5432"
+
 networks:
   styleblitz_default:
     driver: bridge
+
+volumes:
+  styleblitze-pg:

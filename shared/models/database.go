@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/synergydesigns/stylesblitz-server/shared/config"
 )
 
@@ -18,8 +19,13 @@ var database *gorm.DB
 
 // Connect connects to the database connection
 func Connect(conf *config.Config) *gorm.DB {
-	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.DBUser, conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName)
-	db, err := gorm.Open("mysql", dbURL+"?parseTime=true")
+	dbURL := fmt.Sprintf(
+		"host=%d port=%d user=gorm dbname=%d password=%d",
+		conf.DBHost, conf.DBPort, conf.DBUser, conf.DBName, conf.DBPassword,
+	)
+
+	// db, err := gorm.Open("mysql", dbURL+"?parseTime=true")
+	db, err := gorm.Open("postgres", dbURL)
 	log.Println(dbURL)
 
 	if err != nil {

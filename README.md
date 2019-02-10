@@ -25,4 +25,3 @@ However, the solution to this is to encourage massive unit and integration test.
 7. **AWS/ Lambda / Cloud formation**
 8. **Docker**
 9. **Serverless**
-
