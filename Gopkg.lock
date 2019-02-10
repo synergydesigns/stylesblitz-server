@@ -111,7 +111,6 @@
     "github.com/aws/aws-lambda-go/events",
     "github.com/aws/aws-lambda-go/lambda",
     "github.com/graph-gophers/graphql-go",
-    "github.com/graphql-go/graphql/gqlerrors",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
     "gopkg.in/yaml.v2",

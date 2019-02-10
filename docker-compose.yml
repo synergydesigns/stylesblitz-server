@@ -28,8 +28,7 @@ services:
       - styleblitz-pg
     # command: sleep 9999999
     command: >
-      bash -c "make migrate"
-      # bash -c "make build && make supervise"
+      bash -c "make migrate && make build && make supervise"
     networks:
       styleblitz_default:
 

@@ -1,9 +1,9 @@
 TEST_PACKAGES := $(shell go list ./shared/... | grep -v vendor | grep -v fakes)
 
 build:
-	make migrate
-	make clean
 	dep ensure
+	# make migrate
+	make clean
 	make schema
 	make recompile
 
@@ -17,7 +17,7 @@ schema: $(info $(M) Embedding schema files into binary...)
 	go generate ./lambda/graphql/schema
 
 migrate:
-	$(shell go run migrations/main.go)
+	go run ./migrations/main.go
 
 recompile:
 	env GOOS=linux go build -ldflags="-s -w -v" -o lambda/bin/graphql lambda/graphql/main.go
