@@ -60,5 +60,5 @@ func TestGetUserByID(t *testing.T) {
 		}
 	}
 
-	userService.DB.Exec("Truncate table user")
+	userService.DB.Exec("Truncate table users")
 }
