@@ -1,6 +1,6 @@
 version: 2 
 jobs: 
-  text:
+  test:
     docker:
       - image: circleci/golang:1.8 #
       - image: circleci/postgres:9.6-alpine
@@ -58,3 +58,33 @@ jobs:
           key: v1-pkg-cache
           paths:
             - "/go/pkg"
+  build:
+    docker: 
+      - image: synergydesigns/styleblitz-go:latest
+    working_directory: /go/src/github.com/synergydesigns/stylesblitz-server
+    environment:
+      TEST_RESULTS: /tmp/test-results
+      MIGRATION_PATH: migrations/query
+    steps:
+      - checkout
+
+      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      - run: make build
+      - run: make migrate
+      - run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY
+      - run: sls deploy
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
+  buid:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master

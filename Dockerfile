@@ -5,8 +5,6 @@ ENV GIT_TERMINAL_PROMPT=1
 
 WORKDIR /go/src/github.com/synergydesigns/stylesblitz-server
 
-COPY . /go/src/github.com/synergydesigns/stylesblitz-server
-
 RUN apk add --no-cache curl \
     make \
     bash \
@@ -14,6 +12,8 @@ RUN apk add --no-cache curl \
     nodejs \
     yarn  \
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-    && yarn global add supervisor
+    && yarn global add supervisor \
+    && yarn global add serverless
 
+RUN go get -u github.com/jteeuwen/go-bindata/...
 ENV ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server

@@ -25,6 +25,10 @@ package:
 functions:
   graphql:
     handler: bin/graphql
+    environment:
+      PG_SSL: enable
+      APP_NAME: styleblitz
+      MIGRATION_PATH: migrations/query
     events:
     - http:
         path: graphql

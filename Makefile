@@ -2,7 +2,6 @@ TEST_PACKAGES := $(shell go list ./shared/... | grep -v vendor | grep -v fakes)
 
 build:
 	dep ensure
-	# make migrate
 	make clean
 	make schema
 	make recompile

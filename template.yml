@@ -15,8 +15,8 @@ Resources:
           PG_USER: root
           PG_PASSWORD: 
           PG_HOST: localhost
-          PG_PORT: 3306
-          PG_SSL: false
+          PG_PORT: 5432
+          PG_SSL: disable
           MIGRATION_PATH: ../query
           APP_NAME: styleblitz
       Events:

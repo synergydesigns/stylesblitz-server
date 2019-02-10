@@ -16,3 +16,5 @@ lambda/graphql/schema/bindata.go
 
 #vscode
 .vscode
+
+node_modules
