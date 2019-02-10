@@ -20,11 +20,9 @@ var database *gorm.DB
 // Connect connects to the database connection
 func Connect(conf *config.Config) *gorm.DB {
 	dbURL := fmt.Sprintf(
-		"host=%d port=%d user=gorm dbname=%d password=%d",
-		conf.DBHost, conf.DBPort, conf.DBUser, conf.DBName, conf.DBPassword,
+		"postgres://%s:%s@%s:%s/%s?sslmode=%s", conf.DBUser,
+		conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName, conf.SSLMode,
 	)
-
-	// db, err := gorm.Open("mysql", dbURL+"?parseTime=true")
 	db, err := gorm.Open("postgres", dbURL)
 	log.Println(dbURL)
 
@@ -34,9 +32,6 @@ func Connect(conf *config.Config) *gorm.DB {
 
 	// we want to cache db connection
 	database = db
-
-	// disable database pluralization
-	database.SingularTable(true)
 
 	return database
 }
