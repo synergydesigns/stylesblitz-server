@@ -7,6 +7,9 @@ build:
 	make schema
 	make recompile
 
+dep:
+	$(shell curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh)
+
 test:
 	@go test -v -cover $(TEST_PACKAGES)
 
