@@ -30,6 +30,10 @@ Resources:
     Properties:
       Handler: lambda/bin/graphqli
       Runtime: go1.x
+      Environment:
+        Variables:      
+          GRAPHQL_URL: /graphql
+
       Events:
         Api:
           Type: Api

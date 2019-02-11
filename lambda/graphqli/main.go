@@ -1,11 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-const template = `
+var template = fmt.Sprintf(`
 <!DOCTYPE html>
 
 <html>
@@ -540,12 +543,12 @@ const template = `
       root.classList.add('playgroundIn');
 
       GraphQLPlayground.init(root, {
-        endpoint: '/graphql'
+        endpoint: %s
       })
     })
   </script>
 
-</html>`
+</html>`, os.Getenv("GRAPHQL_URL"))
 
 // Handler for graphqli
 func Handler(request interface{}) (events.APIGatewayProxyResponse, error) {

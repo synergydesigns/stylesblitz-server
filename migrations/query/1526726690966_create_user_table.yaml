@@ -62,16 +62,22 @@ changeSet:
         );"
 
       - sql: "
-        CREATE TYPE DAYS AS enum(
-          'moday',
-          'tuesday',
-          'wednesday',
-          'thursday',
-          'friday',
-          'saturday',
-          'sunday'
-        );
-        CREATE TABLE IF NOT EXISTS openings (
+        DO $$
+          BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'days') THEN
+                CREATE TYPE DAYS AS enum(
+                  'moday',
+                  'tuesday',
+                  'wednesday',
+                  'thursday',
+                  'friday',
+                  'saturday',
+                  'sunday'
+                );
+          END IF;
+        END $$;
+        "
+      - sql: "CREATE TABLE IF NOT EXISTS openings (
           id            INTEGER       NOT NULL,
           beginAt       TIMESTAMP,
           endAt         TIMESTAMP,
@@ -82,7 +88,6 @@ changeSet:
           deleted_at    TIMESTAMP,
           PRIMARY KEY (id)
         );"
-      
       - sql: "CREATE TABLE IF NOT EXISTS provider (
           id          INTEGER         NOT NULL,
           name        VARCHAR   (100) NOT NULL,

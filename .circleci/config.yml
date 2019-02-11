@@ -76,9 +76,6 @@ jobs:
 
 workflows:
   version: 2
-  test:
-    jobs:
-      - test
   buid:
     jobs:
       - test

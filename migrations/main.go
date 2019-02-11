@@ -33,20 +33,19 @@ func Migrate() {
 	driver := darwin.NewGenericDriver(database, darwin.PostgresDialect{})
 	d := darwin.New(driver, migrations, nil)
 
-	infos, err := d.Info()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	for _, info := range infos {
-		fmt.Printf("%.1f %s %s\n", info.Migration.Version, info.Status, info.Migration.Description)
-	}
-
 	err = d.Migrate()
 
 	if err != nil {
 		log.Fatal(err)
 	} else {
+		infos, err := d.Info()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		for _, info := range infos {
+			fmt.Printf("%.1f %s %s\n", info.Migration.Version, info.Status, info.Migration.Description)
+		}
 		log.Println("Migration completed")
 	}
 }

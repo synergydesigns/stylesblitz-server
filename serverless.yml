@@ -24,7 +24,7 @@ package:
    - ./lambda/bin/**
 functions:
   graphql:
-    handler: bin/graphql
+    handler: lambda/bin/graphql
     environment:
       PG_SSL: enable
       APP_NAME: styleblitz
@@ -35,7 +35,9 @@ functions:
         method: post
         cors: true
   playground:
-    handler: bin/graphqli
+    handler: lambda/bin/graphqli
+    environments: 
+      GRAPHQL_URL: https://zzq686r09i.execute-api.us-east-1.amazonaws.com/dev/graphql
     events:
     - http:
         path: playground
