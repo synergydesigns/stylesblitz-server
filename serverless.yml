@@ -26,9 +26,14 @@ functions:
   graphql:
     handler: lambda/bin/graphql
     environment:
-      PG_SSL: enable
+      PG_SSL: disable
+      PG_DATABASE: ${ssm:styleblitz_pg_database_staging}
+      PG_USER: ${ssm:styleblitz_pg_user_staging}
+      PG_PASSWORD: ${ssm:styleblitz_pg_password_staging}
+      PG_HOST: ${ssm:styleblitz_pg_host_staging}
+      PG_PORT: 5432
+      MIGRATION_PATH: ../query
       APP_NAME: styleblitz
-      MIGRATION_PATH: migrations/query
     events:
     - http:
         path: graphql
@@ -36,7 +41,7 @@ functions:
         cors: true
   playground:
     handler: lambda/bin/graphqli
-    environments: 
+    environment: 
       GRAPHQL_URL: https://zzq686r09i.execute-api.us-east-1.amazonaws.com/dev/graphql
     events:
     - http:
