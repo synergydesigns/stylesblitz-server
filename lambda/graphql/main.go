@@ -15,7 +15,6 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/models"
 	svc "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
@@ -27,10 +26,15 @@ func init() {
 	services = svc.New()
 }
 
+type GraphqlBody struct {
+	Query         string                 `json:"query"`
+	OperationName string                 `json:"operationName"`
+	Variables     map[string]interface{} `json:"variables"`
+}
+
 // GraphqlHandler handles all qraphql queries
 func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
-	var params models.GraphqlBody
+	var params GraphqlBody
 
 	// set context
 	ctx = context.WithValue(ctx, config.CTXKeyservices, services)
