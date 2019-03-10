@@ -15,8 +15,8 @@ test:
 clean: ; $(info $(M) [TODO] Removing generated files... )
 	$(RM) lambda/graphql/schema/bindata.go
 
-schema: $(info $(M) Embedding schema files into binary...)
-	go generate ./lambda/graphql/schema
+schema: $(info $(M) updating schema files.....)
+	go run  ./scripts/gqlgen.go
 
 migrate:
 	go run ./migrations/main.go

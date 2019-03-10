@@ -9,4 +9,6 @@ type User {
     ProfileImage:   String
     WallImage:      String
     Bio:            String
+    CreatedAt:      Timestamp!
+    UpdatedAt:      Timestamp!
 }
