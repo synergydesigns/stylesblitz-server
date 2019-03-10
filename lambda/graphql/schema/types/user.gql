@@ -2,7 +2,6 @@ type User {
     # ID is a unique idetifer
     # Of the user that owns this resource
     id:             ID!
-    name:           String
     email:          String
     name:           String
     phone:          Int

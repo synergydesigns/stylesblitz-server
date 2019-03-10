@@ -1,15 +1,12 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
 // Category defines the category models for graphql
 // for getting a single category
 type Category struct {
-	gorm.Model
+	ID          uint64 `gorm:"primary_key"`
 	Name        string
 	Description string
 	Image       string
-	ProviderID  uint `json:"provider_id"`
+	ProviderID  uint64 `json:"provider_id"`
+	ShopID      uint64 `json:"shop_id"`
 }

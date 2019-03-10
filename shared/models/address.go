@@ -1,14 +1,10 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
 // Address defines the address models for graphql
 // for getting a single address
 type Address struct {
-	gorm.Model
-	ProviderID uint `json:"provider_id"`
+	ID         uint64 `gorm:"primary_key"`
+	ProviderID uint64 `json:"provider_id"`
 	Country    string
 	State      string
 	City       string

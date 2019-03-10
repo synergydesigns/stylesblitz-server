@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var template = fmt.Sprintf(`
+var template = `
 <!DOCTYPE html>
 
 <html>
@@ -542,13 +541,10 @@ var template = fmt.Sprintf(`
       const root = document.getElementById('root');
       root.classList.add('playgroundIn');
 
-      GraphQLPlayground.init(root, {
-        endpoint: %s
-      })
+      GraphQLPlayground.init(root, { endpoint:'` + os.Getenv("GRAPHQL_URL") + `'})
     })
   </script>
-
-</html>`, os.Getenv("GRAPHQL_URL"))
+</html>`
 
 // Handler for graphqli
 func Handler(request interface{}) (events.APIGatewayProxyResponse, error) {
