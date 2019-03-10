@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
 	"net/http/httptest"
 	"strings"
 
@@ -22,31 +20,17 @@ import (
 var services *svc.Services
 
 func init() {
-	// Schema = graphql.MustParseSchema(schema.String(), &resolver.Resolver{})
 	services = svc.New()
-}
-
-type GraphqlBody struct {
-	Query         string                 `json:"query"`
-	OperationName string                 `json:"operationName"`
-	Variables     map[string]interface{} `json:"variables"`
 }
 
 // GraphqlHandler handles all qraphql queries
 func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var params GraphqlBody
-
-	// set context
 	ctx = context.WithValue(ctx, config.CTXKeyservices, services)
-
-	if err := json.Unmarshal([]byte(request.Body), &params); err != nil {
-		log.Printf("Could not decode body errors %v", err)
-	}
-
-	http := handler.GraphQL(genql.NewExecutableSchema(genql.Config{Resolvers: &resolver.Resolver{}}))
 
 	r := httptest.NewRequest(request.HTTPMethod, request.Path, strings.NewReader(request.Body))
 	w := httptest.NewRecorder()
+
+	http := handler.GraphQL(genql.NewExecutableSchema(genql.Config{Resolvers: &resolver.Resolver{}}))
 
 	http.ServeHTTP(w, r.WithContext(ctx))
 
