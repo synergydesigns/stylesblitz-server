@@ -17,6 +17,7 @@ We use ```dep``` for managing dependecies, make sure you have the ```dep`` depen
 Also, you might want to check out these links for more info.
 [Installing Golang](https://golang.org/doc/install)
 [GOPATH](https://github.com/golang/go/wiki/GOPATH)
+
 #### LAMBDA:
 Since lambda functions run on AWS, we use sam cli to simulate that environment locally. If you don't know what sam cli is, you might want to check this [doc](https://docs.aws.amazon.com/lambda/latest/dg/sam-cli-requirements.html) for more info. 
 To start working on the lambda functions locally, you need to
@@ -24,28 +25,25 @@ To start working on the lambda functions locally, you need to
 2. create an AWS account and Setup and AWS profile add it to your environments ``` AWS_ACCESS_KEY_ID=ssdsdsdsdsdssdss
 AWS_SECRET_ACCESS_KEY=C4S/dsdsdssddsdsdssds
 USER_NAMESPACE=testuer```. You can follow this comprehensive guide on how to set up AWS credentials for lambda [here](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
-0nes you have these setup, you can 
-1. run ```cd lambda && make build```
-2. run ```cd lambda && sam local start-api``
-3. making a change in the lambda folder requires you to rebuild the binaries using ``make build```
-4. done with your change? raise a pr and request a review.
+
 #### MIGRATIONS:
 working with migrations is quite manual as of now. Just move into the query folder and duplicate one entry, make sure you replace the first integer of the filename with the current timestamp. Also, the ID of the query should also use the current timestamp. Add your query, description, and name. 
-When you're done move to the migrations folder root and run
-1. ```dep ensure```: this is on ran ones. it pulls all required dependencies
-2. ```go run main.go```
-
-**NOTE:** All changes/features to the shared folder must be tested
+When you're done.
+1. run `make migrate`
+You need to run docker before running migration
 
 ## DOCKER
-this is the simplest and the bestway to work on this project.
+this is the simplest and the bestway to work on this project locally. 
 Follow the **GOLANG** && **LAMBDA** installation procedure, then.
 1. clone project
 2. install docker 
-3. turn the env.json.example to `env.json` and the the `.env` to `.env`
-3. run `docker-compose build`
-4. run `docker-compose up`
-5. run `sam local start-api --env-vars env.json`
+3. turn the env.json.example to `env.json`
+4. run `docker-compose build`
+6. run `docker-compose up`
+7. open a new terminal and run `sam local start-api --env-vars env.json`
+Any changes you make will trigger an automatic rebuild of the binaries
 
 ## NOTE
-if you're finding graphqli request going past 2s you can quite sam-cli and use this command instead `sam local start-api --skip-pull-image --env-vars=env.json --profile=<aws-credentials>`
+1. if you're finding graphqli request going past 2s you can quit sam-cli and use this command instead `sam local start-api --skip-pull-image --env-vars=env.json --profile=<aws-credentials>`
+2. All changes/features to the shared folder must be tested
+3. If you want to run test locally, `exec` into the styleblitz-shared container `docker exec -it styleblitz-shared bash` and run `go test`
