@@ -2,72 +2,22 @@ package resolver
 
 import (
 	"context"
-	"strconv"
 
-	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/config"
 	"github.com/synergydesigns/stylesblitz-server/shared/models"
 	service "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
-// userResolver struct for resolving users
-type userResolver struct {
-	u *models.User
-}
-
-// ID user id
-func (r *userResolver) ID() graphql.ID {
-	ID := strconv.Itoa(int(r.u.ID))
-
-	return graphql.ID(ID)
-}
-
-// Name user name
-func (r *userResolver) Name() *string {
-	return &r.u.Name
-}
-
-// Email user name
-func (r *userResolver) Email() *string {
-	return &r.u.Email
-}
-
-// Email user name
-func (r *userResolver) Phone() *int32 {
-	return &r.u.Phone
-}
-
-// Email user name
-func (r *userResolver) Password() *string {
-	return &r.u.Email
-}
-
-// Email user name
-func (r *userResolver) ProfileImage() *string {
-	return &r.u.ProfileImage
-}
-
-// Email user name
-func (r *userResolver) WallImage() *string {
-	return &r.u.WallImage
-}
-
-// Email user name
-func (r *userResolver) Bio() *string {
-	return &r.u.Bio
-}
+// userResolver struct for resolving use
+type userResolver struct{ *Resolver }
 
 // User user
-func (r *Resolver) User(ctx context.Context, args struct {
-	ID   string
-	Name string
-}) (*userResolver, error) {
+func (r *queryResolver) User(ctx context.Context, id int) (*models.User, error) {
 	svc := ctx.Value(config.CTXKeyservices).(*service.Services)
-	userID, _ := strconv.ParseUint(args.ID, 10, 64)
-	user, err := svc.Datastore.UserDB.GetUserByID(userID)
+	user, err := svc.Datastore.UserDB.GetUserByID(uint64(id))
 	if err != nil {
 		return nil, err
 	}
 
-	return &userResolver{user}, nil
+	return user, nil
 }

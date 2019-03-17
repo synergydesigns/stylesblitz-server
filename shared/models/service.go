@@ -16,8 +16,8 @@ type Service struct {
 	Price      int32
 	Status     bool
 	Trend      int32
-	ProviderID int32 `json:"provider_id"`
-	CategoryID int32 `json:"category_id"`
+	ProviderID uint64 `json:"provider_id"`
+	CategoryID uint64 `json:"category_id"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

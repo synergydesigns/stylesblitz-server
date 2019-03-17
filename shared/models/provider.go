@@ -1,13 +1,15 @@
 package models
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 )
 
 // Provider defines the provider models for graphql
 // for getting a single provider
 type Provider struct {
-	gorm.Model
+	ID          uint64 `gorm:"primary_key"`
 	Name        string
 	Description string
 	About       string
@@ -15,8 +17,8 @@ type Provider struct {
 	User        User
 	Addresses   []Address
 	Opening     Opening
-	// CreatedAt   time.Time
-	// UpdatedAt   time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type ProviderDbService struct {

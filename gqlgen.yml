@@ -1,0 +1,36 @@
+# .gqlgen.yml example
+#
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+schema: 
+ - "lambda/graphql/schema/types/*.gql"
+ - "lambda/graphql/schema/*.gql"
+ 
+exec:
+  filename: lambda/graphql/genql/generated.go
+  package: genql
+
+model:
+  filename: lambda/graphql/models/models.go
+  package:  models
+
+models:
+  User:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.User
+  Provider:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Provider
+  Service:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Service
+  Category:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Category
+  Address:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Address
+  ID:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ID
+  Timestamp:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Timestamp
+
+resolver:
+  filename: lambda/graphql/resolver/resolver.go
+  type: Resolver
+  package: resolver
