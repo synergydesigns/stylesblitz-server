@@ -29,3 +29,5 @@ However, the solution to this is to encourage massive unit and integration test.
 
 ## Database Design
  - Database model is been structured using an online platform. You can find the current iteration of the DB models [here](https://app.quickdatabasediagrams.com/#/d/DflkIb)
+
+ ## Testing
