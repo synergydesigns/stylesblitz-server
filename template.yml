@@ -1,6 +1,16 @@
-AWSTemplateFormatVersion : '2010-09-09'
+WSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: style blitz serverless application.
+
+Globals:
+  Function:
+    Timeout: 3
+  Api:
+    Cors:
+      AllowMethods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',Access-Control-Allow-Origin'"
+      AllowOrigin: "'*'"
+
 Resources:
   GraphqlFunction:
     Type: AWS::Serverless::Function
