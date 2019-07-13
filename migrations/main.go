@@ -13,7 +13,7 @@ import (
 	"github.com/synergydesigns/stylesblitz-server/shared/config"
 )
 
-const migrationFolder = "file://migrations/mg"
+const migrationFolder = "file://migrations/query"
 
 func main() {
 	config := config.LoadConfig()
@@ -34,10 +34,11 @@ func main() {
 
 	// start migration
 	if os.Args[1] == "up" {
+		fmt.Println("Hello world")
 		m, err := migrate.NewWithDatabaseInstance(
 			migrationFolder,
 			"postgres", driver)
-		m.Steps(2)
+		m.Steps(100)
 
 		if err != nil {
 			log.Fatal(err)

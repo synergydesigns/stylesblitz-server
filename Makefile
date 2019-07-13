@@ -1,8 +1,7 @@
 TEST_PACKAGES := $(shell go list ./shared/... | grep -v vendor | grep -v fakes)
 
 build:
-	dep ensure
-	make clean
+	go mod tidy
 	make recompile
 
 dep:
@@ -18,7 +17,7 @@ schema: $(info $(M) updating schema files.....)
 	go run  ./scripts/gqlgen.go
 
 migrate:
-	go run ./migrations/main.go
+	go run ./migrations/main.go up
 
 recompile:
 	env GOOS=linux go build -ldflags="-s -w -v" -o lambda/bin/graphql lambda/graphql/main.go

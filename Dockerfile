@@ -1,9 +1,11 @@
-FROM golang:1.9.0-alpine
+FROM golang:1.12.7-alpine
 
 ENV CGO_ENABLED=0 GOOS=linux
 ENV GIT_TERMINAL_PROMPT=1
+ENV GO111MODULE=on
 
 WORKDIR /go/src/github.com/synergydesigns/stylesblitz-server
+COPY ./ .
 
 RUN apk add --no-cache curl \
     make \
@@ -15,5 +17,4 @@ RUN apk add --no-cache curl \
     && yarn global add supervisor \
     && yarn global add serverless
 
-RUN go get -u github.com/jteeuwen/go-bindata/...
 ENV ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server
