@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS assets (
   width VARCHAR(100),
   height VARCHAR(100),
   filename VARCHAR(100),
-  size NUMERIC,
+  size NUMERIC(5),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
   deleted_at TIMESTAMP

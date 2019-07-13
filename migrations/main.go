@@ -27,32 +27,45 @@ func main() {
 	defer db.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error connecting to db", err)
 	}
 
 	driver, _ := postgres.WithInstance(db, &postgres.Config{})
 
+	m, err := migrate.NewWithDatabaseInstance(
+		migrationFolder,
+		"postgres",
+		driver,
+	)
+
+	if err != nil {
+		log.Fatal("Error create new migration instance", err)
+	}
+
 	// start migration
 	if os.Args[1] == "up" {
-		fmt.Println("Hello world")
-		m, err := migrate.NewWithDatabaseInstance(
-			migrationFolder,
-			"postgres", driver)
-		m.Steps(100)
+		err = m.Up()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error running migration", err)
 		}
 	}
 
 	// tear down migration
 	if os.Args[1] == "down" {
-		m, err := migrate.New(migrationFolder, dbURL)
-
 		err = m.Down()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error running migration", err)
+		}
+	}
+
+	// tear down migration
+	if os.Args[1] == "drop" {
+		err = m.Drop()
+
+		if err != nil {
+			log.Fatal("Error droping migrations", err)
 		}
 	}
 }

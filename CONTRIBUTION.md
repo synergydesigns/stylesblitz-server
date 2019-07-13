@@ -13,7 +13,7 @@ Libraries and
 ## SETTING UP DEV ENVIRONMENT:
 #### GOLANG:
 Our entire project is based on golang, so you might want to download and install ```GO``` locally... set your ```GOPATH``` to point to your project directory. 
-We use ```dep``` for managing dependecies, make sure you have the ```dep`` dependecy installed. If you don't, checkout the official [documentaion](https://golang.github.io/dep/docs/installation.html) on how to go about it.
+We use ```dep``` for managing dependencies, make sure you have the ```dep`` dependency installed. If you don't, checkout the official [documentaion](https://golang.github.io/dep/docs/installation.html) on how to go about it.
 Also, you might want to check out these links for more info.
 [Installing Golang](https://golang.org/doc/install)
 [GOPATH](https://github.com/golang/go/wiki/GOPATH)
