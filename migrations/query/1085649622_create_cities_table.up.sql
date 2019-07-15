@@ -1,4 +1,4 @@
-CREATE TABLE IF EXISTS cities (
+CREATE TABLE IF NOT EXISTS cities (
   id INT,
   name VARCHAR (100),
   stateId INT,
@@ -8,4 +8,4 @@ CREATE TABLE IF EXISTS cities (
   PRIMARY KEY(id),
   FOREIGN KEY(stateId) REFERENCES states(id),
   FOREIGN KEY(stateId) REFERENCES countries(id)
-)
+);
