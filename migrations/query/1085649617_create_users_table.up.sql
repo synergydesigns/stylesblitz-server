@@ -15,5 +15,6 @@ CREATE TABLE IF NOT EXISTS users (
   deleted_at TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (profileImage) REFERENCES assets(id),
-  FOREIGN KEY (wallImage) REFERENCES assets(id) 
+  FOREIGN KEY (wallImage) REFERENCES assets(id) ,
+  UNIQUE(phone)
 );
