@@ -22,6 +22,11 @@ type Seeder struct {
 	Tables []string
 }
 
+// New initializes seeder with db configuration
+func New() *Seeder {
+	return new(Seeder).Init()
+}
+
 // LoadData Loads the data to be seeded
 func (s *Seeder) LoadData(file string) *Seeder {
 	s.File = getData(file)

@@ -24,7 +24,6 @@ func Connect(conf *config.Config) *gorm.DB {
 		conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName, conf.SSLMode,
 	)
 	db, err := gorm.Open("postgres", dbURL)
-	log.Println(dbURL)
 
 	if err != nil {
 		log.Fatal(err)

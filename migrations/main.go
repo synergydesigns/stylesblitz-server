@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/synergydesigns/stylesblitz-server/shared/seeder"
+
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -66,6 +68,12 @@ func main() {
 
 		if err != nil {
 			log.Fatal("Error droping migrations", err)
+		}
+	}
+
+	if os.Args[1] == "seed" {
+		if os.Args[2] == "locations" {
+			seeder.SeedLocations()
 		}
 	}
 }

@@ -1,0 +1,35 @@
+[
+  {
+     "name": "nigeria",
+     "countryCode": 234,
+     "isoCode": "NGA",
+     "currency": "naira",
+     "currencySymbol": "₦",
+     "currencyCode": "NGN",
+     "geonameId": "2328926",
+     "latitude": 10,
+     "longitude": 8
+  },
+  {
+     "name": "united states",
+     "countryCode": 1,
+     "isoCode": "usa",
+     "currency": "naira",
+     "currencySymbol": "$",
+     "currencyCode": "usd",
+     "geonameId": "6252001",
+     "latitude": 39.76,
+     "longitude": -98.5
+  },
+  {
+     "name": "ghana",
+     "countryCode": 233,
+     "isoCode": "gha",
+     "currency": "cedi",
+     "currencySymbol": "₵",
+     "currencyCode": "ghs",
+     "geonameId": "2300660",
+     "latitude": 8.1,
+     "longitude": -1.2
+  }
+]
