@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS cities (
   id INT,
   name VARCHAR (100),
-  stateId INT,
-  countryId INT,
+  state_id INT,
+  country_id INT,
   longitude Decimal(9,6), --
   latitude Decimal(9,6), --
   PRIMARY KEY(id),
-  FOREIGN KEY(stateId) REFERENCES states(id),
-  FOREIGN KEY(stateId) REFERENCES countries(id)
+  FOREIGN KEY(state_id) REFERENCES states(id),
+  FOREIGN KEY(country_id) REFERENCES countries(id)
 );

@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS address (
   id INT PRIMARY KEY,
-  countryId INT,
-  stateId INT,
-  zipCode NUMERIC(8),
+  country_id INT,
+  state_id INT,
+  zip_code NUMERIC(8),
   city VARCHAR (100),
   street VARCHAR (250),
-  FOREIGN KEY (countryId) REFERENCES countries(id),
-  FOREIGN KEY (stateId) REFERENCES states(id)
+  FOREIGN KEY (country_id) REFERENCES countries(id),
+  FOREIGN KEY (state_id) REFERENCES states(id)
 );
