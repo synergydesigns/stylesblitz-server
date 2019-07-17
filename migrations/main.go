@@ -72,6 +72,18 @@ func main() {
 	}
 
 	if os.Args[1] == "seed" {
+		if os.Args[2] == "countries" {
+			seeder.SeedCountries()
+		}
+
+		if os.Args[2] == "states" {
+			seeder.SeedStates()
+		}
+
+		if os.Args[2] == "cities" {
+			seeder.SeedCities()
+		}
+
 		if os.Args[2] == "locations" {
 			seeder.SeedLocations()
 		}

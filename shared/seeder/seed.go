@@ -13,7 +13,7 @@ import (
 
 var conf = config.LoadConfig()
 
-// Seeder Struct that handles databse seeding
+// Seeder Struct that handles database seeding
 type Seeder struct {
 	Table  string
 	DB     *gorm.DB

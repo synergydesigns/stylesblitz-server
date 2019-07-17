@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS countries (
   currency VARCHAR(10),
   currency_symbol CHAR(1),
   currency_code CHAR(5),
-  longitude Decimal(9,6),
-  latitude Decimal(9,6),
+  longitude FLOAT(5),
+  latitude FLOAT(5),
   PRIMARY KEY(id)
 );

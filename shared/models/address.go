@@ -9,6 +9,6 @@ type Address struct {
 	State      string
 	City       string
 	Zipcode    string
-	Longitude  float64
-	Latitude   float64
+	Longitude  float32
+	Latitude   float32
 }

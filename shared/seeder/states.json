@@ -1,0 +1,786 @@
+[
+   {
+      "name": "abia state",
+      "stateCode": "AB",
+      "longitude": 7.5,
+      "latitude": 5.41667,
+      "country": "nigeria",
+      "geonameId": 2565340
+   },
+   {
+      "name": "adamawa",
+      "stateCode": "AD",
+      "longitude": 12.5,
+      "latitude": 9.33333,
+      "country": "nigeria",
+      "geonameId": 2565342
+   },
+   {
+      "name": "akwa ibom state",
+      "stateCode": "AK",
+      "longitude": 7.83333,
+      "latitude": 5,
+      "country": "nigeria",
+      "geonameId": 2350813
+   },
+   {
+      "name": "anambra",
+      "stateCode": "AN",
+      "longitude": 7,
+      "latitude": 6.33333,
+      "country": "nigeria",
+      "geonameId": 2349961
+   },
+   {
+      "name": "bauchi",
+      "stateCode": "BA",
+      "longitude": 10,
+      "latitude": 10.5,
+      "country": "nigeria",
+      "geonameId": 2347468
+   },
+   {
+      "name": "bayelsa state",
+      "stateCode": "BY",
+      "longitude": 6.08333,
+      "latitude": 4.75,
+      "country": "nigeria",
+      "geonameId": 2595344
+   },
+   {
+      "name": "benue state",
+      "stateCode": "BE",
+      "longitude": 8.75,
+      "latitude": 7.33333,
+      "country": "nigeria",
+      "geonameId": 2347266
+   },
+   {
+      "name": "borno state",
+      "stateCode": "BO",
+      "longitude": 13,
+      "latitude": 11.5,
+      "country": "nigeria",
+      "geonameId": 2346794
+   },
+   {
+      "name": "cross river state",
+      "stateCode": "CR",
+      "longitude": 8.5,
+      "latitude": 5.75,
+      "country": "nigeria",
+      "geonameId": 2345891
+   },
+   {
+      "name": "delta",
+      "stateCode": "DE",
+      "longitude": 6,
+      "latitude": 5.5,
+      "country": "nigeria",
+      "geonameId": 2565341
+   },
+   {
+      "name": "ebonyi state",
+      "stateCode": "EB",
+      "longitude": 8.08333,
+      "latitude": 6.25,
+      "country": "nigeria",
+      "geonameId": 2595345
+   },
+   {
+      "name": "edo",
+      "stateCode": "ED",
+      "longitude": 6,
+      "latitude": 6.5,
+      "country": "nigeria",
+      "geonameId": 2565343
+   },
+   {
+      "name": "ekiti state",
+      "stateCode": "EK",
+      "longitude": 5.25,
+      "latitude": 7.66667,
+      "country": "nigeria",
+      "geonameId": 2595346
+   },
+   {
+      "name": "enugu state",
+      "stateCode": "EN",
+      "longitude": 7.5,
+      "latitude": 6.5,
+      "country": "nigeria",
+      "geonameId": 2565344
+   },
+   {
+      "name": "fct",
+      "stateCode": "FC",
+      "longitude": 7.16667,
+      "latitude": 8.83333,
+      "country": "nigeria",
+      "geonameId": 2352776
+   },
+   {
+      "name": "gombe state",
+      "stateCode": "GO",
+      "longitude": 11.16667,
+      "latitude": 10.25,
+      "country": "nigeria",
+      "geonameId": 2595347
+   },
+   {
+      "name": "imo state",
+      "stateCode": "IM",
+      "longitude": 7.16667,
+      "latitude": 5.5,
+      "country": "nigeria",
+      "geonameId": 2337542
+   },
+   {
+      "name": "jigawa state",
+      "stateCode": "JI",
+      "longitude": 9.56,
+      "latitude": 12.1,
+      "country": "nigeria",
+      "geonameId": 2565345
+   },
+   {
+      "name": "kaduna state",
+      "stateCode": "KD",
+      "longitude": 7.75,
+      "latitude": 10.33333,
+      "country": "nigeria",
+      "geonameId": 2335722
+   },
+   {
+      "name": "kano state",
+      "stateCode": "KN",
+      "longitude": 8.5,
+      "latitude": 11.5,
+      "country": "nigeria",
+      "geonameId": 2335196
+   },
+   {
+      "name": "katsina state",
+      "stateCode": "KT",
+      "longitude": 7.5,
+      "latitude": 12.25,
+      "country": "nigeria",
+      "geonameId": 2334797
+   },
+   {
+      "name": "kebbi",
+      "stateCode": "KE",
+      "longitude": 4,
+      "latitude": 11.5,
+      "country": "nigeria",
+      "geonameId": 2597363
+   },
+   {
+      "name": "kogi state",
+      "stateCode": "KO",
+      "longitude": 6.75,
+      "latitude": 7.75,
+      "country": "nigeria",
+      "geonameId": 2597364
+   },
+   {
+      "name": "kwara state",
+      "stateCode": "KW",
+      "longitude": 5,
+      "latitude": 8.5,
+      "country": "nigeria",
+      "geonameId": 2332785
+   },
+   {
+      "name": "lagos",
+      "stateCode": "LA",
+      "longitude": 3.3522,
+      "latitude": 6.53774,
+      "country": "nigeria",
+      "geonameId": 2332453
+   },
+   {
+      "name": "nasarawa state",
+      "stateCode": "NA",
+      "longitude": 8.25,
+      "latitude": 8.5,
+      "country": "nigeria",
+      "geonameId": 2595348
+   },
+   {
+      "name": "niger state",
+      "stateCode": "NI",
+      "longitude": 6,
+      "latitude": 10,
+      "country": "nigeria",
+      "geonameId": 2328925
+   },
+   {
+      "name": "ogun state",
+      "stateCode": "OG",
+      "longitude": 3.58333,
+      "latitude": 7,
+      "country": "nigeria",
+      "geonameId": 2327546
+   },
+   {
+      "name": "ondo state",
+      "stateCode": "ON",
+      "longitude": 5.08333,
+      "latitude": 7.16667,
+      "country": "nigeria",
+      "geonameId": 2326168
+   },
+   {
+      "name": "osun state",
+      "stateCode": "OS",
+      "longitude": 4.5,
+      "latitude": 7.5,
+      "country": "nigeria",
+      "geonameId": 2597365
+   },
+   {
+      "name": "oyo state",
+      "stateCode": "OY",
+      "longitude": 4,
+      "latitude": 8,
+      "country": "nigeria",
+      "geonameId": 2325190
+   },
+   {
+      "name": "plateau state",
+      "stateCode": "PL",
+      "longitude": 9.75,
+      "latitude": 9.16667,
+      "country": "nigeria",
+      "geonameId": 2324828
+   },
+   {
+      "name": "rivers state",
+      "stateCode": "RI",
+      "longitude": 6.82766,
+      "latitude": 4.74974,
+      "country": "nigeria",
+      "geonameId": 2324433
+   },
+   {
+      "name": "sokoto state",
+      "stateCode": "SO",
+      "longitude": 5.25,
+      "latitude": 13.08333,
+      "country": "nigeria",
+      "geonameId": 2322907
+   },
+   {
+      "name": "taraba state",
+      "stateCode": "TA",
+      "longitude": 10.5,
+      "latitude": 8,
+      "country": "nigeria",
+      "geonameId": 2597366
+   },
+   {
+      "name": "yobe state",
+      "stateCode": "YO",
+      "longitude": 11.5,
+      "latitude": 12,
+      "country": "nigeria",
+      "geonameId": 2597367
+   },
+   {
+      "name": "zamfara state",
+      "stateCode": "ZA",
+      "longitude": 6.25,
+      "latitude": 12.16667,
+      "country": "nigeria",
+      "geonameId": 2595349
+   },
+   {
+      "name": "alabama",
+      "stateCode": "AL",
+      "longitude": -86.75026,
+      "latitude": 32.75041,
+      "country": "united states",
+      "geonameId": 4829764
+   },
+   {
+      "name": "alaska",
+      "stateCode": "AK",
+      "longitude": -150.00028,
+      "latitude": 64.00028,
+      "country": "united states",
+      "geonameId": 5879092
+   },
+   {
+      "name": "arizona",
+      "stateCode": "AZ",
+      "longitude": -111.50098,
+      "latitude": 34.5003,
+      "country": "united states",
+      "geonameId": 5551752
+   },
+   {
+      "name": "arkansas",
+      "stateCode": "AR",
+      "longitude": -92.50044,
+      "latitude": 34.75037,
+      "country": "united states",
+      "geonameId": 4099753
+   },
+   {
+      "name": "california",
+      "stateCode": "CA",
+      "longitude": -119.75126,
+      "latitude": 37.25022,
+      "country": "united states",
+      "geonameId": 5332921
+   },
+   {
+      "name": "colorado",
+      "stateCode": "CO",
+      "longitude": -105.50083,
+      "latitude": 39.00027,
+      "country": "united states",
+      "geonameId": 5417618
+   },
+   {
+      "name": "connecticut",
+      "stateCode": "CT",
+      "longitude": -72.66648,
+      "latitude": 41.66704,
+      "country": "united states",
+      "geonameId": 4831725
+   },
+   {
+      "name": "delaware",
+      "stateCode": "DE",
+      "longitude": -75.49992,
+      "latitude": 39.00039,
+      "country": "united states",
+      "geonameId": 4142224
+   },
+   {
+      "name": "florida",
+      "stateCode": "FL",
+      "longitude": -82.5001,
+      "latitude": 28.75054,
+      "country": "united states",
+      "geonameId": 4155751
+   },
+   {
+      "name": "georgia",
+      "stateCode": "GA",
+      "longitude": -83.50018,
+      "latitude": 32.75042,
+      "country": "united states",
+      "geonameId": 4197000
+   },
+   {
+      "name": "hawaii",
+      "stateCode": "HI",
+      "longitude": -156.38612,
+      "latitude": 20.78785,
+      "country": "united states",
+      "geonameId": 5855797
+   },
+   {
+      "name": "idaho",
+      "stateCode": "ID",
+      "longitude": -114.25118,
+      "latitude": 44.5002,
+      "country": "united states",
+      "geonameId": 5596512
+   },
+   {
+      "name": "illinois",
+      "stateCode": "IL",
+      "longitude": -89.25037,
+      "latitude": 40.00032,
+      "country": "united states",
+      "geonameId": 4896861
+   },
+   {
+      "name": "indiana",
+      "stateCode": "IN",
+      "longitude": -86.25027,
+      "latitude": 40.00032,
+      "country": "united states",
+      "geonameId": 4921868
+   },
+   {
+      "name": "iowa",
+      "stateCode": "IA",
+      "longitude": -93.50049,
+      "latitude": 42.00027,
+      "country": "united states",
+      "geonameId": 4862182
+   },
+   {
+      "name": "kansas",
+      "stateCode": "KS",
+      "longitude": -98.50063,
+      "latitude": 38.50029,
+      "country": "united states",
+      "geonameId": 4273857
+   },
+   {
+      "name": "kentucky",
+      "stateCode": "KY",
+      "longitude": -84.87762,
+      "latitude": 38.20042,
+      "country": "united states",
+      "geonameId": 6254925
+   },
+   {
+      "name": "louisiana",
+      "stateCode": "LA",
+      "longitude": -92.0004,
+      "latitude": 31.00047,
+      "country": "united states",
+      "geonameId": 4331987
+   },
+   {
+      "name": "maine",
+      "stateCode": "ME",
+      "longitude": -69.24977,
+      "latitude": 45.50032,
+      "country": "united states",
+      "geonameId": 4971068
+   },
+   {
+      "name": "maryland",
+      "stateCode": "MD",
+      "longitude": -76.74997,
+      "latitude": 39.00039,
+      "country": "united states",
+      "geonameId": 4361885
+   },
+   {
+      "name": "massachusetts",
+      "stateCode": "MA",
+      "longitude": -71.10832,
+      "latitude": 42.36565,
+      "country": "united states",
+      "geonameId": 6254926
+   },
+   {
+      "name": "michigan",
+      "stateCode": "MI",
+      "longitude": -85.50033,
+      "latitude": 44.25029,
+      "country": "united states",
+      "geonameId": 5001836
+   },
+   {
+      "name": "minnesota",
+      "stateCode": "MN",
+      "longitude": -94.25055,
+      "latitude": 46.25024,
+      "country": "united states",
+      "geonameId": 5037779
+   },
+   {
+      "name": "mississippi",
+      "stateCode": "MS",
+      "longitude": -89.75036,
+      "latitude": 32.75041,
+      "country": "united states",
+      "geonameId": 4436296
+   },
+   {
+      "name": "missouri",
+      "stateCode": "MO",
+      "longitude": -92.50046,
+      "latitude": 38.25031,
+      "country": "united states",
+      "geonameId": 4398678
+   },
+   {
+      "name": "montana",
+      "stateCode": "MT",
+      "longitude": -109.75102,
+      "latitude": 47.00025,
+      "country": "united states",
+      "geonameId": 5667009
+   },
+   {
+      "name": "nebraska",
+      "stateCode": "NE",
+      "longitude": -99.75067,
+      "latitude": 41.50028,
+      "country": "united states",
+      "geonameId": 5073708
+   },
+   {
+      "name": "nevada",
+      "stateCode": "NV",
+      "longitude": -116.75119,
+      "latitude": 39.25021,
+      "country": "united states",
+      "geonameId": 5509151
+   },
+   {
+      "name": "new hampshire",
+      "stateCode": "NH",
+      "longitude": -71.4998,
+      "latitude": 43.66702,
+      "country": "united states",
+      "geonameId": 5090174
+   },
+   {
+      "name": "new jersey",
+      "stateCode": "NJ",
+      "longitude": -74.49987,
+      "latitude": 40.16706,
+      "country": "united states",
+      "geonameId": 5101760
+   },
+   {
+      "name": "new mexico",
+      "stateCode": "NM",
+      "longitude": -106.00085,
+      "latitude": 34.50034,
+      "country": "united states",
+      "geonameId": 5481136
+   },
+   {
+      "name": "new york",
+      "stateCode": "NY",
+      "longitude": -75.4999,
+      "latitude": 43.00035,
+      "country": "united states",
+      "geonameId": 5128638
+   },
+   {
+      "name": "north carolina",
+      "stateCode": "NC",
+      "longitude": -80.00032,
+      "latitude": 35.50069,
+      "country": "united states",
+      "geonameId": 4482348
+   },
+   {
+      "name": "north dakota",
+      "stateCode": "ND",
+      "longitude": -100.00068,
+      "latitude": 47.50027,
+      "country": "united states",
+      "geonameId": 5690763
+   },
+   {
+      "name": "ohio",
+      "stateCode": "OH",
+      "longitude": -83.00018,
+      "latitude": 40.25034,
+      "country": "united states",
+      "geonameId": 5165418
+   },
+   {
+      "name": "oklahoma",
+      "stateCode": "OK",
+      "longitude": -97.50328,
+      "latitude": 35.49209,
+      "country": "united states",
+      "geonameId": 4544379
+   },
+   {
+      "name": "oregon",
+      "stateCode": "OR",
+      "longitude": -120.50139,
+      "latitude": 44.00013,
+      "country": "united states",
+      "geonameId": 5744337
+   },
+   {
+      "name": "pennsylvania",
+      "stateCode": "PA",
+      "longitude": -76.90567,
+      "latitude": 40.27245,
+      "country": "united states",
+      "geonameId": 6254927
+   },
+   {
+      "name": "rhode island",
+      "stateCode": "RI",
+      "longitude": -71.49978,
+      "latitude": 41.75038,
+      "country": "united states",
+      "geonameId": 5224323
+   },
+   {
+      "name": "south carolina",
+      "stateCode": "SC",
+      "longitude": -81.00009,
+      "latitude": 34.00043,
+      "country": "united states",
+      "geonameId": 4597040
+   },
+   {
+      "name": "south dakota",
+      "stateCode": "SD",
+      "longitude": -100.25069,
+      "latitude": 44.50026,
+      "country": "united states",
+      "geonameId": 5769223
+   },
+   {
+      "name": "tennessee",
+      "stateCode": "TN",
+      "longitude": -86.25027,
+      "latitude": 35.75035,
+      "country": "united states",
+      "geonameId": 4662168
+   },
+   {
+      "name": "texas",
+      "stateCode": "TX",
+      "longitude": -99.25061,
+      "latitude": 31.25044,
+      "country": "united states",
+      "geonameId": 4736286
+   },
+   {
+      "name": "utah",
+      "stateCode": "UT",
+      "longitude": -111.75103,
+      "latitude": 39.25024,
+      "country": "united states",
+      "geonameId": 5549030
+   },
+   {
+      "name": "vermont",
+      "stateCode": "VT",
+      "longitude": -72.74983,
+      "latitude": 44.00034,
+      "country": "united states",
+      "geonameId": 5242283
+   },
+   {
+      "name": "virginia",
+      "stateCode": "VA",
+      "longitude": -77.44675,
+      "latitude": 37.54812,
+      "country": "united states",
+      "geonameId": 6254928
+   },
+   {
+      "name": "washington",
+      "stateCode": "WA",
+      "longitude": -120.50147,
+      "latitude": 47.50012,
+      "country": "united states",
+      "geonameId": 5815135
+   },
+   {
+      "name": "washington, d.c.",
+      "stateCode": "DC",
+      "longitude": -77.00025,
+      "latitude": 38.91706,
+      "country": "united states",
+      "geonameId": 4138106
+   },
+   {
+      "name": "west virginia",
+      "stateCode": "WV",
+      "longitude": -80.50009,
+      "latitude": 38.50038,
+      "country": "united states",
+      "geonameId": 4826850
+   },
+   {
+      "name": "wisconsin",
+      "stateCode": "WI",
+      "longitude": -90.00041,
+      "latitude": 44.50024,
+      "country": "united states",
+      "geonameId": 5279468
+   },
+   {
+      "name": "wyoming",
+      "stateCode": "WY",
+      "longitude": -107.5009,
+      "latitude": 43.00024,
+      "country": "united states",
+      "geonameId": 5843591
+   },
+   {
+      "name": "ashanti region",
+      "stateCode": "AH",
+      "longitude": -1.5,
+      "latitude": 6.75,
+      "country": "ghana",
+      "geonameId": 2304116
+   },
+   {
+      "name": "brong-ahafo",
+      "stateCode": "BA",
+      "longitude": -1.5,
+      "latitude": 7.75,
+      "country": "ghana",
+      "geonameId": 2302547
+   },
+   {
+      "name": "central region",
+      "stateCode": "CP",
+      "longitude": -1,
+      "latitude": 5.5,
+      "country": "ghana",
+      "geonameId": 2302353
+   },
+   {
+      "name": "eastern region",
+      "stateCode": "EP",
+      "longitude": -0.5,
+      "latitude": 6.5,
+      "country": "ghana",
+      "geonameId": 2301360
+   },
+   {
+      "name": "greater accra region",
+      "stateCode": "AA",
+      "longitude": 0,
+      "latitude": 5.75,
+      "country": "ghana",
+      "geonameId": 2300569
+   },
+   {
+      "name": "northern region",
+      "stateCode": "NP",
+      "longitude": -0.1,
+      "latitude": 9.45,
+      "country": "ghana",
+      "geonameId": 2297169
+   },
+   {
+      "name": "upper east region",
+      "stateCode": "UE",
+      "longitude": -0.75,
+      "latitude": 10.75,
+      "country": "ghana",
+      "geonameId": 2294291
+   },
+   {
+      "name": "upper west region",
+      "stateCode": "UW",
+      "longitude": -2.25,
+      "latitude": 10.33333,
+      "country": "ghana",
+      "geonameId": 2294286
+   },
+   {
+      "name": "volta region",
+      "stateCode": "TV",
+      "longitude": 0.5,
+      "latitude": 6.4,
+      "country": "ghana",
+      "geonameId": 2294234
+   },
+   {
+      "name": "western region",
+      "stateCode": "WP",
+      "longitude": -2.25,
+      "latitude": 5.45,
+      "country": "ghana",
+      "geonameId": 2294076
+   }
+]
