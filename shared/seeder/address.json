@@ -1,91 +1,181 @@
 [{
   "id": 1,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 19,
+  "city": "agege",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57961216,
-  "longitude": 3.35756456,
-  "provider_id": 1
+  "latitude": 6.64118582,
+  "longitude": 3.30545167,
+  "street": "48 Kingsford Center"
 }, {
   "id": 2,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 13,
+  "city": "agege",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.56803897,
-  "longitude": 3.36609155,
-  "provider_id": 2
+  "latitude": 6.63660256,
+  "longitude": 3.30610808,
+  "street": "647 Grim Plaza"
 }, {
   "id": 3,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 13,
+  "city": "ijeromi/ifelodun",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57035687,
-  "longitude": 3.36652346,
-  "provider_id": 3
+  "latitude": 6.45031357,
+  "longitude": 3.34802214,
+  "street": "78 Buena Vista Center"
 }, {
   "id": 4,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 27,
+  "city": "alimosho",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.5433736,
-  "longitude": 3.3263002999999,
-  "provider_id": 4
+  "latitude": 6.59095342,
+  "longitude": 3.24997121,
+  "street": "71915 Tony Center"
 }, {
   "id": 5,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 26,
+  "city": "alimosho",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57302072,
-  "longitude": 3.36468914,
-  "provider_id": 5
+  "latitude": 6.5931107,
+  "longitude": 3.24786108,
+  "street": "102 Heath Crossing"
 }, {
   "id": 6,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 1,
+  "city": "amuwo odofin",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57145949,
-  "longitude": 3.36598251,
-  "provider_id": 6
+  "latitude": 6.46825865,
+  "longitude": 3.26212832,
+  "street": "2043 Fuller Alley"
 }, {
   "id": 7,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 16,
+  "city": "apapa",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57415526,
-  "longitude": 3.36090473,
-  "provider_id": 7
+  "latitude": 6.43310744,
+  "longitude": 3.35020662,
+  "street": "7694 Esker Pass"
 }, {
   "id": 8,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 3,
+  "city": "apapa",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57463773,
-  "longitude": 3.36685732,
-  "provider_id": 8
+  "latitude": 6.4289653,
+  "longitude": 3.34500289,
+  "street": "38236 Derek Center"
 }, {
   "id": 9,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 16,
+  "city": "apapa",
   "zipcode": null,
-  "city": "maryland",
-  "latitude": 6.57717936,
-  "longitude": 3.35899219,
-  "provider_id": 9
+  "latitude": 6.4272486,
+  "longitude": 3.34829137,
+  "street": "4995 Shopko Center"
 }, {
   "id": 10,
-  "country": "nigeria",
-  "state": "lagos",
+  "countryId": 1,
+  "stateId": 30,
+  "city": "ibeju lekki",
   "zipcode": null,
+  "latitude": 6.45845505,
+  "longitude": 3.94265026,
+  "street": "7970 Calypso Place"
+}, {
+  "id": 11,
+  "countryId": 1,
+  "stateId": 16,
+  "city": "ikeja",
+  "zipcode": null,
+  "latitude": 6.62005248,
+  "longitude": 3.34149981,
+  "street": "16 Thackeray Road"
+}, {
+  "id": 12,
+  "countryId": 1,
+  "stateId": 7,
+  "city": "ikeja",
+  "zipcode": null,
+  "latitude": 6.61608029,
+  "longitude": 3.34547035,
+  "street": "63 Hermina Avenue"
+}, {
+  "id": 13,
+  "countryId": 1,
+  "stateId": 21,
+  "city": "mushin",
+  "zipcode": null,
+  "latitude": 6.52700458,
+  "longitude": 3.36137755,
+  "street": "329 Beilfuss Junction"
+}, {
+  "id": 14,
+  "countryId": 1,
+  "stateId": 26,
   "city": "maryland",
-  "latitude": 6.58363223,
-  "longitude": 3.36750578,
-  "provider_id": 10
+  "zipcode": null,
+  "latitude": 6.57931168,
+  "longitude": 3.36305473,
+  "street": "6 Service Plaza"
+}, {
+  "id": 15,
+  "countryId": 1,
+  "stateId": 3,
+  "city": "maryland",
+  "zipcode": null,
+  "latitude": 6.57701813,
+  "longitude": 3.36244767,
+  "street": "609 Gerald Lane"
+}, {
+  "id": 16,
+  "countryId": 1,
+  "stateId": 10,
+  "city": "oshodi/isolo",
+  "zipcode": null,
+  "latitude": 6.56070444,
+  "longitude": 3.30137447,
+  "street": "7068 Starling Pass"
+}, {
+  "id": 17,
+  "countryId": 1,
+  "stateId": 33,
+  "city": "oshodi/isolo",
+  "zipcode": null,
+  "latitude": 6.55528202,
+  "longitude": 3.30308357,
+  "street": "40 Montana Terrace"
+}, {
+  "id": 18,
+  "countryId": 1,
+  "stateId": 6,
+  "city": "surulere",
+  "zipcode": null,
+  "latitude": 6.49536802,
+  "longitude": 3.34727766,
+  "street": "65090 Chive Drive"
+}, {
+  "id": 19,
+  "countryId": 1,
+  "stateId": 20,
+  "city": "surulere",
+  "zipcode": null,
+  "latitude": 6.49487082,
+  "longitude": 3.34824137,
+  "street": "7590 Main Way"
+}, {
+  "id": 20,
+  "countryId": 1,
+  "stateId": 21,
+  "city": "surulere",
+  "zipcode": null,
+  "latitude": 6.49269425,
+  "longitude": 3.34840762,
+  "street": "28206 Amoth Parkway"
 }]

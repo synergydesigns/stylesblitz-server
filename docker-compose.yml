@@ -5,17 +5,18 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    environment:
-      - "PG_ROOT_PASSWORD=styleblitz"
-      - "PG_DATABASE=styleblitz"
-      - "PG_USER=root"
-      - "PG_PASSWORD=styleblitz"
-      - "PG_HOST=styleblitz-pg"
-      - "PG_PORT=5432"
-      - "PG_SSL=disable"
-      - "MIGRATION_PATH=migrations/query"
-      - "APP_NAME=styleblitz"
-      - "ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server"
+    env_file:
+      # - "PG_ROOT_PASSWORD=styleblitz"
+      # - "PG_DATABASE=styleblitz"
+      # - "PG_USER=root"
+      # - "PG_PASSWORD=styleblitz"
+      # - "PG_HOST=styleblitz-pg"
+      # - "PG_PORT=5432"
+      # - "PG_SSL=disable"
+      # - "MIGRATION_PATH=migrations/query"
+      # - "APP_NAME=styleblitz"
+      # - "ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server"
+      - .env
     volumes:
       - ./:/go/src/github.com/synergydesigns/stylesblitz-server
     # restart: always
