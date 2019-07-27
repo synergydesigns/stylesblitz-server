@@ -8,7 +8,7 @@ import (
 // for getting a single opening
 type Opening struct {
 	gorm.Model
-	ProviderID uint
+	VendorID uint
 	From       string
 	To         string
 	Day        string

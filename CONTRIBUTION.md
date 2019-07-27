@@ -24,7 +24,7 @@ To start working on the lambda functions locally, you need to
 1. install sam cli. The GitHub doc is quite comprehensive and should get you up and running click [here](https://github.com/awslabs/aws-sam-cli) to check it out
 2. create an AWS account and Setup and AWS profile add it to your environments ``` AWS_ACCESS_KEY_ID=ssdsdsdsdsdssdss
 AWS_SECRET_ACCESS_KEY=C4S/dsdsdssddsdsdssds
-USER_NAMESPACE=testuer```. You can follow this comprehensive guide on how to set up AWS credentials for lambda [here](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
+USER_NAMESPACE=testuer```. You can follow this comprehensive guide on how to set up AWS credentials for lambda [here](https://serverless.com/framework/docs/Vendors/aws/guide/credentials/)
 
 #### MIGRATIONS:
 working with migrations is quite manual as of now. Just move into the query folder and duplicate one entry, make sure you replace the first integer of the filename with the current timestamp. Also, the ID of the query should also use the current timestamp. Add your query, description, and name. 

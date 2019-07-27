@@ -87,5 +87,9 @@ func main() {
 		if os.Args[2] == "locations" {
 			seeder.SeedLocations()
 		}
+
+		if os.Args[2] == "vendors_all" {
+			seeder.SeedVendorData()
+		}
 	}
 }

@@ -17,7 +17,7 @@ func MarshalID(id uint64) graphql.Marshaler {
 	})
 }
 
-// UnmarshalID tells gqlgen how to uparse the ID
+// UnmarshalID tells gqlgen how to unp-arse the ID
 func UnmarshalID(v interface{}) (uint64, error) {
 	id, ok := v.(string)
 	if !ok {

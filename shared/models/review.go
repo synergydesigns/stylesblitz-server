@@ -9,7 +9,7 @@ import (
 type Review struct {
 	gorm.Model
 	UserID     uint
-	ProviderID uint
+	VendorID uint
 	Rating     string
 	Review     string
 }

@@ -5,5 +5,5 @@ type Service {
     price: Int
     status: Boolean
     Trend: Int
-    providerID: ID
+    VendorID: ID
 }

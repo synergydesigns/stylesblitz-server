@@ -1,9 +1,8 @@
-type Provider {
+type Vendor {
     ID: ID!
     name: String
     description:  String
-    about: String
-    phone: String
+    phone: String @goField(forceResolver: false, name:"Phone")
     user: User
     addresses: [Address]
     services: [Service]

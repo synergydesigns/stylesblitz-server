@@ -6,9 +6,14 @@ import (
 
 type Resolver struct{}
 
-func (r *Resolver) Provider() genql.ProviderResolver {
-	return &providerResolver{r}
+func (r *Resolver) Vendor() genql.VendorResolver {
+	return &VendorResolver{r}
 }
+
 func (r *Resolver) Query() genql.QueryResolver {
 	return &queryResolver{r}
+}
+
+func (r *Resolver) Address() genql.AddressResolver {
+	return &addressResolver{r}
 }

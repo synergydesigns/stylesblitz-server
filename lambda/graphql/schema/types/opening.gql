@@ -1,7 +1,0 @@
-type Opening {
-    ID:         ID!
-	shopID:     ID!
-	from:       String
-	to:         String
-	day:        String
-}

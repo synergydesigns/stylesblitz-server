@@ -17,14 +17,18 @@ model:
 models:
   User:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.User
-  Provider:
-    model: github.com/synergydesigns/stylesblitz-server/shared/models.Provider
+  Vendor:
+    model:
+      - github.com/synergydesigns/stylesblitz-server/shared/models.Vendor
+      - github.com/synergydesigns/stylesblitz-server/shared/models.Phone
   Service:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Service
   Category:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Category
   Address:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Address
+  # Phone:
+  #   model: github.com/synergydesigns/stylesblitz-server/shared/models.Phone
   ID:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.ID
   Timestamp:

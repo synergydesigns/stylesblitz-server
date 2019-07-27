@@ -1,17 +1,11 @@
 TEST_PACKAGES := $(shell go list ./shared/... | grep -v vendor | grep -v fakes)
 
 build:
-	go mod tidy
+	# go mod tidy
 	make recompile
-
-dep:
-	$(shell curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh)
 
 test:
 	@go test -v -cover $(TEST_PACKAGES)
-
-clean: ; $(info $(M) [TODO] Removing generated files... )
-	$(RM) lambda/graphql/schema/bindata.go
 
 schema: $(info $(M) updating schema files.....)
 	go run  ./scripts/gqlgen.go

@@ -8,13 +8,13 @@ type Query {
         limit: Int,
         page: Int
     ): [Service!]
-    GetProvidersByServiceAndLocation(
+    GetVendorsByServiceAndLocation(
         name: String!,
         latitude: Float,
         longitude: Float,
         radius: Float,
         limit: Int,
         page: Int
-    ): [Provider!]
+    ): [Vendor!]
     GetAddress(id: Int!): Address
 }

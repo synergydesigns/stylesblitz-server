@@ -40,14 +40,14 @@ func NewDB(config *config.Config) *Datastore {
 	DB := Connect(config)
 
 	return &Datastore{
-		ProviderDB: &ProviderDbService{DB},
+		VendorDB: &VendorDbService{DB},
 		UserDB:     &UserDbService{DB},
 		ServiceDB:  &ServiceDBService{DB},
 	}
 }
 
 type Datastore struct {
-	ProviderDB ProviderDB
+	VendorDB VendorDB
 	UserDB     UserDB
 	ServiceDB  ServiceDB
 }

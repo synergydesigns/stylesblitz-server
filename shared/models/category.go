@@ -7,6 +7,6 @@ type Category struct {
 	Name        string
 	Description string
 	Image       string
-	ProviderID  uint64 `json:"provider_id"`
+	VendorID  uint64 `json:"Vendor_id"`
 	ShopID      uint64 `json:"shop_id"`
 }

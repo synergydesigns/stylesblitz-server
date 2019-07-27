@@ -16,7 +16,7 @@ type Service struct {
 	Price      int32
 	Status     bool
 	Trend      int32
-	ProviderID uint64 `json:"provider_id"`
+	VendorID uint64 `json:"Vendor_id"`
 	CategoryID uint64 `json:"category_id"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
@@ -49,7 +49,7 @@ func (service *ServiceDBService) GetServices(serviceName string, lat float64, lo
 		) AS distance_in_km
 	FROM
 		service AS s
-		JOIN address a on s.provider_id = a.provider_id
+		JOIN address a on s.Vendor_id = a.Vendor_id
 		JOIN (
 			SELECT
 				? AS latpoint,

@@ -3,12 +3,14 @@ package models
 // Address defines the address models for graphql
 // for getting a single address
 type Address struct {
-	ID         uint64 `gorm:"primary_key"`
-	ProviderID uint64 `json:"provider_id"`
-	Country    string
-	State      string
-	City       string
-	Zipcode    string
-	Longitude  float32
-	Latitude   float32
+	ID        uint64 `gorm:"primary_key"`
+	CountryID uint64
+	StateID   uint64
+	City      string
+	Street    string
+	Zipcode   int
+	Longitude float64
+	Latitude  float64
+	Country   Country
+	State     State
 }

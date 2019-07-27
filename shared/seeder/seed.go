@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
@@ -46,7 +47,7 @@ func (s *Seeder) Init() *Seeder {
 // Seed seed the Loaded data
 func (s *Seeder) Seed(schema string) *Seeder {
 	switch schema {
-	case "category":
+	case "categories":
 		var data []models.Category
 
 		json.Unmarshal(s.File, &data)
@@ -56,12 +57,12 @@ func (s *Seeder) Seed(schema string) *Seeder {
 			}(v)
 		}
 		break
-	case "provider":
-		var data []models.Provider
+	case "vendors":
+		var data []models.Vendor
 
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
-			func(v models.Provider) {
+			func(v models.Vendor) {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
@@ -72,15 +73,26 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Address) {
+				fmt.Println(v)
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
-	case "service":
+	case "services":
 		var data []models.Service
 
 		json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Service) {
+				s.DB.Table(schema).Create(&v)
+			}(v)
+		}
+		break
+	case "assets":
+		var data []models.Asset
+
+		json.Unmarshal(s.File, &data)
+		for _, v := range data {
+			func(v models.Asset) {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
@@ -120,4 +132,19 @@ func (s *Seeder) SetTables(tables []string) *Seeder {
 	s.Tables = tables
 
 	return s
+}
+
+func SeedVendorData() {
+	seed := New()
+	schemas := []string{
+		"address",
+		// "assets",
+		// "users",
+		// "vendors",
+	}
+
+	for _, schema := range schemas {
+		seed.LoadData(schema)
+		seed.Seed(schema)
+	}
 }

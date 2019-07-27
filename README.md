@@ -1,6 +1,6 @@
 # STYLE BLITZ
-Style blitz is an online platform that empowers service providers within the fashion and beauty niche to enlarger their online presence. Blitz gives users the necessary tools to automate booking, engaging larger customer base and advertising their products for free. 
-Blitz Will further empower these service providers with the ability to create customised profiles and shop tailored their brands and services.
+Style blitz is an online platform that empowers service Vendors within the fashion and beauty niche to enlarger their online presence. Blitz gives users the necessary tools to automate booking, engaging larger customer base and advertising their products for free. 
+Blitz Will further empower these service Vendors with the ability to create customised profiles and shop tailored their brands and services.
 
 ## Project structure
 **Style Blitz** is structured to use modern solutions like GRAPHQL. Most of the technological decisions were made to ease the development timeline so that we can focus more on implementing core features rather than building solutions to already solved problems.

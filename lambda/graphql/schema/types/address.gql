@@ -1,8 +1,10 @@
 type Address {
     ID:             ID!
-    providerID:     ID!
     country:        String
     state:          String
     city:           String
-    zipcode:        String
+    zipcode:        Int
+    street:         String
+    longitude:      Float
+    latitude:       Float
 }

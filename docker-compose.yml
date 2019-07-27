@@ -6,16 +6,6 @@ services:
       context: .
       dockerfile: ./Dockerfile
     env_file:
-      # - "PG_ROOT_PASSWORD=styleblitz"
-      # - "PG_DATABASE=styleblitz"
-      # - "PG_USER=root"
-      # - "PG_PASSWORD=styleblitz"
-      # - "PG_HOST=styleblitz-pg"
-      # - "PG_PORT=5432"
-      # - "PG_SSL=disable"
-      # - "MIGRATION_PATH=migrations/query"
-      # - "APP_NAME=styleblitz"
-      # - "ROOT_DIRECTORY=/go/src/github.com/synergydesigns/stylesblitz-server"
       - .env
     volumes:
       - ./:/go/src/github.com/synergydesigns/stylesblitz-server
@@ -29,7 +19,7 @@ services:
       - styleblitz-pg
     # command: sleep 9999999
     command: >
-      bash -c "make migrate && make build && make supervise"
+      bash -c "make build && make supervise"
     networks:
       styleblitz_default:
 
