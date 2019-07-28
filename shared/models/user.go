@@ -11,15 +11,17 @@ import (
 // User defines the user models for graphql
 // for getting a single user
 type User struct {
-	ID           uint64 `gorm:"primary_key"`
+	ID           string `gorm:"primary_key"`
+	Firstname    string
+	Lastname     string
 	Username     string
 	Email        string
-	Name         string
-	Phone        int32
 	Password     string
+	Bio          string
+	Phone        uint64
 	ProfileImage string
 	WallImage    string
-	Bio          string
+	AddressID    int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

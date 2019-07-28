@@ -9,10 +9,10 @@ import (
 // Vendor defines the Vendor models for graphql
 // for getting a single Vendor
 type Vendor struct {
-	ID           uint64 `gorm:"primary_key"`
+	ID           string `gorm:"primary_key"`
 	Name         string
 	Description  string
-	Phone        []Phone
+	Phone        JSON `sql:"type:json"`
 	User         User
 	ProfileImage string
 	UserID       string

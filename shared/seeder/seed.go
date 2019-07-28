@@ -96,6 +96,15 @@ func (s *Seeder) Seed(schema string) *Seeder {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
+	case "users":
+		var data []models.User
+
+		json.Unmarshal(s.File, &data)
+		for _, v := range data {
+			func(v models.User) {
+				s.DB.Table(schema).Create(&v)
+			}(v)
+		}
 	}
 
 	s.Tables = append(s.Tables, schema)
@@ -138,9 +147,9 @@ func SeedVendorData() {
 	seed := New()
 	schemas := []string{
 		"address",
-		// "assets",
-		// "users",
-		// "vendors",
+		"assets",
+		"users",
+		"vendors",
 	}
 
 	for _, schema := range schemas {
