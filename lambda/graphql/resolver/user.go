@@ -12,9 +12,9 @@ import (
 type userResolver struct{ *Resolver }
 
 // User user
-func (r *queryResolver) User(ctx context.Context, id int) (*models.User, error) {
+func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
 	svc := ctx.Value(config.CTXKeyservices).(*service.Services)
-	user, err := svc.Datastore.UserDB.GetUserByID(uint64(id))
+	user, err := svc.Datastore.UserDB.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}

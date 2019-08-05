@@ -18,7 +18,7 @@ type User struct {
 	Email        string
 	Password     string
 	Bio          string
-	Phone        uint64
+	Phone        string
 	ProfileImage string
 	WallImage    string
 	AddressID    int
@@ -31,19 +31,19 @@ type UserDbService struct {
 }
 
 type UserDB interface {
-	GetUserByID(id uint64) (*User, error)
+	GetUserByID(id string) (*User, error)
 }
 
 // GetUserByID gets a single user by ID
 // @params {userID} userID is an integer
-func (service *UserDbService) GetUserByID(id uint64) (*User, error) {
+func (service *UserDbService) GetUserByID(id string) (*User, error) {
 	var user User
 
 	result := service.DB.First(&user, id)
 
 	if result.Error != nil {
 		log.Printf("Could not find User: %v", result.Error)
-		return nil, fmt.Errorf("User with id %d cannot be found", id)
+		return nil, fmt.Errorf("User with id %s cannot be found", id)
 	}
 
 	return &user, nil

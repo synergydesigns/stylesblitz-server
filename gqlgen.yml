@@ -30,7 +30,9 @@ models:
   # Phone:
   #   model: github.com/synergydesigns/stylesblitz-server/shared/models.Phone
   ID:
-    model: github.com/synergydesigns/stylesblitz-server/shared/models.ID
+    model:
+      - github.com/synergydesigns/stylesblitz-server/shared/models.ID
+      - github.com/synergydesigns/stylesblitz-server/shared/models.CUID
   Timestamp:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Timestamp
 

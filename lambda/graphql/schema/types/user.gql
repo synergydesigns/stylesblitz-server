@@ -3,8 +3,9 @@ type User {
     # Of the user that owns this resource
     id:             ID!
     email:          String
-    name:           String
-    phone:          Int
+    firstname:      String
+    lastname:       String
+    phone:          String
     password:       String
     ProfileImage:   String
     WallImage:      String

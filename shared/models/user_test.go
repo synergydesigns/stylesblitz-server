@@ -13,37 +13,38 @@ func TestGetUserByID(t *testing.T) {
 
 	defer userService.DB.Close()
 	user := models.User{
-		ID:       1,
-		Name:     "Enaho Murphy",
-		Email:    "enahomurphy@gmail.com",
-		Username: "enahomurphy",
-		Password: "testing",
+		ID:        "cjyy6zsvl000001ladldsby9z",
+		Firstname: "Enaho",
+		Lastname:  "Murphy",
+		Email:     "enahomurphy@gmail.com",
+		Username:  "enahomurphy",
+		Password:  "testing",
 	}
 
 	userService.DB.Create(&user)
 
 	testCases := []struct {
 		Title    string
-		ID       uint64
+		ID       string
 		Response *models.User
 		Error    string
 	}{
 		{
 			Title:    "When a user does not exist",
-			ID:       44,
+			ID:       "cjyy7054h000101lacboe5ve9",
 			Response: &models.User{},
 			Error:    "User with id 44 cannot be found",
 		},
 		{
 			Title:    "When a user exist",
-			ID:       1,
+			ID:       "cjyy7054h000101lacboe5vee",
 			Response: &models.User{},
 			Error:    "",
 		},
 	}
 
 	for _, testCase := range testCases {
-		user, err := userService.GetUserByID(uint64(testCase.ID))
+		user, err := userService.GetUserByID(testCase.ID)
 
 		if err != nil {
 			if testCase.Error != err.Error() {
@@ -53,7 +54,7 @@ func TestGetUserByID(t *testing.T) {
 		} else {
 			if user.ID != testCase.ID {
 				t.Errorf("expected %d to equal %d", user.ID, testCase.Response.ID)
-				t.Errorf("expected %s to equal %s", user.Name, testCase.Response.Name)
+				t.Errorf("expected %s to equal %s", user.Firstname, testCase.Response.Lastname)
 				t.Errorf("expected %s to equal %s", user.Username, testCase.Response.Username)
 				t.Errorf("expected %s to equal %s", user.Password, testCase.Response.Password)
 			}

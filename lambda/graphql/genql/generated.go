@@ -65,7 +65,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		User                           func(childComplexity int, id int) int
+		User                           func(childComplexity int, id string) int
 		Services                       func(childComplexity int, name string, latitude *float64, longitude *float64, radius *float64, limit *int, page *int) int
 		GetVendorsByServiceAndLocation func(childComplexity int, name string, latitude *float64, longitude *float64, radius *float64, limit *int, page *int) int
 		GetAddress                     func(childComplexity int, id int) int
@@ -84,7 +84,8 @@ type ComplexityRoot struct {
 	User struct {
 		ID           func(childComplexity int) int
 		Email        func(childComplexity int) int
-		Name         func(childComplexity int) int
+		Firstname    func(childComplexity int) int
+		Lastname     func(childComplexity int) int
 		Phone        func(childComplexity int) int
 		Password     func(childComplexity int) int
 		ProfileImage func(childComplexity int) int
@@ -110,7 +111,7 @@ type AddressResolver interface {
 	State(ctx context.Context, obj *models.Address) (*string, error)
 }
 type QueryResolver interface {
-	User(ctx context.Context, id int) (*models.User, error)
+	User(ctx context.Context, id string) (*models.User, error)
 	Services(ctx context.Context, name string, latitude *float64, longitude *float64, radius *float64, limit *int, page *int) ([]models.Service, error)
 	GetVendorsByServiceAndLocation(ctx context.Context, name string, latitude *float64, longitude *float64, radius *float64, limit *int, page *int) ([]models.Vendor, error)
 	GetAddress(ctx context.Context, id int) (*models.Address, error)
@@ -238,7 +239,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.User(childComplexity, args["id"].(int)), true
+		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
 	case "Query.Services":
 		if e.complexity.Query.Services == nil {
@@ -339,12 +340,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Email(childComplexity), true
 
-	case "User.Name":
-		if e.complexity.User.Name == nil {
+	case "User.Firstname":
+		if e.complexity.User.Firstname == nil {
 			break
 		}
 
-		return e.complexity.User.Name(childComplexity), true
+		return e.complexity.User.Firstname(childComplexity), true
+
+	case "User.Lastname":
+		if e.complexity.User.Lastname == nil {
+			break
+		}
+
+		return e.complexity.User.Lastname(childComplexity), true
 
 	case "User.Phone":
 		if e.complexity.User.Phone == nil {
@@ -531,7 +539,7 @@ var parsedSchema = gqlparser.MustLoadSchema(
 	&ast.Source{Name: "lambda/graphql/schema/scalers.gql", Input: `scalar Timestamp
 `},
 	&ast.Source{Name: "lambda/graphql/schema/schema.gql", Input: `type Query {
-    user(id: Int!): User
+    user(id: String!): User
     services(
         name: String!,
         latitude: Float,
@@ -582,8 +590,9 @@ var parsedSchema = gqlparser.MustLoadSchema(
     # Of the user that owns this resource
     id:             ID!
     email:          String
-    name:           String
-    phone:          Int
+    firstname:      String
+    lastname:       String
+    phone:          String
     password:       String
     ProfileImage:   String
     WallImage:      String
@@ -767,9 +776,9 @@ func (ec *executionContext) field_Query_services_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1137,7 +1146,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, args["id"].(int))
+		return ec.resolvers.Query().User(rctx, args["id"].(string))
 	})
 	if resTmp == nil {
 		return graphql.Null
@@ -1475,10 +1484,10 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(uint64)
+	res := resTmp.(string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2uint64(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
@@ -1504,7 +1513,7 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
+func (ec *executionContext) _User_firstname(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1516,7 +1525,30 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.Firstname, nil
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_lastname(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "User",
+		Field:  field,
+		Args:   nil,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Lastname, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
@@ -1544,10 +1576,10 @@ func (ec *executionContext) _User_phone(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_password(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
@@ -1714,10 +1746,10 @@ func (ec *executionContext) _Vendor_ID(ctx context.Context, field graphql.Collec
 		}
 		return graphql.Null
 	}
-	res := resTmp.(uint64)
+	res := resTmp.(string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2uint64(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Vendor_name(ctx context.Context, field graphql.CollectedField, obj *models.Vendor) graphql.Marshaler {
@@ -2893,8 +2925,10 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "email":
 			out.Values[i] = ec._User_email(ctx, field, obj)
-		case "name":
-			out.Values[i] = ec._User_name(ctx, field, obj)
+		case "firstname":
+			out.Values[i] = ec._User_firstname(ctx, field, obj)
+		case "lastname":
+			out.Values[i] = ec._User_lastname(ctx, field, obj)
 		case "phone":
 			out.Values[i] = ec._User_phone(ctx, field, obj)
 		case "password":
@@ -3243,6 +3277,14 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interf
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
 	return graphql.MarshalBoolean(v)
+}
+
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
+	return models.UnmarshalCUID(v)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return models.MarshalCUID(v)
 }
 
 func (ec *executionContext) unmarshalNID2uint64(ctx context.Context, v interface{}) (uint64, error) {

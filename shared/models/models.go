@@ -31,6 +31,23 @@ func UnmarshalID(v interface{}) (uint64, error) {
 	return uint64(i), e
 }
 
+// MarshalID tells gqlgen how to parse the ID
+func MarshalCUID(id string) graphql.Marshaler {
+	return graphql.WriterFunc(func(w io.Writer) {
+		io.WriteString(w, id)
+	})
+}
+
+// UnmarshalID tells gqlgen how to unp-arse the ID
+func UnmarshalCUID(v interface{}) (string, error) {
+	id, ok := v.(string)
+	if !ok {
+		return "", fmt.Errorf("ids must be strings")
+	}
+
+	return id, nil
+}
+
 func MarshalTimestamp(t time.Time) graphql.Marshaler {
 	timestamp := t.Unix() * 1000
 

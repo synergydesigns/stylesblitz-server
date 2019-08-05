@@ -35,7 +35,7 @@ func (s *Seeder) LoadData(file string) *Seeder {
 	return s
 }
 
-// Init initialisesa DB connection
+// Init initializes DB connection
 func (s *Seeder) Init() *Seeder {
 
 	s.DB = models.Connect(conf)
@@ -56,7 +56,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
-		break
 	case "vendors":
 		var data []models.Vendor
 
@@ -86,7 +85,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
-		break
 	case "assets":
 		var data []models.Asset
 
