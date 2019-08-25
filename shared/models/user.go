@@ -38,8 +38,9 @@ type UserDB interface {
 // @params {userID} userID is an integer
 func (service *UserDbService) GetUserByID(id string) (*User, error) {
 	var user User
+	log.Println(id)
 
-	result := service.DB.First(&user, id)
+	result := service.DB.First(&user, "id = ?", id)
 
 	if result.Error != nil {
 		log.Printf("Could not find User: %v", result.Error)
