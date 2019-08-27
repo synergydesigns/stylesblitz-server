@@ -1,20 +1,3 @@
 type Query {
     user(id: String!): User
-    services(
-        name: String!,
-        latitude: Float,
-        longitude: Float,
-        radius: Float,
-        limit: Int,
-        page: Int
-    ): [Service!]
-    GetVendorsByServiceAndLocation(
-        name: String!,
-        latitude: Float,
-        longitude: Float,
-        radius: Float,
-        limit: Int,
-        page: Int
-    ): [Vendor!]
-    GetAddress(id: Int!): Address
 }

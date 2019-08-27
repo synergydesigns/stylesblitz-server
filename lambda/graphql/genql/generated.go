@@ -570,7 +570,6 @@ var parsedSchema = gqlparser.MustLoadSchema(
 `},
 	&ast.Source{Name: "lambda/graphql/schema/schema.gql", Input: `type Query {
     user(id: String!): User
-    getAsset(id: String!): Asset
 }
 `},
 	&ast.Source{Name: "lambda/graphql/schema/types/address.gql", Input: `type Address {
@@ -597,8 +596,9 @@ var parsedSchema = gqlparser.MustLoadSchema(
   size: Int
 }
 
-# extend type Query {
-# }`},
+extend type Query {
+  getAsset(id: String!): Asset
+}`},
 	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type Category {
 	ID:          ID!
 	name:        String

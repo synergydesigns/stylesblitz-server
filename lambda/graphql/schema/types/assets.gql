@@ -1,0 +1,17 @@
+type Asset {
+	ID: ID!
+	title: String
+	description: String
+	caption: String
+	alt: String
+  mediaType: String!
+  mimeType: String!
+  width: Int
+  height: Int
+  filename: String!
+  size: Int
+}
+
+extend type Query {
+  getAsset(id: String!): Asset
+}

@@ -2,8 +2,6 @@ package models
 
 import "time"
 
-// Asset defines the Asset models for graphql
-// for getting a single Asset
 type Asset struct {
 	ID          string `gorm:"primary_key"`
 	Title       string
@@ -12,8 +10,8 @@ type Asset struct {
 	Alt         string
 	MediaType   string
 	MimeType    string
-	Width       uint64
-	Height      uint64
+	Width       int
+	Height      int
 	Filename    string
 	Size        int
 	CreatedAt   time.Time
