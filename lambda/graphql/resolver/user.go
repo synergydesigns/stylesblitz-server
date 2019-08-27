@@ -8,10 +8,6 @@ import (
 	service "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
-// userResolver struct for resolving use
-type userResolver struct{ *Resolver }
-
-// User user
 func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
 	svc := ctx.Value(config.CTXKeyservices).(*service.Services)
 	user, err := svc.Datastore.UserDB.GetUserByID(id)

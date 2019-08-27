@@ -14,14 +14,32 @@ import (
 
 type JSON []byte
 
-// MarshalID tells gqlgen how to parse the ID
-func MarshalID(id uint64) graphql.Marshaler {
+func MarshalCUID(id string) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		io.WriteString(w, strconv.Quote(fmt.Sprintf("%d", id)))
+		if _, err := io.WriteString(w, strconv.Quote(string(id))); err != nil {
+			panic(err)
+		}
 	})
 }
 
-// UnmarshalID tells gqlgen how to unp-arse the ID
+func UnmarshalCUID(v interface{}) (string, error) {
+	id, ok := v.(string)
+
+	if !ok {
+		return "", fmt.Errorf("%T is not a string", v)
+	}
+
+	return id, nil
+}
+
+func MarshalID(id uint64) graphql.Marshaler {
+	return graphql.WriterFunc(func(w io.Writer) {
+		if _, err := io.WriteString(w, strconv.Quote(fmt.Sprintf("%d", id))); err != nil {
+			panic(err)
+		}
+	})
+}
+
 func UnmarshalID(v interface{}) (uint64, error) {
 	id, ok := v.(string)
 	if !ok {
@@ -31,28 +49,13 @@ func UnmarshalID(v interface{}) (uint64, error) {
 	return uint64(i), e
 }
 
-// MarshalID tells gqlgen how to parse the ID
-func MarshalCUID(id string) graphql.Marshaler {
-	return graphql.WriterFunc(func(w io.Writer) {
-		io.WriteString(w, id)
-	})
-}
-
-// UnmarshalID tells gqlgen how to unp-arse the ID
-func UnmarshalCUID(v interface{}) (string, error) {
-	id, ok := v.(string)
-	if !ok {
-		return "", fmt.Errorf("ids must be strings")
-	}
-
-	return id, nil
-}
-
 func MarshalTimestamp(t time.Time) graphql.Marshaler {
 	timestamp := t.Unix() * 1000
 
 	return graphql.WriterFunc(func(w io.Writer) {
-		io.WriteString(w, strconv.FormatInt(timestamp, 10))
+		if _, err := io.WriteString(w, strconv.FormatInt(timestamp, 10)); err != nil {
+			panic(err)
+		}
 	})
 }
 
@@ -77,7 +80,7 @@ func (j *JSON) Scan(value interface{}) error {
 	}
 	s, ok := value.([]byte)
 	if !ok {
-		errors.New("invalid scan source")
+		return errors.New("invalid scan source")
 	}
 	*j = append((*j)[0:0], s...)
 	return nil

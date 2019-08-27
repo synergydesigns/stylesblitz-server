@@ -1,7 +1,6 @@
 TEST_PACKAGES := $(shell go list ./shared/... | grep -v vendor | grep -v fakes)
 
 build:
-	# go mod tidy
 	make recompile
 
 test:

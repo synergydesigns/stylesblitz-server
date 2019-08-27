@@ -53,7 +53,7 @@ func TestGetUserByID(t *testing.T) {
 			}
 		} else {
 			if user.ID != testCase.ID {
-				t.Errorf("expected %d to equal %d", user.ID, testCase.Response.ID)
+				t.Errorf("expected %s to equal %s", user.ID, testCase.Response.ID)
 				t.Errorf("expected %s to equal %s", user.Firstname, testCase.Response.Lastname)
 				t.Errorf("expected %s to equal %s", user.Username, testCase.Response.Username)
 				t.Errorf("expected %s to equal %s", user.Password, testCase.Response.Password)

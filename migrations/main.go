@@ -26,8 +26,6 @@ func main() {
 	)
 	db, err := sql.Open("postgres", dbURL)
 
-	defer db.Close()
-
 	if err != nil {
 		log.Fatal("Error connecting to db", err)
 	}

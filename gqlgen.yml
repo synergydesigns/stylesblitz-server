@@ -27,12 +27,12 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Category
   Address:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Address
-  # Phone:
-  #   model: github.com/synergydesigns/stylesblitz-server/shared/models.Phone
+  Asset:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Asset
   ID:
     model:
-      - github.com/synergydesigns/stylesblitz-server/shared/models.ID
       - github.com/synergydesigns/stylesblitz-server/shared/models.CUID
+      - github.com/synergydesigns/stylesblitz-server/shared/models.ID
   Timestamp:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Timestamp
 
