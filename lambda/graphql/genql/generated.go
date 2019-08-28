@@ -239,7 +239,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Asset.Height(childComplexity), true
 
-	case "Asset.ID":
+	case "Asset.id":
 		if e.complexity.Asset.ID == nil {
 			break
 		}
@@ -583,7 +583,7 @@ var parsedSchema = gqlparser.MustLoadSchema(
     latitude:       Float
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/assets.gql", Input: `type Asset {
-	ID: ID!
+	id: ID!
 	title: String
 	description: String
 	caption: String
@@ -998,7 +998,7 @@ func (ec *executionContext) _Address_latitude(ctx context.Context, field graphql
 	return ec.marshalOFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Asset_ID(ctx context.Context, field graphql.CollectedField, obj *models.Asset) (ret graphql.Marshaler) {
+func (ec *executionContext) _Asset_id(ctx context.Context, field graphql.CollectedField, obj *models.Asset) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3811,8 +3811,8 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Asset")
-		case "ID":
-			out.Values[i] = ec._Asset_ID(ctx, field, obj)
+		case "id":
+			out.Values[i] = ec._Asset_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

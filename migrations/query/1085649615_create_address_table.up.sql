@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS address (
-  id INT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   country_id INT,
   state_id INT,
   zipcode NUMERIC(8),

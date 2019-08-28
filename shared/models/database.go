@@ -17,7 +17,6 @@ type DB struct {
 
 var database *gorm.DB
 
-// Connect connects to the database connection
 func Connect(conf *config.Config) *gorm.DB {
 	dbURL := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=%s", conf.DBUser,
@@ -29,8 +28,9 @@ func Connect(conf *config.Config) *gorm.DB {
 		log.Fatal(err)
 	}
 
-	// we want to cache db connection
 	database = db
+
+	db.LogMode(true)
 
 	return database
 }
@@ -43,11 +43,13 @@ func NewDB(config *config.Config) *Datastore {
 		VendorDB:  &VendorDbService{DB},
 		UserDB:    &UserDbService{DB},
 		ServiceDB: &ServiceDBService{DB},
+		AssetDB:   &AssetDBService{DB},
 	}
 }
 
 type Datastore struct {
 	VendorDB  VendorDB
 	UserDB    UserDB
+	AssetDB   AssetDB
 	ServiceDB ServiceDB
 }

@@ -22,6 +22,7 @@ type User struct {
 	ProfileImage string
 	WallImage    string
 	AddressID    int
+	Assets       []Asset `gorm:"many2many:user_assets;;"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -34,12 +35,10 @@ type UserDB interface {
 	GetUserByID(id string) (*User, error)
 }
 
-// GetUserByID gets a single user by ID
-// @params {userID} userID is an integer
 func (service *UserDbService) GetUserByID(id string) (*User, error) {
 	var user User
 
-	result := service.DB.First(&user, "id = ?", id)
+	result := service.DB.Where("id = ?", id).First((&user))
 
 	if result.Error != nil {
 		log.Printf("Could not find User: %v", result.Error)

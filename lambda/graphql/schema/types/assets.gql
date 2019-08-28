@@ -1,5 +1,5 @@
 type Asset {
-	ID: ID!
+	id: ID!
 	title: String
 	description: String
 	caption: String
