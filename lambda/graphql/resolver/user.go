@@ -17,3 +17,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*models.User, erro
 
 	return user, nil
 }
+
+func (m *mutationResolver) CreateAccount(ctx context.Context, name *string) (*models.Asset, error) {
+	panic(1)
+}

@@ -37,6 +37,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Address() AddressResolver
+	Mutation() MutationResolver
 	Query() QueryResolver
 	Vendor() VendorResolver
 }
@@ -76,6 +77,11 @@ type ComplexityRoot struct {
 		Image       func(childComplexity int) int
 		Name        func(childComplexity int) int
 		ShopID      func(childComplexity int) int
+	}
+
+	Mutation struct {
+		CreateAccount      func(childComplexity int, name *string) int
+		CreatePresignedURL func(childComplexity int, input []*models.AssetInput) int
 	}
 
 	Query struct {
@@ -121,6 +127,10 @@ type ComplexityRoot struct {
 type AddressResolver interface {
 	Country(ctx context.Context, obj *models.Address) (*string, error)
 	State(ctx context.Context, obj *models.Address) (*string, error)
+}
+type MutationResolver interface {
+	CreateAccount(ctx context.Context, name *string) (*models.Asset, error)
+	CreatePresignedURL(ctx context.Context, input []*models.AssetInput) (*string, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -315,6 +325,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Category.ShopID(childComplexity), true
+
+	case "Mutation.createAccount":
+		if e.complexity.Mutation.CreateAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateAccount(childComplexity, args["name"].(*string)), true
+
+	case "Mutation.createPresignedURL":
+		if e.complexity.Mutation.CreatePresignedURL == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPresignedURL_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput)), true
 
 	case "Query.getAsset":
 		if e.complexity.Query.GetAsset == nil {
@@ -537,7 +571,20 @@ func (e *executableSchema) Query(ctx context.Context, op *ast.OperationDefinitio
 }
 
 func (e *executableSchema) Mutation(ctx context.Context, op *ast.OperationDefinition) *graphql.Response {
-	return graphql.ErrorResponse(ctx, "mutations are not supported")
+	ec := executionContext{graphql.GetRequestContext(ctx), e}
+
+	buf := ec.RequestMiddleware(ctx, func(ctx context.Context) []byte {
+		data := ec._Mutation(ctx, op.SelectionSet)
+		var buf bytes.Buffer
+		data.MarshalGQL(&buf)
+		return buf.Bytes()
+	})
+
+	return &graphql.Response{
+		Data:       buf,
+		Errors:     ec.Errors,
+		Extensions: ec.Extensions,
+	}
 }
 
 func (e *executableSchema) Subscription(ctx context.Context, op *ast.OperationDefinition) func() *graphql.Response {
@@ -571,7 +618,10 @@ var parsedSchema = gqlparser.MustLoadSchema(
 	&ast.Source{Name: "lambda/graphql/schema/schema.gql", Input: `type Query {
     user(id: String!): User
 }
-`},
+
+type Mutation {
+    createAccount(name: String): Asset
+}`},
 	&ast.Source{Name: "lambda/graphql/schema/types/address.gql", Input: `type Address {
     ID:             ID!
     country:        String
@@ -596,8 +646,25 @@ var parsedSchema = gqlparser.MustLoadSchema(
   size: Int
 }
 
+
+input AssetInput {
+  id: ID!
+  title: String
+  alt: String
+  mediaType: String!
+  mimeType: String!
+  width: Int
+  height: Int
+  filename: String!
+  size: Int!
+}
+
 extend type Query {
   getAsset(id: String!): Asset
+}
+
+extend type Mutation {
+  createPresignedURL(input: [AssetInput]!): String
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type Category {
 	ID:          ID!
@@ -644,6 +711,34 @@ extend type Query {
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createPresignedURL_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*models.AssetInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNAssetInput2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -1558,6 +1653,88 @@ func (ec *executionContext) _Category_shopID(ctx context.Context, field graphql.
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNID2uint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createAccount_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateAccount(rctx, args["name"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Asset)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOAsset2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAsset(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createPresignedURL(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createPresignedURL_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreatePresignedURL(rctx, args["input"].([]*models.AssetInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3733,6 +3910,72 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAssetInput(ctx context.Context, obj interface{}) (models.AssetInput, error) {
+	var it models.AssetInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			it.Title, err = ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alt":
+			var err error
+			it.Alt, err = ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mediaType":
+			var err error
+			it.MediaType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mimeType":
+			var err error
+			it.MimeType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "width":
+			var err error
+			it.Width, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "height":
+			var err error
+			it.Height, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "filename":
+			var err error
+			it.Filename, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "size":
+			var err error
+			it.Size, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3883,6 +4126,36 @@ func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var mutationImplementors = []string{"Mutation"}
+
+func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, mutationImplementors)
+
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
+		Object: "Mutation",
+	})
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Mutation")
+		case "createAccount":
+			out.Values[i] = ec._Mutation_createAccount(ctx, field)
+		case "createPresignedURL":
+			out.Values[i] = ec._Mutation_createPresignedURL(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4349,6 +4622,26 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNAssetInput2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx context.Context, v interface{}) ([]*models.AssetInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AssetInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOAssetInput2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	return graphql.UnmarshalBoolean(v)
 }
@@ -4383,6 +4676,20 @@ func (ec *executionContext) unmarshalNID2uint64(ctx context.Context, v interface
 
 func (ec *executionContext) marshalNID2uint64(ctx context.Context, sel ast.SelectionSet, v uint64) graphql.Marshaler {
 	res := models.MarshalID(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	return graphql.UnmarshalInt(v)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -4705,6 +5012,18 @@ func (ec *executionContext) marshalOAsset2ᚖgithubᚗcomᚋsynergydesignsᚋsty
 		return graphql.Null
 	}
 	return ec._Asset(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAssetInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx context.Context, v interface{}) (models.AssetInput, error) {
+	return ec.unmarshalInputAssetInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOAssetInput2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx context.Context, v interface{}) (*models.AssetInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOAssetInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

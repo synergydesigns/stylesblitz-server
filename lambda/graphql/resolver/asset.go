@@ -19,3 +19,7 @@ func (r *queryResolver) GetAsset(ctx context.Context, id string) (*models.Asset,
 
 	return &asset, nil
 }
+
+func (m *mutationResolver) CreatePresignedURL(ctx context.Context, input []*models.AssetInput) (*string, error) {
+	panic(1)
+}

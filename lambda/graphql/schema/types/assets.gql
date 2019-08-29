@@ -12,6 +12,23 @@ type Asset {
   size: Int
 }
 
+
+input AssetInput {
+  id: ID!
+  title: String
+  alt: String
+  mediaType: String!
+  mimeType: String!
+  width: Int
+  height: Int
+  filename: String!
+  size: Int!
+}
+
 extend type Query {
   getAsset(id: String!): Asset
+}
+
+extend type Mutation {
+  createPresignedURL(input: [AssetInput]!): String
 }

@@ -35,6 +35,8 @@ models:
       - github.com/synergydesigns/stylesblitz-server/shared/models.ID
   Timestamp:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Timestamp
+  AssetInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.AssetInput
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go
