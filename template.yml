@@ -21,6 +21,10 @@ Resources:
           PG_SSL: disable
           MIGRATION_PATH: ../query
           APP_NAME: styleblitz
+          AWS_SECRET_ACCESS_KEY:
+          AWS_S3_BUCKET:
+          AUTHENTICATION_SECRET:
+          PASSWORD_SECRET:
       Events:
         GraphqlAPI:
           Type: Api

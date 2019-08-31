@@ -4,4 +4,5 @@ type Query {
 
 type Mutation {
     createAccount(name: String): Asset
+    login(email: String!, password: String!): String
 }

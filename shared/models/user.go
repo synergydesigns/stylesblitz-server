@@ -8,8 +8,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// User defines the user models for graphql
-// for getting a single user
 type User struct {
 	ID           string `gorm:"primary_key"`
 	Firstname    string
@@ -22,7 +20,8 @@ type User struct {
 	ProfileImage string
 	WallImage    string
 	AddressID    int
-	Assets       []Asset `gorm:"many2many:user_assets;;"`
+	Assets       []Asset `gorm:"many2many:user_assets;"`
+	Vendor       *Vendor `gorm:"foreignkey:user_id"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -33,16 +32,26 @@ type UserDbService struct {
 
 type UserDB interface {
 	GetUserByID(id string) (*User, error)
+	GetUserByEmail(email string) (*User, error)
 }
 
 func (service *UserDbService) GetUserByID(id string) (*User, error) {
 	var user User
-
-	result := service.DB.Where("id = ?", id).First((&user))
-
+	result := service.DB.Where("id = ?", id).First(&user)
 	if result.Error != nil {
 		log.Printf("Could not find User: %v", result.Error)
-		return nil, fmt.Errorf("User with id %s cannot be found", id)
+		return nil, fmt.Errorf("user with id %s cannot be found", id)
+	}
+
+	return &user, nil
+}
+
+func (service *UserDbService) GetUserByEmail(email string) (*User, error) {
+	var user User
+	result := service.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		log.Printf("Could not find User: %v", result.Error)
+		return nil, fmt.Errorf("user with email %s cannot be found", email)
 	}
 
 	return &user, nil
