@@ -28,7 +28,7 @@ func AuthMiddleware(next handlerFunc) handlerFunc {
 
 		if err != nil {
 			return events.APIGatewayProxyResponse{
-				Headers:    config.Getheaders(),
+				Headers:    config.GetHeaders(),
 				StatusCode: 401,
 				Body:       config.AuthenticationError("Authentication failed: Invalid token"),
 			}, nil

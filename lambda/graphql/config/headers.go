@@ -1,6 +1,6 @@
 package config
 
-func Getheaders() map[string]string {
+func GetHeaders() map[string]string {
 	return map[string]string{
 		"Content-Type":                 "application/json",
 		"Control-Allow-Credentials":    "true",
