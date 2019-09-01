@@ -7,24 +7,15 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/handler"
-	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/config"
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/genql"
+	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/middleware"
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/resolver"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	svc "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
-var services *svc.Services
-
-func init() {
-	services = svc.New()
-}
-
 func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	ctx = context.WithValue(ctx, config.CTXKeyservices, services)
-
 	r := httptest.NewRequest(request.HTTPMethod, request.Path, strings.NewReader(request.Body))
 
 	for k, v := range request.Headers {
@@ -50,5 +41,11 @@ func GraphqlHandler(ctx context.Context, request events.APIGatewayProxyRequest) 
 }
 
 func main() {
-	lambda.Start(GraphqlHandler)
+	lambda.Start(
+		middleware.ServiceInitialize(
+			middleware.AuthMiddleware(
+				GraphqlHandler,
+			),
+		),
+	)
 }

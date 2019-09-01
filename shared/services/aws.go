@@ -12,25 +12,43 @@ import (
 
 var conf = config.LoadConfig()
 
-// GetS3SignedURL generates a presigned url to upload files
-// to s3
-func GetS3SignedURL(key string, expire time.Duration) (string, error) {
+type AWSService struct {
+	session *session.Session
+	s3      *s3.S3
+}
+
+type AWS interface {
+	GetS3SignedURL(key string, contentType string, expire time.Duration) (string, error)
+}
+
+func NewAWS() *AWSService {
 	session, err := session.NewSession(&aws.Config{
 		Region: aws.String(conf.AWSRegion)},
 	)
 
-	// Create S3 service client
-	svc := s3.New(session)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(conf.AwsS3Bucket),
-		Key:    aws.String(key),
+	aws := AWSService{
+		session: session,
+		s3:      s3.New(session),
+	}
+
+	return &aws
+}
+
+func (service *AWSService) GetS3SignedURL(key string, contentType string, expire time.Duration) (string, error) {
+	req, _ := service.s3.GetObjectRequest(&s3.GetObjectInput{
+		Bucket:              aws.String(conf.AwsS3Bucket),
+		Key:                 aws.String(key),
+		ResponseContentType: aws.String(contentType),
 	})
 
 	urlStr, err := req.Presign(expire)
 
 	if err != nil {
-		log.Fatalf("Failed to sign request, %v", err)
+		log.Printf("Failed to sign request, %v", err)
 		return "", err
 	}
 

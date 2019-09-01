@@ -82,6 +82,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateAccount      func(childComplexity int, name *string) int
 		CreatePresignedURL func(childComplexity int, input []*models.AssetInput) int
+		Login              func(childComplexity int, email string, password string) int
 	}
 
 	Query struct {
@@ -130,6 +131,7 @@ type AddressResolver interface {
 }
 type MutationResolver interface {
 	CreateAccount(ctx context.Context, name *string) (*models.Asset, error)
+	Login(ctx context.Context, email string, password string) (*string, error)
 	CreatePresignedURL(ctx context.Context, input []*models.AssetInput) (*string, error)
 }
 type QueryResolver interface {
@@ -349,6 +351,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput)), true
+
+	case "Mutation.login":
+		if e.complexity.Mutation.Login == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Login(childComplexity, args["email"].(string), args["password"].(string)), true
 
 	case "Query.getAsset":
 		if e.complexity.Query.GetAsset == nil {
@@ -621,6 +635,7 @@ var parsedSchema = gqlparser.MustLoadSchema(
 
 type Mutation {
     createAccount(name: String): Asset
+    login(email: String!, password: String!): String
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/address.gql", Input: `type Address {
     ID:             ID!
@@ -737,6 +752,28 @@ func (ec *executionContext) field_Mutation_createPresignedURL_args(ctx context.C
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["email"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["email"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["password"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["password"] = arg1
 	return args, nil
 }
 
@@ -1694,6 +1731,47 @@ func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field g
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOAsset2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAsset(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_login_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Login(rctx, args["email"].(string), args["password"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createPresignedURL(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2685,10 +2763,10 @@ func (ec *executionContext) _Vendor_user(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(models.User)
+	res := resTmp.(*models.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOUser2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Vendor_addresses(ctx context.Context, field graphql.CollectedField, obj *models.Vendor) (ret graphql.Marshaler) {
@@ -4154,6 +4232,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createAccount":
 			out.Values[i] = ec._Mutation_createAccount(ctx, field)
+		case "login":
+			out.Values[i] = ec._Mutation_login(ctx, field)
 		case "createPresignedURL":
 			out.Values[i] = ec._Mutation_createPresignedURL(ctx, field)
 		default:

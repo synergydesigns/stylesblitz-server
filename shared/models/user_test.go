@@ -33,11 +33,11 @@ func TestGetUserByID(t *testing.T) {
 			Title:    "When a user does not exist",
 			ID:       "cjyy7054h000101lacboe5ve9",
 			Response: &models.User{},
-			Error:    "User with id 44 cannot be found",
+			Error:    "user with id cjyy7054h000101lacboe5ve9 cannot be found",
 		},
 		{
 			Title:    "When a user exist",
-			ID:       "cjyy7054h000101lacboe5vee",
+			ID:       "cjyy6zsvl000001ladldsby9z",
 			Response: &models.User{},
 			Error:    "",
 		},

@@ -7,6 +7,7 @@ import (
 
 type Services struct {
 	Datastore *models.Datastore
+	AWS       AWS
 	JWT       JWT
 }
 
@@ -15,6 +16,7 @@ func New() *Services {
 	conf := config.LoadConfig()
 	return &Services{
 		Datastore: models.NewDB(conf),
+		AWS:       NewAWS(),
 		JWT:       NewJWT(conf),
 	}
 }

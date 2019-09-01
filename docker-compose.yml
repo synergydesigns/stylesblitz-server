@@ -9,6 +9,7 @@ services:
       - .env
     volumes:
       - ./:/go/src/github.com/synergydesigns/stylesblitz-server
+      - go-cache:/go
     # restart: always
     expose:
       - 80
@@ -38,6 +39,19 @@ services:
       styleblitz_default:
     ports:
       - "5432:5432"
+  styleblitz-pg-test:
+    container_name: styleblitz-pg-test
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: styleblitz
+      POSTGRES_USER: root
+      POSTGRES_DB: styleblitz
+      FATHOM_DATABASE_SSLMODE: disable
+    networks:
+      styleblitz_default:
+    ports:
+      - "5433:5432"
 
 networks:
   styleblitz_default:
@@ -45,3 +59,4 @@ networks:
 
 volumes:
   styleblitze-pg:
+  go-cache:

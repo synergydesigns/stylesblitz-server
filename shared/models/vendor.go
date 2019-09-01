@@ -13,7 +13,7 @@ type Vendor struct {
 	Name         string
 	Description  string
 	Phone        JSON `sql:"type:json"`
-	User         User
+	User         *User
 	ProfileImage string
 	UserID       string
 	Email        string
