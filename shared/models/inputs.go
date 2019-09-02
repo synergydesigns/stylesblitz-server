@@ -11,3 +11,9 @@ type AssetInput struct {
 	Filename  string `json:"filename"`
 	Size      int    `json:"size"`
 }
+
+type AssetUploadOutput struct {
+	ID        string
+	UploadURL string
+	AssetURL  string
+}

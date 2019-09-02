@@ -37,6 +37,8 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Timestamp
   AssetInput:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.AssetInput
+  AssetUploadOutput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.AssetUploadOutput
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go
