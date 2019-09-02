@@ -12,6 +12,12 @@ type Asset {
   size: Int
 }
 
+type AssetUploadOutput {
+  ID: String!
+  uploadUrl: String!
+  assetURL: String!
+}
+
 
 input AssetInput {
   id: ID!
@@ -30,5 +36,5 @@ extend type Query {
 }
 
 extend type Mutation {
-  createPresignedURL(input: [AssetInput]!): String
+  createPresignedURL(input: [AssetInput]!): [AssetUploadOutput]
 }

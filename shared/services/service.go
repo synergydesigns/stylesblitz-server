@@ -12,11 +12,10 @@ type Services struct {
 }
 
 // New initializes all services
-func New() *Services {
-	conf := config.LoadConfig()
+func New(conf *config.Config) *Services {
 	return &Services{
 		Datastore: models.NewDB(conf),
-		AWS:       NewAWS(),
+		AWS:       NewAWS(conf),
 		JWT:       NewJWT(conf),
 	}
 }

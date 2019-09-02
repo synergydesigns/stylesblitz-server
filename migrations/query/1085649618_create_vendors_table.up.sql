@@ -11,6 +11,5 @@ CREATE TABLE IF NOT EXISTS vendors (
   updated_at TIMESTAMP,
   deleted_at TIMESTAMP,
   PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (profile_image) REFERENCES assets(id)
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );

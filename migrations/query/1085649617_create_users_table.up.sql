@@ -7,14 +7,12 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR (100) NOT NULL,
   bio VARCHAR,
   phone VARCHAR (20),
-  profile_image VARCHAR (25),
-  wall_image VARCHAR (25),
+  profile_image VARCHAR (25) NULL,
+  wall_image VARCHAR (25) NULL,
   address_id INT,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
   deleted_at TIMESTAMP,
   PRIMARY KEY (id),
-  FOREIGN KEY (profile_image) REFERENCES assets(id),
-  FOREIGN KEY (wall_image) REFERENCES assets(id) ,
   UNIQUE(phone)
 );
