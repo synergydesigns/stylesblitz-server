@@ -87,7 +87,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateAccount      func(childComplexity int, name *string) int
-		CreatePresignedURL func(childComplexity int, input []*models.AssetInput) int
+		CreatePresignedURL func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
 		Login              func(childComplexity int, email string, password string) int
 	}
 
@@ -138,7 +138,7 @@ type AddressResolver interface {
 type MutationResolver interface {
 	CreateAccount(ctx context.Context, name *string) (*models.Asset, error)
 	Login(ctx context.Context, email string, password string) (*string, error)
-	CreatePresignedURL(ctx context.Context, input []*models.AssetInput) ([]*models.AssetUploadOutput, error)
+	CreatePresignedURL(ctx context.Context, input []*models.AssetInput, owner models.AssetOwner, id *string) ([]*models.AssetUploadOutput, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -377,7 +377,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput)), true
+		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput), args["owner"].(models.AssetOwner), args["id"].(*string)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -707,12 +707,19 @@ input AssetInput {
   size: Int!
 }
 
+enum AssetOwner {
+  VENDOR
+  USER
+  SERVICE
+  CATEGORY
+}
+
 extend type Query {
   getAsset(id: String!): Asset
 }
 
 extend type Mutation {
-  createPresignedURL(input: [AssetInput]!): [AssetUploadOutput]
+  createPresignedURL(input: [AssetInput]!, owner: AssetOwner!, id: String): [AssetUploadOutput]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type Category {
 	ID:          ID!
@@ -785,6 +792,22 @@ func (ec *executionContext) field_Mutation_createPresignedURL_args(ctx context.C
 		}
 	}
 	args["input"] = arg0
+	var arg1 models.AssetOwner
+	if tmp, ok := rawArgs["owner"]; ok {
+		arg1, err = ec.unmarshalNAssetOwner2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetOwner(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["owner"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg2
 	return args, nil
 }
 
@@ -1944,7 +1967,7 @@ func (ec *executionContext) _Mutation_createPresignedURL(ctx context.Context, fi
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePresignedURL(rctx, args["input"].([]*models.AssetInput))
+		return ec.resolvers.Mutation().CreatePresignedURL(rctx, args["input"].([]*models.AssetInput), args["owner"].(models.AssetOwner), args["id"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4901,6 +4924,15 @@ func (ec *executionContext) unmarshalNAssetInput2ᚕᚖgithubᚗcomᚋsynergydes
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalNAssetOwner2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetOwner(ctx context.Context, v interface{}) (models.AssetOwner, error) {
+	var res models.AssetOwner
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNAssetOwner2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetOwner(ctx context.Context, sel ast.SelectionSet, v models.AssetOwner) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

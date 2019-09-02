@@ -23,7 +23,7 @@ func (r *queryResolver) GetAsset(ctx context.Context, id string) (*models.Asset,
 	return &asset, nil
 }
 
-func (m *mutationResolver) CreatePresignedURL(ctx context.Context, input []*models.AssetInput) ([]*models.AssetUploadOutput, error) {
+func (m *mutationResolver) CreatePresignedURL(ctx context.Context, input []*models.AssetInput, owner models.AssetOwner, id *string) ([]*models.AssetUploadOutput, error) {
 	var resp []*models.AssetUploadOutput
 
 	service := config.GetServices(ctx)
@@ -50,11 +50,6 @@ func (m *mutationResolver) CreatePresignedURL(ctx context.Context, input []*mode
 			Size:      file.Size,
 			Key:       key,
 			Url:       assetURL,
-			User: []models.User{
-				{
-					ID: user.ID,
-				},
-			},
 		}
 
 		uploadedAsset := models.AssetUploadOutput{
@@ -63,10 +58,10 @@ func (m *mutationResolver) CreatePresignedURL(ctx context.Context, input []*mode
 			UploadURL: signedURL,
 		}
 
+		asset = handleAssetOwner(asset, owner, user.ID)
 		resp = append(resp, &uploadedAsset)
 		assets = append(assets, asset)
 	}
-
 	_, err := service.Datastore.AssetDB.CreateAssets(assets)
 
 	if err != nil {
@@ -74,6 +69,25 @@ func (m *mutationResolver) CreatePresignedURL(ctx context.Context, input []*mode
 	}
 
 	return resp, nil
+}
+
+func handleAssetOwner(asset models.Asset, owner models.AssetOwner, id string) models.Asset {
+	switch owner {
+	case models.AssetOwnerUser:
+		asset.User = []models.User{
+			{
+				ID: id,
+			},
+		}
+	case models.AssetOwnerVendor:
+		break
+	case models.AssetOwnerService:
+		break
+	case models.AssetOwnerCategory:
+		break
+	}
+
+	return asset
 }
 
 func getAssetKey(id, assetId, mimeType string) string {
