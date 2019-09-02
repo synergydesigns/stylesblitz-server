@@ -2,8 +2,10 @@ type Service {
     ID: ID!
     name: String
     duration: Int
+    durationType: String
     price: Int
     status: Boolean
-    Trend: Int
-    VendorID: ID
+    Trending: Boolean
+    VendorId: ID
+    CategoryId: ID
 }

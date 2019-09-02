@@ -39,6 +39,7 @@ type ResolverRoot interface {
 	Address() AddressResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	Service() ServiceResolver
 	Vendor() VendorResolver
 }
 
@@ -77,14 +78,6 @@ type ComplexityRoot struct {
 		UploadURL func(childComplexity int) int
 	}
 
-	Category struct {
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Image       func(childComplexity int) int
-		Name        func(childComplexity int) int
-		ShopID      func(childComplexity int) int
-	}
-
 	Mutation struct {
 		CreateAccount      func(childComplexity int, name *string) int
 		CreatePresignedURL func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
@@ -97,13 +90,15 @@ type ComplexityRoot struct {
 	}
 
 	Service struct {
-		Duration func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Price    func(childComplexity int) int
-		Status   func(childComplexity int) int
-		Trend    func(childComplexity int) int
-		VendorID func(childComplexity int) int
+		CategoryID   func(childComplexity int) int
+		Duration     func(childComplexity int) int
+		DurationType func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Price        func(childComplexity int) int
+		Status       func(childComplexity int) int
+		Trending     func(childComplexity int) int
+		VendorID     func(childComplexity int) int
 	}
 
 	User struct {
@@ -129,6 +124,12 @@ type ComplexityRoot struct {
 		Services    func(childComplexity int) int
 		User        func(childComplexity int) int
 	}
+
+	VendorCategory struct {
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
 }
 
 type AddressResolver interface {
@@ -143,6 +144,11 @@ type MutationResolver interface {
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
 	GetAsset(ctx context.Context, id string) (*models.Asset, error)
+}
+type ServiceResolver interface {
+	Duration(ctx context.Context, obj *models.Service) (*int, error)
+
+	Price(ctx context.Context, obj *models.Service) (*int, error)
 }
 type VendorResolver interface {
 	Phone(ctx context.Context, obj *models.Vendor) (*string, error)
@@ -320,41 +326,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AssetUploadOutput.UploadURL(childComplexity), true
 
-	case "Category.description":
-		if e.complexity.Category.Description == nil {
-			break
-		}
-
-		return e.complexity.Category.Description(childComplexity), true
-
-	case "Category.ID":
-		if e.complexity.Category.ID == nil {
-			break
-		}
-
-		return e.complexity.Category.ID(childComplexity), true
-
-	case "Category.image":
-		if e.complexity.Category.Image == nil {
-			break
-		}
-
-		return e.complexity.Category.Image(childComplexity), true
-
-	case "Category.name":
-		if e.complexity.Category.Name == nil {
-			break
-		}
-
-		return e.complexity.Category.Name(childComplexity), true
-
-	case "Category.shopID":
-		if e.complexity.Category.ShopID == nil {
-			break
-		}
-
-		return e.complexity.Category.ShopID(childComplexity), true
-
 	case "Mutation.createAccount":
 		if e.complexity.Mutation.CreateAccount == nil {
 			break
@@ -415,12 +386,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
+	case "Service.CategoryId":
+		if e.complexity.Service.CategoryID == nil {
+			break
+		}
+
+		return e.complexity.Service.CategoryID(childComplexity), true
+
 	case "Service.duration":
 		if e.complexity.Service.Duration == nil {
 			break
 		}
 
 		return e.complexity.Service.Duration(childComplexity), true
+
+	case "Service.durationType":
+		if e.complexity.Service.DurationType == nil {
+			break
+		}
+
+		return e.complexity.Service.DurationType(childComplexity), true
 
 	case "Service.ID":
 		if e.complexity.Service.ID == nil {
@@ -450,14 +435,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Service.Status(childComplexity), true
 
-	case "Service.Trend":
-		if e.complexity.Service.Trend == nil {
+	case "Service.Trending":
+		if e.complexity.Service.Trending == nil {
 			break
 		}
 
-		return e.complexity.Service.Trend(childComplexity), true
+		return e.complexity.Service.Trending(childComplexity), true
 
-	case "Service.VendorID":
+	case "Service.VendorId":
 		if e.complexity.Service.VendorID == nil {
 			break
 		}
@@ -590,6 +575,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vendor.User(childComplexity), true
 
+	case "VendorCategory.description":
+		if e.complexity.VendorCategory.Description == nil {
+			break
+		}
+
+		return e.complexity.VendorCategory.Description(childComplexity), true
+
+	case "VendorCategory.ID":
+		if e.complexity.VendorCategory.ID == nil {
+			break
+		}
+
+		return e.complexity.VendorCategory.ID(childComplexity), true
+
+	case "VendorCategory.name":
+		if e.complexity.VendorCategory.Name == nil {
+			break
+		}
+
+		return e.complexity.VendorCategory.Name(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -721,21 +727,21 @@ extend type Query {
 extend type Mutation {
   createPresignedURL(input: [AssetInput]!, owner: AssetOwner!, id: String): [AssetUploadOutput]
 }`},
-	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type Category {
+	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type VendorCategory {
 	ID:          ID!
 	name:        String
 	description: String
-	image:       String
-	shopID:      ID!
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/service.gql", Input: `type Service {
     ID: ID!
     name: String
     duration: Int
+    durationType: String
     price: Int
     status: Boolean
-    Trend: Int
-    VendorID: ID
+    Trending: Boolean
+    VendorId: ID
+    CategoryId: ID
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/user.gql", Input: `type User {
     # ID is a unique idetifer
@@ -1683,182 +1689,6 @@ func (ec *executionContext) _AssetUploadOutput_assetURL(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Category_ID(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uint64)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2uint64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_name(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_description(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_image(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Image, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_shopID(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ShopID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uint64)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2uint64(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -2223,13 +2053,13 @@ func (ec *executionContext) _Service_duration(ctx context.Context, field graphql
 		Object:   "Service",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Duration, nil
+		return ec.resolvers.Service().Duration(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2238,13 +2068,13 @@ func (ec *executionContext) _Service_duration(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Service_price(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+func (ec *executionContext) _Service_durationType(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2263,7 +2093,7 @@ func (ec *executionContext) _Service_price(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Price, nil
+		return obj.DurationType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2272,10 +2102,44 @@ func (ec *executionContext) _Service_price(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_price(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Service",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Service().Price(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Service_status(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
@@ -2312,7 +2176,7 @@ func (ec *executionContext) _Service_status(ctx context.Context, field graphql.C
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Service_Trend(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+func (ec *executionContext) _Service_Trending(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2331,7 +2195,7 @@ func (ec *executionContext) _Service_Trend(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Trend, nil
+		return obj.Trending, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2340,13 +2204,13 @@ func (ec *executionContext) _Service_Trend(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Service_VendorID(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+func (ec *executionContext) _Service_VendorId(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2366,6 +2230,40 @@ func (ec *executionContext) _Service_VendorID(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.VendorID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_CategoryId(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Service",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CategoryID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3002,6 +2900,111 @@ func (ec *executionContext) _Vendor_services(ctx context.Context, field graphql.
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOService2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorCategory_ID(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "VendorCategory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorCategory_name(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "VendorCategory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorCategory_description(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "VendorCategory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -4381,44 +4384,6 @@ func (ec *executionContext) _AssetUploadOutput(ctx context.Context, sel ast.Sele
 	return out
 }
 
-var categoryImplementors = []string{"Category"}
-
-func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *models.Category) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.RequestContext, sel, categoryImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Category")
-		case "ID":
-			out.Values[i] = ec._Category_ID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Category_name(ctx, field, obj)
-		case "description":
-			out.Values[i] = ec._Category_description(ctx, field, obj)
-		case "image":
-			out.Values[i] = ec._Category_image(ctx, field, obj)
-		case "shopID":
-			out.Values[i] = ec._Category_shopID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -4517,20 +4482,42 @@ func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, 
 		case "ID":
 			out.Values[i] = ec._Service_ID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Service_name(ctx, field, obj)
 		case "duration":
-			out.Values[i] = ec._Service_duration(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Service_duration(ctx, field, obj)
+				return res
+			})
+		case "durationType":
+			out.Values[i] = ec._Service_durationType(ctx, field, obj)
 		case "price":
-			out.Values[i] = ec._Service_price(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Service_price(ctx, field, obj)
+				return res
+			})
 		case "status":
 			out.Values[i] = ec._Service_status(ctx, field, obj)
-		case "Trend":
-			out.Values[i] = ec._Service_Trend(ctx, field, obj)
-		case "VendorID":
-			out.Values[i] = ec._Service_VendorID(ctx, field, obj)
+		case "Trending":
+			out.Values[i] = ec._Service_Trending(ctx, field, obj)
+		case "VendorId":
+			out.Values[i] = ec._Service_VendorId(ctx, field, obj)
+		case "CategoryId":
+			out.Values[i] = ec._Service_CategoryId(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4650,6 +4637,37 @@ func (ec *executionContext) _Vendor(ctx context.Context, sel ast.SelectionSet, o
 				res = ec._Vendor_services(ctx, field, obj)
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var vendorCategoryImplementors = []string{"VendorCategory"}
+
+func (ec *executionContext) _VendorCategory(ctx context.Context, sel ast.SelectionSet, obj *models.VendorCategory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, vendorCategoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("VendorCategory")
+		case "ID":
+			out.Values[i] = ec._VendorCategory_ID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._VendorCategory_name(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._VendorCategory_description(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5401,6 +5419,14 @@ func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.S
 	return graphql.MarshalFloat(v)
 }
 
+func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
+	return models.UnmarshalCUID(v)
+}
+
+func (ec *executionContext) marshalOID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return models.MarshalCUID(v)
+}
+
 func (ec *executionContext) unmarshalOID2uint64(ctx context.Context, v interface{}) (uint64, error) {
 	return models.UnmarshalID(v)
 }
@@ -5417,12 +5443,19 @@ func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.Selecti
 	return graphql.MarshalInt(v)
 }
 
-func (ec *executionContext) unmarshalOInt2int32(ctx context.Context, v interface{}) (int32, error) {
-	return graphql.UnmarshalInt32(v)
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOInt2int(ctx, v)
+	return &res, err
 }
 
-func (ec *executionContext) marshalOInt2int32(ctx context.Context, sel ast.SelectionSet, v int32) graphql.Marshaler {
-	return graphql.MarshalInt32(v)
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
 func (ec *executionContext) marshalOService2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx context.Context, sel ast.SelectionSet, v models.Service) graphql.Marshaler {

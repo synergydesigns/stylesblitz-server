@@ -23,8 +23,8 @@ models:
       - github.com/synergydesigns/stylesblitz-server/shared/models.Phone
   Service:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Service
-  Category:
-    model: github.com/synergydesigns/stylesblitz-server/shared/models.Category
+  VendorCategory:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.VendorCategory
   Address:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Address
   Asset:

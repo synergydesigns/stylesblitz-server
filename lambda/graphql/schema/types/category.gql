@@ -1,7 +1,5 @@
-type Category {
+type VendorCategory {
 	ID:          ID!
 	name:        String
 	description: String
-	image:       String
-	shopID:      ID!
 }
