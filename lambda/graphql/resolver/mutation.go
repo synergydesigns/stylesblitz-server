@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/synergydesigns/stylesblitz-server/lambda/graphql/config"
+	"github.com/synergydesigns/stylesblitz-server/shared/models"
 	service "github.com/synergydesigns/stylesblitz-server/shared/services"
 )
 
@@ -30,4 +31,14 @@ func (mutation mutationResolver) Login(ctx context.Context, email string, passwo
 	}
 
 	return &token, nil
+}
+
+func (mutation mutationResolver) CreateVendorCategory(ctx context.Context, input models.VendorCategoryInput) (*models.VendorCategory, error) {
+	panic(0)
+}
+func (mutation mutationResolver) UpdateVendorCategory(ctx context.Context, input models.VendorCategoryInput, id *int) (*models.VendorCategory, error) {
+	panic(0)
+}
+func (mutation mutationResolver) DeleteVendorCategory(ctx context.Context, input models.VendorCategoryInput, id *int) (*models.VendorCategory, error) {
+	panic(0)
 }

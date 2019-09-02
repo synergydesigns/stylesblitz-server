@@ -3,3 +3,18 @@ type VendorCategory {
 	name:        String
 	description: String
 }
+
+input VendorCategoryInput {
+	name: String!
+	description: String
+}
+
+extend type Mutation {
+	createVendorCategory(input: VendorCategoryInput!): VendorCategory
+	updateVendorCategory(input: VendorCategoryInput!, id: Int): VendorCategory
+	deleteVendorCategory(input: VendorCategoryInput!, id: Int): VendorCategory
+}
+
+extend type Query {
+	getAllCategories(vendorId: String): [VendorCategory]
+}
