@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/lucsky/cuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -14,13 +16,13 @@ type User struct {
 	Lastname     string
 	Username     string
 	Email        string
-	Password     string
+	Password     string `json:"password,omitempty"`
 	Bio          string
 	Phone        string
 	ProfileImage string
 	WallImage    string
 	AddressID    int
-	Assets       []Asset `gorm:"many2many:user_assets;"`
+	Assets       []*Asset `gorm:"many2many:user_assets;"`
 	Vendor       *Vendor `gorm:"foreignkey:user_id"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -33,6 +35,17 @@ type UserDbService struct {
 type UserDB interface {
 	GetUserByID(id string) (*User, error)
 	GetUserByEmail(email string) (*User, error)
+}
+
+func (user *User) BeforeCreate(scope *gorm.Scope) error {
+	if user.ID == "" {
+		scope.SetColumn("ID", cuid.New())
+	}
+
+	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	scope.SetColumn("Password", password)
+
+  return nil
 }
 
 func (service *UserDbService) GetUserByID(id string) (*User, error) {

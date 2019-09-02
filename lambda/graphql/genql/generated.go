@@ -71,6 +71,12 @@ type ComplexityRoot struct {
 		Width       func(childComplexity int) int
 	}
 
+	AssetUploadOutput struct {
+		AssetURL  func(childComplexity int) int
+		ID        func(childComplexity int) int
+		UploadURL func(childComplexity int) int
+	}
+
 	Category struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -132,7 +138,7 @@ type AddressResolver interface {
 type MutationResolver interface {
 	CreateAccount(ctx context.Context, name *string) (*models.Asset, error)
 	Login(ctx context.Context, email string, password string) (*string, error)
-	CreatePresignedURL(ctx context.Context, input []*models.AssetInput) (*string, error)
+	CreatePresignedURL(ctx context.Context, input []*models.AssetInput) ([]*models.AssetUploadOutput, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -292,6 +298,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Asset.Width(childComplexity), true
+
+	case "AssetUploadOutput.assetURL":
+		if e.complexity.AssetUploadOutput.AssetURL == nil {
+			break
+		}
+
+		return e.complexity.AssetUploadOutput.AssetURL(childComplexity), true
+
+	case "AssetUploadOutput.ID":
+		if e.complexity.AssetUploadOutput.ID == nil {
+			break
+		}
+
+		return e.complexity.AssetUploadOutput.ID(childComplexity), true
+
+	case "AssetUploadOutput.uploadUrl":
+		if e.complexity.AssetUploadOutput.UploadURL == nil {
+			break
+		}
+
+		return e.complexity.AssetUploadOutput.UploadURL(childComplexity), true
 
 	case "Category.description":
 		if e.complexity.Category.Description == nil {
@@ -661,6 +688,12 @@ type Mutation {
   size: Int
 }
 
+type AssetUploadOutput {
+  ID: String!
+  uploadUrl: String!
+  assetURL: String!
+}
+
 
 input AssetInput {
   id: ID!
@@ -679,7 +712,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  createPresignedURL(input: [AssetInput]!): String
+  createPresignedURL(input: [AssetInput]!): [AssetUploadOutput]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type Category {
 	ID:          ID!
@@ -1516,6 +1549,117 @@ func (ec *executionContext) _Asset_size(ctx context.Context, field graphql.Colle
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _AssetUploadOutput_ID(ctx context.Context, field graphql.CollectedField, obj *models.AssetUploadOutput) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "AssetUploadOutput",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AssetUploadOutput_uploadUrl(ctx context.Context, field graphql.CollectedField, obj *models.AssetUploadOutput) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "AssetUploadOutput",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UploadURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AssetUploadOutput_assetURL(ctx context.Context, field graphql.CollectedField, obj *models.AssetUploadOutput) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "AssetUploadOutput",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AssetURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Category_ID(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -1809,10 +1953,10 @@ func (ec *executionContext) _Mutation_createPresignedURL(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.([]*models.AssetUploadOutput)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOAssetUploadOutput2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetUploadOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4177,6 +4321,43 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
+var assetUploadOutputImplementors = []string{"AssetUploadOutput"}
+
+func (ec *executionContext) _AssetUploadOutput(ctx context.Context, sel ast.SelectionSet, obj *models.AssetUploadOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, assetUploadOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AssetUploadOutput")
+		case "ID":
+			out.Values[i] = ec._AssetUploadOutput_ID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "uploadUrl":
+			out.Values[i] = ec._AssetUploadOutput_uploadUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "assetURL":
+			out.Values[i] = ec._AssetUploadOutput_assetURL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var categoryImplementors = []string{"Category"}
 
 func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *models.Category) graphql.Marshaler {
@@ -5104,6 +5285,57 @@ func (ec *executionContext) unmarshalOAssetInput2ᚖgithubᚗcomᚋsynergydesign
 	}
 	res, err := ec.unmarshalOAssetInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetInput(ctx, v)
 	return &res, err
+}
+
+func (ec *executionContext) marshalOAssetUploadOutput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetUploadOutput(ctx context.Context, sel ast.SelectionSet, v models.AssetUploadOutput) graphql.Marshaler {
+	return ec._AssetUploadOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOAssetUploadOutput2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetUploadOutput(ctx context.Context, sel ast.SelectionSet, v []*models.AssetUploadOutput) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOAssetUploadOutput2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetUploadOutput(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOAssetUploadOutput2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetUploadOutput(ctx context.Context, sel ast.SelectionSet, v *models.AssetUploadOutput) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._AssetUploadOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

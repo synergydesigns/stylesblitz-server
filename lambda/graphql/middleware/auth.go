@@ -24,7 +24,7 @@ func AuthMiddleware(next handlerFunc) handlerFunc {
 			return next(ctx, request)
 		}
 
-		user, err := svc.JWT.DecodeToken(token[0])
+		user, err := svc.JWT.DecodeToken(token[1])
 
 		if err != nil {
 			return events.APIGatewayProxyResponse{
