@@ -35,21 +35,22 @@ func Connect(conf *config.Config) *gorm.DB {
 	return database
 }
 
-// NewDB initializes the database instance
 func NewDB(config *config.Config) *Datastore {
 	DB := Connect(config)
 
 	return &Datastore{
-		VendorDB:  &VendorDbService{DB},
-		UserDB:    &UserDbService{DB},
-		ServiceDB: &ServiceDBService{DB},
-		AssetDB:   &AssetDBService{DB},
+		VendorDB:         &VendorDbService{DB},
+		UserDB:           &UserDbService{DB},
+		ServiceDB:        &ServiceDBService{DB},
+		AssetDB:          &AssetDBService{DB},
+		VendorCategoryDB: &VendorCategoryDBService{DB},
 	}
 }
 
 type Datastore struct {
-	VendorDB  VendorDB
-	UserDB    UserDB
-	AssetDB   AssetDB
-	ServiceDB ServiceDB
+	VendorDB         VendorDB
+	UserDB           UserDB
+	AssetDB          AssetDB
+	ServiceDB        ServiceDB
+	VendorCategoryDB VendorCategoryDB
 }

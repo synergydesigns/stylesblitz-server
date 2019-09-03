@@ -3240,10 +3240,10 @@ func (ec *executionContext) _VendorCategory_ID(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uint64)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2uint64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _VendorCategory_name(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
