@@ -13,7 +13,6 @@ import (
 var JWT *service.JWTService = service.NewJWT(config.LoadConfig())
 
 func TestGenerateAuthToken(t *testing.T) {
-	//GenerateAuthToken takes a userModel and return a string
 	testCase := []struct {
 		Title string
 		User  models.User

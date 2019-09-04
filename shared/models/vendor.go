@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/lucsky/cuid"
 )
 
 type Vendor struct {
@@ -31,6 +32,13 @@ type VendorDbService struct {
 
 type VendorDB interface {
 	GetVendorsByServiceAndLocation(serviceName string, lat, long, radius float64) ([]*Vendor, error)
+}
+
+func (vendor *Vendor) BeforeCreate(scope *gorm.Scope) error {
+	if vendor.ID == "" {
+		scope.SetColumn("ID", cuid.New())
+	}
+	return nil
 }
 
 func (service *VendorDbService) GetVendorsByServiceAndLocation(serviceName string, lat float64, long float64, radius float64) ([]*Vendor, error) {

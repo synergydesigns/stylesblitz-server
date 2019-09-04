@@ -113,7 +113,7 @@ func (s *Seeder) Clean() *Seeder {
 	for _, value := range s.Tables {
 
 		if s.DB.HasTable(value) {
-			s.DB.Exec("TRUNCATE TABLE " + value)
+			s.DB.Exec("TRUNCATE TABLE " + value + " CASCADE")
 		}
 	}
 	return s
@@ -154,4 +154,47 @@ func SeedVendorData() {
 		seed.LoadData(schema)
 		seed.Seed(schema)
 	}
+}
+
+func (s *Seeder) SeedUser(id string, username string, email string, phone string) models.User {
+	user := models.User{
+		ID:        id,
+		Firstname: "john",
+		Lastname:  "doe",
+		Username:  username,
+		Email:     email,
+		Password:  "test1234",
+		Phone:     phone,
+	}
+
+	s.DB.Create(&user)
+
+	return user
+}
+
+func (s *Seeder) SeedVendor(id string, userID, name string) models.Vendor {
+	vendor := models.Vendor{
+		ID:     id,
+		Name:   name,
+		UserID: userID,
+	}
+
+	s.DB.Create(&vendor)
+
+	return vendor
+}
+
+func (s *Seeder) VendorCategory(id uint64, vendorID, name string) models.VendorCategory {
+	category := models.VendorCategory{
+		Name:     name,
+		VendorID: vendorID,
+	}
+
+	if id != 0 {
+		category.ID = id
+	}
+
+	s.DB.Create(&category)
+
+	return category
 }
