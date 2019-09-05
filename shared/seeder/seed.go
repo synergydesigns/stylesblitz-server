@@ -111,11 +111,17 @@ func (s *Seeder) Seed(schema string) *Seeder {
 
 func (s *Seeder) Clean() *Seeder {
 	for _, value := range s.Tables {
-
-		if s.DB.HasTable(value) {
-			s.DB.Exec("TRUNCATE TABLE " + value + " CASCADE")
-		}
+		s.Truncate(value)
 	}
+
+	return s
+}
+
+func (s *Seeder) Truncate(table string) *Seeder {
+	if s.DB.HasTable(table) {
+		s.DB.Exec("TRUNCATE TABLE " + table + " CASCADE")
+	}
+
 	return s
 }
 
