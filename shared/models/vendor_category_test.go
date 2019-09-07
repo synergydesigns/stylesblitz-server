@@ -170,5 +170,31 @@ func TestUpdateCategory(t *testing.T) {
 		assert.Equal(t, test.ExpectedName, category.Name, test.Title)
 		assert.Equal(t, test.ExpectedDescription, category.Description, test.Title)
 	}
+
+	seed.Truncate("categories")
+}
+
+func TestDeleteCategory(t *testing.T) {
+	category := seed.VendorCategory(1, vendor.ID, "braiding")
+
+	testCases := []struct {
+		Title      string
+		CategoryID uint64
+	}{
+		{
+			Title:      "Should delete category",
+			CategoryID: category.ID,
+		},
+	}
+
+	for _, test := range testCases {
+		deleted, err := vendorService.DeleteCategory(test.CategoryID)
+		var deletedCategory models.VendorCategory
+		vendorService.DB.Find(&deletedCategory, "id = ?", test.CategoryID)
+
+		assert.Nil(t, err)
+		assert.True(t, deleted, test.Title)
+		assert.Equal(t, deletedCategory.ID, uint64(0), test.Title)
+	}
 	seed.Clean()
 }

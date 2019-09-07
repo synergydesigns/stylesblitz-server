@@ -87,3 +87,16 @@ func (service *VendorCategoryDBService) UpdateCategory(id uint64, vendorID strin
 
 	return category, nil
 }
+
+func (service *VendorCategoryDBService) DeleteCategory(id uint64) (bool, error) {
+	category := VendorCategory{}
+
+	result := service.DB.Delete(&category, "id = ?", id)
+
+	if result.Error != nil {
+		log.Printf("An error occurred deleting category %v", result.Error.Error())
+		return false, fmt.Errorf("An error occurred deleting category %s", result.Error.Error())
+	}
+
+	return true, nil
+}
