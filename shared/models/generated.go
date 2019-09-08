@@ -8,6 +8,25 @@ import (
 	"strconv"
 )
 
+type ServiceInput struct {
+	Name         string       `json:"name"`
+	Duration     int          `json:"Duration"`
+	DurationType DurationType `json:"DurationType"`
+	Price        *float64     `json:"price"`
+	Trending     *bool        `json:"trending"`
+	VendorID     string       `json:"VendorId"`
+	CategoryID   int          `json:"CategoryId"`
+}
+
+type ServiceInputUpdate struct {
+	Name         *string       `json:"name"`
+	Duration     *int          `json:"Duration"`
+	DurationType *DurationType `json:"DurationType"`
+	Price        *float64      `json:"price"`
+	Trending     *bool         `json:"trending"`
+	CategoryID   *int          `json:"CategoryId"`
+}
+
 type AssetOwner string
 
 const (
@@ -50,5 +69,48 @@ func (e *AssetOwner) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AssetOwner) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type DurationType string
+
+const (
+	DurationTypeDays  DurationType = "days"
+	DurationTypeHours DurationType = "hours"
+	DurationTypeMins  DurationType = "mins"
+)
+
+var AllDurationType = []DurationType{
+	DurationTypeDays,
+	DurationTypeHours,
+	DurationTypeMins,
+}
+
+func (e DurationType) IsValid() bool {
+	switch e {
+	case DurationTypeDays, DurationTypeHours, DurationTypeMins:
+		return true
+	}
+	return false
+}
+
+func (e DurationType) String() string {
+	return string(e)
+}
+
+func (e *DurationType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DurationType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DurationType", str)
+	}
+	return nil
+}
+
+func (e DurationType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

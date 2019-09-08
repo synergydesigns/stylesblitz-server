@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"strings"
 )
 
@@ -16,6 +17,18 @@ func StringToPointer(value string) *string {
 	return &value
 }
 
+func BoolToPointer(value bool) *bool {
+	return &value
+}
+
+func IntToPointer(value int) *int {
+	return &value
+}
+
+func Float64ToPointer(value float64) *float64 {
+	return &value
+}
+
 func HasRecord(err error) bool {
 	index := strings.Index(err.Error(), "violates unique constraint")
 
@@ -26,4 +39,13 @@ func ForeignKeyNotExist(err error) bool {
 	index := strings.Index(err.Error(), "violates foreign key constraint")
 
 	return index > 0
+}
+
+func StructToInterface(value interface{}) map[string]interface{} {
+	in := make(map[string]interface{})
+
+	updateData, _ := json.Marshal(value)
+	json.Unmarshal(updateData, &in)
+
+	return in
 }

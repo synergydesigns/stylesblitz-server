@@ -204,3 +204,23 @@ func (s *Seeder) VendorCategory(id uint64, vendorID, name string) models.VendorC
 
 	return category
 }
+
+func (s *Seeder) VendorService(id uint64, serviceInput models.ServiceInput) models.Service {
+	newService := models.Service{
+		Name:         serviceInput.Name,
+		Price:        *serviceInput.Price,
+		Duration:     uint(serviceInput.Duration),
+		DurationType: serviceInput.DurationType.String(),
+		Trending:     *serviceInput.Trending,
+		CategoryID:   uint64(serviceInput.CategoryID),
+		VendorID:     serviceInput.VendorID,
+	}
+
+	if id != 0 {
+		newService.ID = id
+	}
+
+	s.DB.Create(&newService)
+
+	return newService
+}

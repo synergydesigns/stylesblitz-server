@@ -100,7 +100,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Price        func(childComplexity int) int
-		Status       func(childComplexity int) int
 		Trending     func(childComplexity int) int
 		VendorID     func(childComplexity int) int
 	}
@@ -155,8 +154,6 @@ type QueryResolver interface {
 }
 type ServiceResolver interface {
 	Duration(ctx context.Context, obj *models.Service) (*int, error)
-
-	Price(ctx context.Context, obj *models.Service) (*int, error)
 }
 type VendorResolver interface {
 	Phone(ctx context.Context, obj *models.Vendor) (*string, error)
@@ -484,13 +481,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Service.Price(childComplexity), true
 
-	case "Service.status":
-		if e.complexity.Service.Status == nil {
-			break
-		}
-
-		return e.complexity.Service.Status(childComplexity), true
-
 	case "Service.Trending":
 		if e.complexity.Service.Trending == nil {
 			break
@@ -808,11 +798,35 @@ extend type Query {
     name: String
     duration: Int
     durationType: String
-    price: Int
-    status: Boolean
+    price: Float
     Trending: Boolean
     VendorId: ID
     CategoryId: ID
+}
+
+enum DurationType {
+  days
+  hours
+  mins
+}
+
+input ServiceInput {
+    name: String!
+    Duration: Int!
+    DurationType: DurationType!
+    price: Float
+    trending: Boolean
+    VendorId: String!
+    CategoryId: Int!
+}
+
+input ServiceInputUpdate {
+    name: String
+    Duration: Int
+    DurationType: DurationType
+    price: Float
+    trending: Boolean
+    CategoryId: Int
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/user.gql", Input: `type User {
     # ID is a unique idetifer
@@ -2428,47 +2442,13 @@ func (ec *executionContext) _Service_price(ctx context.Context, field graphql.Co
 		Object:   "Service",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Price(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Service_status(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Service",
-		Field:    field,
-		Args:     nil,
 		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
+		return obj.Price, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2477,10 +2457,10 @@ func (ec *executionContext) _Service_status(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(float64)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Service_Trending(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
@@ -4531,6 +4511,108 @@ func (ec *executionContext) unmarshalInputAssetInput(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputServiceInput(ctx context.Context, obj interface{}) (models.ServiceInput, error) {
+	var it models.ServiceInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Duration":
+			var err error
+			it.Duration, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "DurationType":
+			var err error
+			it.DurationType, err = ec.unmarshalNDurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "price":
+			var err error
+			it.Price, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trending":
+			var err error
+			it.Trending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "VendorId":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "CategoryId":
+			var err error
+			it.CategoryID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputServiceInputUpdate(ctx context.Context, obj interface{}) (models.ServiceInputUpdate, error) {
+	var it models.ServiceInputUpdate
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Duration":
+			var err error
+			it.Duration, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "DurationType":
+			var err error
+			it.DurationType, err = ec.unmarshalODurationType2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "price":
+			var err error
+			it.Price, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trending":
+			var err error
+			it.Trending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "CategoryId":
+			var err error
+			it.CategoryID, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Context, obj interface{}) (models.VendorCategoryInput, error) {
 	var it models.VendorCategoryInput
 	var asMap = obj.(map[string]interface{})
@@ -4848,18 +4930,7 @@ func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, 
 		case "durationType":
 			out.Values[i] = ec._Service_durationType(ctx, field, obj)
 		case "price":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Service_price(ctx, field, obj)
-				return res
-			})
-		case "status":
-			out.Values[i] = ec._Service_status(ctx, field, obj)
+			out.Values[i] = ec._Service_price(ctx, field, obj)
 		case "Trending":
 			out.Values[i] = ec._Service_Trending(ctx, field, obj)
 		case "VendorId":
@@ -5315,6 +5386,15 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNDurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, v interface{}) (models.DurationType, error) {
+	var res models.DurationType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNDurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, sel ast.SelectionSet, v models.DurationType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	return models.UnmarshalCUID(v)
 }
@@ -5763,12 +5843,51 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
+func (ec *executionContext) unmarshalODurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, v interface{}) (models.DurationType, error) {
+	var res models.DurationType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalODurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, sel ast.SelectionSet, v models.DurationType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalODurationType2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, v interface{}) (*models.DurationType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalODurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalODurationType2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, sel ast.SelectionSet, v *models.DurationType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	return graphql.UnmarshalFloat(v)
 }
 
 func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
 	return graphql.MarshalFloat(v)
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOFloat2float64(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOFloat2float64(ctx, sel, *v)
 }
 
 func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {

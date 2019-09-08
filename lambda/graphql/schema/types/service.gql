@@ -3,9 +3,33 @@ type Service {
     name: String
     duration: Int
     durationType: String
-    price: Int
-    status: Boolean
+    price: Float
     Trending: Boolean
     VendorId: ID
     CategoryId: ID
+}
+
+enum DurationType {
+  days
+  hours
+  mins
+}
+
+input ServiceInput {
+    name: String!
+    Duration: Int!
+    DurationType: DurationType!
+    price: Float
+    trending: Boolean
+    VendorId: String!
+    CategoryId: Int!
+}
+
+input ServiceInputUpdate {
+    name: String
+    Duration: Int
+    DurationType: DurationType
+    price: Float
+    trending: Boolean
+    CategoryId: Int
 }
