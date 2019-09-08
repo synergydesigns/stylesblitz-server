@@ -49,3 +49,9 @@ func StructToInterface(value interface{}) map[string]interface{} {
 
 	return in
 }
+
+func HasValue(phrase, value string) bool {
+	index := strings.Index(phrase, value)
+
+	return index > 0
+}

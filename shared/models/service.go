@@ -81,21 +81,27 @@ func (service *ServiceDBService) CreateService(serviceInput ServiceInput) (Servi
 
 	if result.Error != nil {
 		log.Printf("An error occurred creating category %v", result.Error.Error())
-
 		if utils.HasRecord(result.Error) {
-			return newService, fmt.Errorf("Service with name %d already exit", serviceInput.CategoryID)
+			return newService, fmt.Errorf("service with name %s already exit", serviceInput.Name)
 		}
 
 		if utils.ForeignKeyNotExist(result.Error) {
-			return newService, fmt.Errorf("Vendor with id %s does not exit", serviceInput.VendorID)
+			if utils.HasValue(result.Error.Error(), "vendor") {
+				return newService, fmt.Errorf("vendor with id %s does not exit", serviceInput.VendorID)
+			}
+
+			return newService, fmt.Errorf("category with id %d does not exit", serviceInput.CategoryID)
 		}
 
-		return newService, fmt.Errorf("An error occurred creating category %v", result.Error)
+		return newService, fmt.Errorf("an error occurred creating category %s", result.Error.Error())
 	}
 
 	return newService, nil
 }
 
+// @TODO we need to decide how to handle updating categoryID for for vendor
+// users should not be able to set service to a categoryID they did not create
+// that should either be handle here or on the resolver level
 func (service *ServiceDBService) UpdateService(id uint64, serviceInput ServiceInputUpdate) (bool, error) {
 	vendorService := Service{}
 	fields := make(map[string]interface{})
