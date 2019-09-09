@@ -21,4 +21,5 @@ type AssetUploadOutput struct {
 type VendorCategoryInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
+	VendorID    string  `json:"vendor_id"`
 }

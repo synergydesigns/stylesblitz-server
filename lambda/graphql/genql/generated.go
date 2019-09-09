@@ -82,9 +82,9 @@ type ComplexityRoot struct {
 		CreateAccount        func(childComplexity int, name *string) int
 		CreatePresignedURL   func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
 		CreateVendorCategory func(childComplexity int, input models.VendorCategoryInput) int
-		DeleteVendorCategory func(childComplexity int, input models.VendorCategoryInput, id *int) int
+		DeleteVendorCategory func(childComplexity int, categoryID int) int
 		Login                func(childComplexity int, email string, password string) int
-		UpdateVendorCategory func(childComplexity int, input models.VendorCategoryInput, id *int) int
+		UpdateVendorCategory func(childComplexity int, input models.VendorCategoryInputUpdate, categoryID int) int
 	}
 
 	Query struct {
@@ -144,8 +144,8 @@ type MutationResolver interface {
 	Login(ctx context.Context, email string, password string) (*string, error)
 	CreatePresignedURL(ctx context.Context, input []*models.AssetInput, owner models.AssetOwner, id *string) ([]*models.AssetUploadOutput, error)
 	CreateVendorCategory(ctx context.Context, input models.VendorCategoryInput) (*models.VendorCategory, error)
-	UpdateVendorCategory(ctx context.Context, input models.VendorCategoryInput, id *int) (*models.VendorCategory, error)
-	DeleteVendorCategory(ctx context.Context, input models.VendorCategoryInput, id *int) (*models.VendorCategory, error)
+	UpdateVendorCategory(ctx context.Context, input models.VendorCategoryInputUpdate, categoryID int) (*models.VendorCategory, error)
+	DeleteVendorCategory(ctx context.Context, categoryID int) (*bool, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -377,7 +377,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["input"].(models.VendorCategoryInput), args["id"].(*int)), true
+		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["category_id"].(int)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -401,7 +401,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInput), args["id"].(*int)), true
+		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int)), true
 
 	case "Query.getAllCategories":
 		if e.complexity.Query.GetAllCategories == nil {
@@ -782,12 +782,19 @@ extend type Mutation {
 input VendorCategoryInput {
 	name: String!
 	description: String
+	vendor_id: String!
+}
+
+input VendorCategoryInputUpdate {
+	vendor_id: String!
+	name: String
+	description: String
 }
 
 extend type Mutation {
 	createVendorCategory(input: VendorCategoryInput!): VendorCategory
-	updateVendorCategory(input: VendorCategoryInput!, id: Int): VendorCategory
-	deleteVendorCategory(input: VendorCategoryInput!, id: Int): VendorCategory
+	updateVendorCategory(input: VendorCategoryInputUpdate!, category_id: Int!): VendorCategory
+	deleteVendorCategory(category_id: Int!): Boolean
 }
 
 extend type Query {
@@ -919,22 +926,14 @@ func (ec *executionContext) field_Mutation_createVendorCategory_args(ctx context
 func (ec *executionContext) field_Mutation_deleteVendorCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.VendorCategoryInput
-	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNVendorCategoryInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInput(ctx, tmp)
+	var arg0 int
+	if tmp, ok := rawArgs["category_id"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["id"]; ok {
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg1
+	args["category_id"] = arg0
 	return args, nil
 }
 
@@ -963,22 +962,22 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Mutation_updateVendorCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.VendorCategoryInput
+	var arg0 models.VendorCategoryInputUpdate
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNVendorCategoryInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInput(ctx, tmp)
+		arg0, err = ec.unmarshalNVendorCategoryInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInputUpdate(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["input"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["id"]; ok {
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+	var arg1 int
+	if tmp, ok := rawArgs["category_id"]; ok {
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg1
+	args["category_id"] = arg1
 	return args, nil
 }
 
@@ -2036,7 +2035,7 @@ func (ec *executionContext) _Mutation_updateVendorCategory(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInput), args["id"].(*int))
+		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2077,7 +2076,7 @@ func (ec *executionContext) _Mutation_deleteVendorCategory(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["input"].(models.VendorCategoryInput), args["id"].(*int))
+		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["category_id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2086,10 +2085,10 @@ func (ec *executionContext) _Mutation_deleteVendorCategory(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.VendorCategory)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOVendorCategory2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4631,6 +4630,42 @@ func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
+		case "vendor_id":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputVendorCategoryInputUpdate(ctx context.Context, obj interface{}) (models.VendorCategoryInputUpdate, error) {
+	var it models.VendorCategoryInputUpdate
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "vendor_id":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -5467,6 +5502,10 @@ func (ec *executionContext) marshalNTimestamp2timeᚐTime(ctx context.Context, s
 
 func (ec *executionContext) unmarshalNVendorCategoryInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInput(ctx context.Context, v interface{}) (models.VendorCategoryInput, error) {
 	return ec.unmarshalInputVendorCategoryInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNVendorCategoryInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInputUpdate(ctx context.Context, v interface{}) (models.VendorCategoryInputUpdate, error) {
+	return ec.unmarshalInputVendorCategoryInputUpdate(ctx, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

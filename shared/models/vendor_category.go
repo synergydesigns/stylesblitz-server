@@ -21,15 +21,18 @@ type VendorCategoryDBService struct {
 }
 
 type VendorCategoryDB interface {
-	GetAllCategoriesByVendorID(vendorID string) ([]VendorCategory, error)
+	GetAllCategoriesByVendorID(vendorID string) ([]*VendorCategory, error)
+	CreateCategory(vendorID, name, description string) (VendorCategory, error)
+	UpdateCategory(id uint64, vendorID string, name, description *string) (VendorCategory, error)
+	DeleteCategory(id uint64) (bool, error)
 }
 
 func (VendorCategory) TableName() string {
 	return "categories"
 }
 
-func (service *VendorCategoryDBService) GetAllCategoriesByVendorID(vendorID string) ([]VendorCategory, error) {
-	var categories []VendorCategory
+func (service *VendorCategoryDBService) GetAllCategoriesByVendorID(vendorID string) ([]*VendorCategory, error) {
+	var categories []*VendorCategory
 
 	result := service.DB.Where("vendor_id = ?", vendorID).Limit(20).Find(&categories)
 
@@ -84,6 +87,8 @@ func (service *VendorCategoryDBService) UpdateCategory(id uint64, vendorID strin
 		log.Printf("An error occurred updating category %v", result.Error.Error())
 		return category, fmt.Errorf("An error occurred updating category %s", result.Error.Error())
 	}
+
+	result.First(&category, "id = ?", id)
 
 	return category, nil
 }

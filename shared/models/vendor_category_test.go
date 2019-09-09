@@ -150,7 +150,7 @@ func TestUpdateCategory(t *testing.T) {
 		{
 			Title:               "Should update category description \"very good barbing shop\"",
 			VendorID:            vendor.ID,
-			ExpectedName:        "",
+			ExpectedName:        "make up",
 			Name:                nil,
 			ExpectedDescription: "very good barbing shop",
 			Description:         utils.StringToPointer("very good barbing shop"),
