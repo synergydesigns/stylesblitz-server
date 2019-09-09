@@ -33,3 +33,13 @@ input ServiceInputUpdate {
     trending: Boolean
     CategoryId: Int
 }
+
+extend type Mutation {
+	createService(input: ServiceInput!): Service
+	updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
+	deleteService(serviceId: Int!): Boolean
+}
+
+extend type Query {
+	getAllVendorService(vendorId: String!): [Service]
+}

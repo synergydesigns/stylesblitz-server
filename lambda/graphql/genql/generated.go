@@ -81,16 +81,20 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateAccount        func(childComplexity int, name *string) int
 		CreatePresignedURL   func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
+		CreateService        func(childComplexity int, input models.ServiceInput) int
 		CreateVendorCategory func(childComplexity int, input models.VendorCategoryInput) int
+		DeleteService        func(childComplexity int, serviceID int) int
 		DeleteVendorCategory func(childComplexity int, categoryID int) int
 		Login                func(childComplexity int, email string, password string) int
+		UpdateService        func(childComplexity int, input models.ServiceInputUpdate, serviceID int) int
 		UpdateVendorCategory func(childComplexity int, input models.VendorCategoryInputUpdate, categoryID int) int
 	}
 
 	Query struct {
-		GetAllCategories func(childComplexity int, vendorID *string) int
-		GetAsset         func(childComplexity int, id string) int
-		User             func(childComplexity int, id string) int
+		GetAllCategories    func(childComplexity int, vendorID *string) int
+		GetAllVendorService func(childComplexity int, vendorID string) int
+		GetAsset            func(childComplexity int, id string) int
+		User                func(childComplexity int, id string) int
 	}
 
 	Service struct {
@@ -146,11 +150,15 @@ type MutationResolver interface {
 	CreateVendorCategory(ctx context.Context, input models.VendorCategoryInput) (*models.VendorCategory, error)
 	UpdateVendorCategory(ctx context.Context, input models.VendorCategoryInputUpdate, categoryID int) (*models.VendorCategory, error)
 	DeleteVendorCategory(ctx context.Context, categoryID int) (*bool, error)
+	CreateService(ctx context.Context, input models.ServiceInput) (*models.Service, error)
+	UpdateService(ctx context.Context, input models.ServiceInputUpdate, serviceID int) (*models.Service, error)
+	DeleteService(ctx context.Context, serviceID int) (*bool, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
 	GetAsset(ctx context.Context, id string) (*models.Asset, error)
 	GetAllCategories(ctx context.Context, vendorID *string) ([]*models.VendorCategory, error)
+	GetAllVendorService(ctx context.Context, vendorID string) ([]*models.Service, error)
 }
 type ServiceResolver interface {
 	Duration(ctx context.Context, obj *models.Service) (*int, error)
@@ -355,6 +363,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput), args["owner"].(models.AssetOwner), args["id"].(*string)), true
 
+	case "Mutation.createService":
+		if e.complexity.Mutation.CreateService == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateService(childComplexity, args["input"].(models.ServiceInput)), true
+
 	case "Mutation.createVendorCategory":
 		if e.complexity.Mutation.CreateVendorCategory == nil {
 			break
@@ -366,6 +386,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInput)), true
+
+	case "Mutation.deleteService":
+		if e.complexity.Mutation.DeleteService == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteService(childComplexity, args["serviceId"].(int)), true
 
 	case "Mutation.deleteVendorCategory":
 		if e.complexity.Mutation.DeleteVendorCategory == nil {
@@ -391,6 +423,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Login(childComplexity, args["email"].(string), args["password"].(string)), true
 
+	case "Mutation.updateService":
+		if e.complexity.Mutation.UpdateService == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateService(childComplexity, args["input"].(models.ServiceInputUpdate), args["serviceId"].(int)), true
+
 	case "Mutation.updateVendorCategory":
 		if e.complexity.Mutation.UpdateVendorCategory == nil {
 			break
@@ -414,6 +458,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetAllCategories(childComplexity, args["vendorId"].(*string)), true
+
+	case "Query.getAllVendorService":
+		if e.complexity.Query.GetAllVendorService == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getAllVendorService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetAllVendorService(childComplexity, args["vendorId"].(string)), true
 
 	case "Query.getAsset":
 		if e.complexity.Query.GetAsset == nil {
@@ -834,6 +890,16 @@ input ServiceInputUpdate {
     price: Float
     trending: Boolean
     CategoryId: Int
+}
+
+extend type Mutation {
+	createService(input: ServiceInput!): Service
+	updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
+	deleteService(serviceId: Int!): Boolean
+}
+
+extend type Query {
+	getAllVendorService(vendorId: String!): [Service]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/user.gql", Input: `type User {
     # ID is a unique idetifer
@@ -909,6 +975,20 @@ func (ec *executionContext) field_Mutation_createPresignedURL_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createVendorCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -920,6 +1000,20 @@ func (ec *executionContext) field_Mutation_createVendorCategory_args(ctx context
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["serviceId"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["serviceId"] = arg0
 	return args, nil
 }
 
@@ -956,6 +1050,28 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 		}
 	}
 	args["password"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceInputUpdate
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInputUpdate(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["serviceId"]; ok {
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["serviceId"] = arg1
 	return args, nil
 }
 
@@ -1001,6 +1117,20 @@ func (ec *executionContext) field_Query_getAllCategories_args(ctx context.Contex
 	var arg0 *string
 	if tmp, ok := rawArgs["vendorId"]; ok {
 		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vendorId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getAllVendorService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["vendorId"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2091,6 +2221,129 @@ func (ec *executionContext) _Mutation_deleteVendorCategory(ctx context.Context, 
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateService(rctx, args["input"].(models.ServiceInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateService(rctx, args["input"].(models.ServiceInputUpdate), args["serviceId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteService(rctx, args["serviceId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -2212,6 +2465,47 @@ func (ec *executionContext) _Query_getAllCategories(ctx context.Context, field g
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOVendorCategory2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getAllVendorService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getAllVendorService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllVendorService(rctx, args["vendorId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4859,6 +5153,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_updateVendorCategory(ctx, field)
 		case "deleteVendorCategory":
 			out.Values[i] = ec._Mutation_deleteVendorCategory(ctx, field)
+		case "createService":
+			out.Values[i] = ec._Mutation_createService(ctx, field)
+		case "updateService":
+			out.Values[i] = ec._Mutation_updateService(ctx, field)
+		case "deleteService":
+			out.Values[i] = ec._Mutation_deleteService(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4916,6 +5216,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getAllCategories(ctx, field)
+				return res
+			})
+		case "getAllVendorService":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllVendorService(ctx, field)
 				return res
 			})
 		case "__type":
@@ -5470,6 +5781,14 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNServiceInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInput(ctx context.Context, v interface{}) (models.ServiceInput, error) {
+	return ec.unmarshalInputServiceInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNServiceInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInputUpdate(ctx context.Context, v interface{}) (models.ServiceInputUpdate, error) {
+	return ec.unmarshalInputServiceInputUpdate(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

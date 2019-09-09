@@ -28,10 +28,11 @@ type ServiceDBService struct {
 
 type ServiceDB interface {
 	GetServices(serviceName string, lat, long, radius float64) ([]*Service, error)
-	GetServicesByVendor(vendorID string) ([]Service, error)
-	GetServicesByCategory(vendorID, categoryID string) ([]Service, error)
-	CreateService(service ServiceInput) (Service, error)
-	UpdateService(id uint64, service ServiceInputUpdate) (bool, error)
+	GetServicesByVendor(vendorID string) ([]*Service, error)
+	GetServicesByCategory(vendorID, categoryID string) ([]*Service, error)
+	CreateService(service ServiceInput) (*Service, error)
+	UpdateService(id uint64, service ServiceInputUpdate) (*Service, error)
+	DeleteService(id uint64) (bool, error)
 }
 
 func (service *ServiceDBService) GetServices(serviceName string, lat float64, long float64, radius float64) ([]*Service, error) {
@@ -40,8 +41,8 @@ func (service *ServiceDBService) GetServices(serviceName string, lat float64, lo
 	return services, nil
 }
 
-func (service *ServiceDBService) GetServicesByVendor(vendorID string) ([]Service, error) {
-	var vendorServices []Service
+func (service *ServiceDBService) GetServicesByVendor(vendorID string) ([]*Service, error) {
+	var vendorServices []*Service
 
 	result := service.DB.Where("vendor_id = ?", vendorID).Find(&vendorServices)
 
@@ -53,8 +54,8 @@ func (service *ServiceDBService) GetServicesByVendor(vendorID string) ([]Service
 	return vendorServices, nil
 }
 
-func (service *ServiceDBService) GetServicesByCategory(vendorID, categoryID string) ([]Service, error) {
-	var vendorServices []Service
+func (service *ServiceDBService) GetServicesByCategory(vendorID, categoryID string) ([]*Service, error) {
+	var vendorServices []*Service
 
 	result := service.DB.Where("vendor_id = ?", categoryID).Where("category_id = ?", categoryID).Find(&vendorServices)
 
@@ -66,15 +67,21 @@ func (service *ServiceDBService) GetServicesByCategory(vendorID, categoryID stri
 	return vendorServices, nil
 }
 
-func (service *ServiceDBService) CreateService(serviceInput ServiceInput) (Service, error) {
+func (service *ServiceDBService) CreateService(serviceInput ServiceInput) (*Service, error) {
 	newService := Service{
 		Name:         serviceInput.Name,
-		Price:        *serviceInput.Price,
 		Duration:     uint(serviceInput.Duration),
 		DurationType: serviceInput.DurationType.String(),
-		Trending:     *serviceInput.Trending,
 		CategoryID:   uint64(serviceInput.CategoryID),
 		VendorID:     serviceInput.VendorID,
+	}
+
+	if serviceInput.Price != nil {
+		newService.Price = *serviceInput.Price
+	}
+
+	if serviceInput.Trending != nil {
+		newService.Trending = *serviceInput.Trending
 	}
 
 	result := service.DB.Create(&newService)
@@ -82,27 +89,27 @@ func (service *ServiceDBService) CreateService(serviceInput ServiceInput) (Servi
 	if result.Error != nil {
 		log.Printf("An error occurred creating category %v", result.Error.Error())
 		if utils.HasRecord(result.Error) {
-			return newService, fmt.Errorf("service with name %s already exit", serviceInput.Name)
+			return &newService, fmt.Errorf("service with name %s already exit", serviceInput.Name)
 		}
 
 		if utils.ForeignKeyNotExist(result.Error) {
 			if utils.HasValue(result.Error.Error(), "vendor") {
-				return newService, fmt.Errorf("vendor with id %s does not exit", serviceInput.VendorID)
+				return &newService, fmt.Errorf("vendor with id %s does not exit", serviceInput.VendorID)
 			}
 
-			return newService, fmt.Errorf("category with id %d does not exit", serviceInput.CategoryID)
+			return &newService, fmt.Errorf("category with id %d does not exit", serviceInput.CategoryID)
 		}
 
-		return newService, fmt.Errorf("an error occurred creating category %s", result.Error.Error())
+		return &newService, fmt.Errorf("an error occurred creating category %s", result.Error.Error())
 	}
 
-	return newService, nil
+	return &newService, nil
 }
 
 // @TODO we need to decide how to handle updating categoryID for for vendor
 // users should not be able to set service to a categoryID they did not create
 // that should either be handle here or on the resolver level
-func (service *ServiceDBService) UpdateService(id uint64, serviceInput ServiceInputUpdate) (bool, error) {
+func (service *ServiceDBService) UpdateService(id uint64, serviceInput ServiceInputUpdate) (*Service, error) {
 	vendorService := Service{}
 	fields := make(map[string]interface{})
 
@@ -118,7 +125,20 @@ func (service *ServiceDBService) UpdateService(id uint64, serviceInput ServiceIn
 
 	if result.Error != nil {
 		log.Printf("An error occurred updating category %v", result.Error.Error())
-		return false, fmt.Errorf("An error occurred updating category %s", result.Error.Error())
+		return &vendorService, fmt.Errorf("An error occurred updating category %s", result.Error.Error())
+	}
+
+	result.First(&vendorService, "id = ?", id)
+
+	return &vendorService, nil
+}
+
+func (service *ServiceDBService) DeleteService(id uint64) (bool, error) {
+	result := service.DB.Delete(&Service{}, "id = ?", id)
+
+	if result.Error != nil {
+		log.Printf("An error occurred deleting service %v", result.Error.Error())
+		return false, fmt.Errorf("An error occurred deleting service %s", result.Error.Error())
 	}
 
 	return true, nil
