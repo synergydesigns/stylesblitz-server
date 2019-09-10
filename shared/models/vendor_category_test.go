@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucsky/cuid"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/synergydesigns/stylesblitz-server/shared/config"
 	"github.com/synergydesigns/stylesblitz-server/shared/models"
@@ -20,11 +20,34 @@ var vendor models.Vendor
 
 func init() {
 	seed.Tables = []string{"categories", "vendors", "users"}
-	user = seed.SeedUser("", "testuser", "testduser@gmail.com", "09099350122")
+	user = seed.SeedUser("", "testuser", "testduser@gmail.com", nil)
 	vendor = seed.SeedVendor("", user.ID, "testvendor")
 }
 
-func TestGetAllCategoriesByVendorID(t *testing.T) {
+type VendorCategoryTestSuite struct {
+	suite.Suite
+	vendor models.Vendor
+	user   models.User
+	seed   *seeder.Seeder
+}
+
+func (suite *VendorCategoryTestSuite) SetupTest() {
+	suite.seed = seeder.New()
+	suite.seed.Tables = []string{"categories", "vendors", "users"}
+	suite.seed.Tables = []string{"categories", "vendors", "users", "services"}
+	suite.user = suite.seed.SeedUser("", "testuser", "testduser@gmail.com", nil)
+	suite.vendor = suite.seed.SeedVendor("", suite.user.ID, "testvendor")
+}
+
+func (suite *VendorCategoryTestSuite) TearDownTest() {
+	suite.seed.Clean()
+}
+
+func (suite *VendorCategoryTestSuite) AfterTest() {
+	suite.seed.Truncate("categories")
+}
+
+func (suite *VendorCategoryTestSuite) TestGetAllCategoriesByVendorID() {
 	for _, value := range utils.MakeRange(1, 21) {
 		seed.VendorCategory(
 			0,
@@ -51,15 +74,13 @@ func TestGetAllCategoriesByVendorID(t *testing.T) {
 	}
 
 	for _, test := range testCase {
-		categories, error := vendorService.GetAllCategoriesByVendorID(test.VendorID)
-		assert.Equal(t, test.Expected, len(categories), test.Title)
-		assert.Nil(t, error)
+		categories, err := vendorService.GetAllCategoriesByVendorID(test.VendorID)
+		suite.Equal(test.Expected, len(categories), test.Title)
+		suite.Nil(err)
 	}
-
-	seed.Truncate("categories")
 }
 
-func TestCreateCategory(t *testing.T) {
+func (suite *VendorCategoryTestSuite) TestCreateCategory() {
 	vendor2 := seed.SeedVendor("", user.ID, "testvendor2")
 
 	testCases := []struct {
@@ -105,29 +126,27 @@ func TestCreateCategory(t *testing.T) {
 		)
 
 		if test.Error == "DuplicateField" {
-			assert.NotNil(t, err)
-			assert.Equal(t, err, fmt.Errorf("Category with name %s already exit", test.Name))
+			suite.NotNil(err)
+			suite.Equal(err, fmt.Errorf("Category with name %s already exit", test.Name))
 		}
 
 		if test.Error == "ForeignKeyNotExist" {
-			assert.NotNil(t, err)
-			assert.Equal(t, err, fmt.Errorf("Vendor with id %s does not exit", test.VendorID))
+			suite.NotNil(err)
+			suite.Equal(err, fmt.Errorf("Vendor with id %s does not exit", test.VendorID))
 		}
 
 		if test.Error == "" {
-			assert.Nil(t, err)
-			assert.Equal(t, category.Name, test.Name)
-			assert.Equal(t, category.Description, test.Description)
-			assert.Equal(t, category.VendorID, test.VendorID)
+			suite.Nil(err)
+			suite.Equal(category.Name, test.Name)
+			suite.Equal(category.Description, test.Description)
+			suite.Equal(category.VendorID, test.VendorID)
 		}
 	}
-
-	seed.Truncate("categories")
 }
 
-func TestUpdateCategory(t *testing.T) {
-	category := seed.VendorCategory(1, vendor.ID, "braiding")
-	category2 := seed.VendorCategory(2, vendor.ID, "make up")
+func (suite *VendorCategoryTestSuite) TestUpdateCategory() {
+	category := suite.seed.VendorCategory(1, vendor.ID, "braiding")
+	category2 := suite.seed.VendorCategory(2, vendor.ID, "make up")
 
 	testCases := []struct {
 		Title               string
@@ -141,7 +160,7 @@ func TestUpdateCategory(t *testing.T) {
 	}{
 		{
 			Title:               "Should update category name from braiding to barbing",
-			VendorID:            vendor.ID,
+			VendorID:            suite.vendor.ID,
 			ExpectedName:        "barbing",
 			ExpectedDescription: "",
 			Name:                utils.StringToPointer("barbing"),
@@ -149,7 +168,7 @@ func TestUpdateCategory(t *testing.T) {
 		},
 		{
 			Title:               "Should update category description \"very good barbing shop\"",
-			VendorID:            vendor.ID,
+			VendorID:            suite.vendor.ID,
 			ExpectedName:        "make up",
 			Name:                nil,
 			ExpectedDescription: "very good barbing shop",
@@ -166,15 +185,14 @@ func TestUpdateCategory(t *testing.T) {
 			test.Description,
 		)
 
-		assert.Nil(t, err)
-		assert.Equal(t, test.ExpectedName, category.Name, test.Title)
-		assert.Equal(t, test.ExpectedDescription, category.Description, test.Title)
+		suite.Nil(err)
+		suite.Equal(test.ExpectedName, category.Name, test.Title)
+		suite.Equal(test.ExpectedDescription, category.Description, test.Title)
 	}
 
-	seed.Truncate("categories")
 }
 
-func TestDeleteCategory(t *testing.T) {
+func (suite *VendorCategoryTestSuite) TestDeleteCategory() {
 	category := seed.VendorCategory(1, vendor.ID, "braiding")
 
 	testCases := []struct {
@@ -192,9 +210,12 @@ func TestDeleteCategory(t *testing.T) {
 		var deletedCategory models.VendorCategory
 		vendorService.DB.Find(&deletedCategory, "id = ?", test.CategoryID)
 
-		assert.Nil(t, err)
-		assert.True(t, deleted, test.Title)
-		assert.Equal(t, deletedCategory.ID, uint64(0), test.Title)
+		suite.Nil(err)
+		suite.True(deleted, test.Title)
+		suite.Equal(deletedCategory.ID, uint64(0), test.Title)
 	}
-	seed.Clean()
+}
+
+func TestVendorCategorySuite(t *testing.T) {
+	suite.Run(t, new(CategoryServiceTestSuite))
 }

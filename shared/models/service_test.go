@@ -26,11 +26,11 @@ type CategoryServiceTestSuite struct {
 
 func (suite *CategoryServiceTestSuite) SetupTest() {
 	suite.seed = seeder.New()
-	suite.seed.Tables = []string{"categories", "vendors", "users"}
-	suite.user = suite.seed.SeedUser("", "testuser", "testduser@gmail.com", "09099350122")
-	suite.vendor = suite.seed.SeedVendor("", suite.user.ID, "testvendor")
-	suite.vendor2 = suite.seed.SeedVendor("", suite.user.ID, "testvendor")
-	suite.vendor2 = suite.seed.SeedVendor("", suite.user.ID, "testvendor2")
+	suite.seed.Tables = []string{"categories", "vendors", "users", "services"}
+	suite.user = suite.seed.SeedUser("", "testuserservice", "testuserservice@gmail.com", nil)
+	suite.vendor = suite.seed.SeedVendor("", suite.user.ID, "new custom vendor")
+	suite.vendor2 = suite.seed.SeedVendor("", suite.user.ID, "new custom vendor 2")
+	suite.vendor2 = suite.seed.SeedVendor("", suite.user.ID, "new custom vendor 3")
 	suite.category = suite.seed.VendorCategory(1, suite.vendor.ID, "native")
 	suite.category2 = suite.seed.VendorCategory(2, suite.vendor.ID, "make up")
 	suite.category3 = suite.seed.VendorCategory(3, suite.vendor2.ID, "make up")
@@ -247,15 +247,16 @@ func (suite *CategoryServiceTestSuite) TestCreateService() {
 			suite.Equal(test.expectedError, err.Error())
 		} else {
 			var service models.Service
-			categoryService.DB.Find(&service, "id = ?", newService.ID)
+			categoryService.DB.First(&service, newService.ID)
 			suite.Nil(err)
-			suite.Equal(service.ID, newService.ID)
-			suite.Equal(service.Name, newService.Name)
-			suite.Equal(service.CategoryID, newService.CategoryID)
-			suite.Equal(service.VendorID, newService.VendorID)
+			suite.Equal(service.ID, newService.ID, test.title)
+			suite.Equal(service.Name, newService.Name, test.title)
+			suite.Equal(service.CategoryID, newService.CategoryID, test.title)
+			suite.Equal(service.VendorID, newService.VendorID, test.title)
 		}
 	}
 }
+
 func (suite *CategoryServiceTestSuite) TestUpdateService() {
 
 	data := models.ServiceInput{

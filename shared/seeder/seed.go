@@ -162,7 +162,7 @@ func SeedVendorData() {
 	}
 }
 
-func (s *Seeder) SeedUser(id string, username string, email string, phone string) models.User {
+func (s *Seeder) SeedUser(id string, username string, email string, phone *string) models.User {
 	user := models.User{
 		ID:        id,
 		Firstname: "john",
@@ -172,6 +172,10 @@ func (s *Seeder) SeedUser(id string, username string, email string, phone string
 		Password:  "test1234",
 		Phone:     phone,
 	}
+
+	// if phone != nil {
+	// 	user.Phone = *phone
+	// }
 
 	s.DB.Create(&user)
 

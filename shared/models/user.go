@@ -18,7 +18,7 @@ type User struct {
 	Email        string
 	Password     string `json:"password,omitempty"`
 	Bio          string
-	Phone        string
+	Phone        *string
 	ProfileImage string
 	WallImage    string
 	AddressID    int
