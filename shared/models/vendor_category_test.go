@@ -20,7 +20,7 @@ var vendor models.Vendor
 
 func init() {
 	seed.Tables = []string{"categories", "vendors", "users"}
-	user = seed.SeedUser("", "testudser", "testduser@gmail.com", "09099350122")
+	user = seed.SeedUser("", "testuser", "testduser@gmail.com", "09099350122")
 	vendor = seed.SeedVendor("", user.ID, "testvendor")
 }
 

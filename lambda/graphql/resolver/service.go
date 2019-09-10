@@ -38,9 +38,9 @@ func (categoryService *mutationResolver) CreateService(ctx context.Context, inpu
 func (categoryService *mutationResolver) UpdateService(ctx context.Context, input models.ServiceInputUpdate, serviceID int) (*models.Service, error) {
 	service := config.GetServices(ctx)
 
-	createdService, err := service.Datastore.ServiceDB.UpdateService(uint64(serviceID), input)
+	updatedService, err := service.Datastore.ServiceDB.UpdateService(uint64(serviceID), input)
 
-	return createdService, err
+	return updatedService, err
 }
 
 func (categoryService *mutationResolver) DeleteService(ctx context.Context, serviceID int) (*bool, error) {

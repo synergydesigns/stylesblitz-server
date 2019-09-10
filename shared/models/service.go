@@ -29,7 +29,7 @@ type ServiceDBService struct {
 type ServiceDB interface {
 	GetServices(serviceName string, lat, long, radius float64) ([]*Service, error)
 	GetServicesByVendor(vendorID string) ([]*Service, error)
-	GetServicesByCategory(vendorID, categoryID string) ([]*Service, error)
+	GetServicesByCategory(vendorID string, categoryID uint64) ([]*Service, error)
 	CreateService(service ServiceInput) (*Service, error)
 	UpdateService(id uint64, service ServiceInputUpdate) (*Service, error)
 	DeleteService(id uint64) (bool, error)
@@ -54,10 +54,10 @@ func (service *ServiceDBService) GetServicesByVendor(vendorID string) ([]*Servic
 	return vendorServices, nil
 }
 
-func (service *ServiceDBService) GetServicesByCategory(vendorID, categoryID string) ([]*Service, error) {
+func (service *ServiceDBService) GetServicesByCategory(vendorID string, categoryID uint64) ([]*Service, error) {
 	var vendorServices []*Service
 
-	result := service.DB.Where("vendor_id = ?", categoryID).Where("category_id = ?", categoryID).Find(&vendorServices)
+	result := service.DB.Where("vendor_id = ?", vendorID).Where("category_id = ?", categoryID).Find(&vendorServices)
 
 	if result.Error != nil {
 		log.Printf("An error occurred getting all vendor services %v", result.Error.Error())
@@ -87,7 +87,7 @@ func (service *ServiceDBService) CreateService(serviceInput ServiceInput) (*Serv
 	result := service.DB.Create(&newService)
 
 	if result.Error != nil {
-		log.Printf("An error occurred creating category %v", result.Error.Error())
+		log.Printf("An error occurred creating service %v", result.Error.Error())
 		if utils.HasRecord(result.Error) {
 			return &newService, fmt.Errorf("service with name %s already exit", serviceInput.Name)
 		}
@@ -124,8 +124,8 @@ func (service *ServiceDBService) UpdateService(id uint64, serviceInput ServiceIn
 	result := service.DB.Model(&vendorService).Where("id = ?", id).Updates(fields)
 
 	if result.Error != nil {
-		log.Printf("An error occurred updating category %v", result.Error.Error())
-		return &vendorService, fmt.Errorf("An error occurred updating category %s", result.Error.Error())
+		log.Printf("An error occurred updating service %v", result.Error.Error())
+		return &vendorService, fmt.Errorf("An error occurred updating service %s", result.Error.Error())
 	}
 
 	result.First(&vendorService, "id = ?", id)

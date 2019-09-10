@@ -27,7 +27,7 @@ type CategoryServiceTestSuite struct {
 func (suite *CategoryServiceTestSuite) SetupTest() {
 	suite.seed = seeder.New()
 	suite.seed.Tables = []string{"categories", "vendors", "users"}
-	suite.user = suite.seed.SeedUser("", "testudser", "testduser@gmail.com", "09099350122")
+	suite.user = suite.seed.SeedUser("", "testuser", "testduser@gmail.com", "09099350122")
 	suite.vendor = suite.seed.SeedVendor("", suite.user.ID, "testvendor")
 	suite.vendor2 = suite.seed.SeedVendor("", suite.user.ID, "testvendor")
 	suite.vendor2 = suite.seed.SeedVendor("", suite.user.ID, "testvendor2")
