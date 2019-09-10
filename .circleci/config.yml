@@ -31,8 +31,7 @@ jobs:
             - v1-pkg-cache
 
       - run: go get github.com/jstemmer/go-junit-report
-      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      - run: dep ensure
+      - run: go tidy
       - run: make migrate
 
       #  CircleCi's Go Docker image includes netcat
@@ -47,7 +46,6 @@ jobs:
               sleep 1
             done
             echo Failed waiting for Postgres && exit 1
-
       - run:
           name: Run unit tests
           command: |
@@ -58,30 +56,30 @@ jobs:
           key: v1-pkg-cache
           paths:
             - "/go/pkg"
-  build:
-    docker: 
-      - image: synergydesigns/styleblitz-go:latest
-    working_directory: /go/src/github.com/synergydesigns/stylesblitz-server
-    environment:
-      TEST_RESULTS: /tmp/test-results
-      MIGRATION_PATH: migrations/query
-    steps:
-      - checkout
+  # build:
+  #   docker: 
+  #     - image: synergydesigns/styleblitz-go:latest
+  #   working_directory: /go/src/github.com/synergydesigns/stylesblitz-server
+  #   environment:
+  #     TEST_RESULTS: /tmp/test-results
+  #     MIGRATION_PATH: migrations/query
+  #   steps:
+  #     - checkout
 
-      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      - run: make build
-      - run: make migrate
-      - run: serverless config credentials --Vendor aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY
-      - run: sls deploy
+  #     - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  #     - run: make build
+  #     - run: make migrate
+  #     - run: serverless config credentials --Vendor aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY
+  #     - run: sls deploy
 
 workflows:
   version: 2
   buid:
     jobs:
       - test
-      - build:
-          requires:
-            - test
-          filters:
-            branches:
-              only: master
+      # - build:
+      #     requires:
+      #       - test
+          # filters:
+          #   branches:
+          #     only: master
