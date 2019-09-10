@@ -1,7 +1,27 @@
-type Category {
+type VendorCategory {
 	ID:          ID!
 	name:        String
 	description: String
-	image:       String
-	shopID:      ID!
+}
+
+input VendorCategoryInput {
+	name: String!
+	description: String
+	vendor_id: String!
+}
+
+input VendorCategoryInputUpdate {
+	vendor_id: String!
+	name: String
+	description: String
+}
+
+extend type Mutation {
+	createVendorCategory(input: VendorCategoryInput!): VendorCategory
+	updateVendorCategory(input: VendorCategoryInputUpdate!, category_id: Int!): VendorCategory
+	deleteVendorCategory(category_id: Int!): Boolean
+}
+
+extend type Query {
+	getAllCategories(vendorId: String): [VendorCategory]
 }

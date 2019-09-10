@@ -2,8 +2,44 @@ type Service {
     ID: ID!
     name: String
     duration: Int
-    price: Int
-    status: Boolean
-    Trend: Int
-    VendorID: ID
+    durationType: String
+    price: Float
+    Trending: Boolean
+    VendorId: ID
+    CategoryId: ID
+}
+
+enum DurationType {
+  days
+  hours
+  mins
+}
+
+input ServiceInput {
+    name: String!
+    Duration: Int!
+    DurationType: DurationType!
+    price: Float
+    trending: Boolean
+    VendorId: String!
+    CategoryId: Int!
+}
+
+input ServiceInputUpdate {
+    name: String
+    Duration: Int
+    DurationType: DurationType
+    price: Float
+    trending: Boolean
+    CategoryId: Int
+}
+
+extend type Mutation {
+	createService(input: ServiceInput!): Service
+	updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
+	deleteService(serviceId: Int!): Boolean
+}
+
+extend type Query {
+	getAllVendorService(vendorId: String!): [Service]
 }

@@ -39,6 +39,7 @@ type ResolverRoot interface {
 	Address() AddressResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	Service() ServiceResolver
 	Vendor() VendorResolver
 }
 
@@ -77,33 +78,34 @@ type ComplexityRoot struct {
 		UploadURL func(childComplexity int) int
 	}
 
-	Category struct {
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Image       func(childComplexity int) int
-		Name        func(childComplexity int) int
-		ShopID      func(childComplexity int) int
-	}
-
 	Mutation struct {
-		CreateAccount      func(childComplexity int, name *string) int
-		CreatePresignedURL func(childComplexity int, input []*models.AssetInput) int
-		Login              func(childComplexity int, email string, password string) int
+		CreateAccount        func(childComplexity int, name *string) int
+		CreatePresignedURL   func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
+		CreateService        func(childComplexity int, input models.ServiceInput) int
+		CreateVendorCategory func(childComplexity int, input models.VendorCategoryInput) int
+		DeleteService        func(childComplexity int, serviceID int) int
+		DeleteVendorCategory func(childComplexity int, categoryID int) int
+		Login                func(childComplexity int, email string, password string) int
+		UpdateService        func(childComplexity int, input models.ServiceInputUpdate, serviceID int) int
+		UpdateVendorCategory func(childComplexity int, input models.VendorCategoryInputUpdate, categoryID int) int
 	}
 
 	Query struct {
-		GetAsset func(childComplexity int, id string) int
-		User     func(childComplexity int, id string) int
+		GetAllCategories    func(childComplexity int, vendorID *string) int
+		GetAllVendorService func(childComplexity int, vendorID string) int
+		GetAsset            func(childComplexity int, id string) int
+		User                func(childComplexity int, id string) int
 	}
 
 	Service struct {
-		Duration func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Price    func(childComplexity int) int
-		Status   func(childComplexity int) int
-		Trend    func(childComplexity int) int
-		VendorID func(childComplexity int) int
+		CategoryID   func(childComplexity int) int
+		Duration     func(childComplexity int) int
+		DurationType func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Price        func(childComplexity int) int
+		Trending     func(childComplexity int) int
+		VendorID     func(childComplexity int) int
 	}
 
 	User struct {
@@ -129,6 +131,12 @@ type ComplexityRoot struct {
 		Services    func(childComplexity int) int
 		User        func(childComplexity int) int
 	}
+
+	VendorCategory struct {
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
 }
 
 type AddressResolver interface {
@@ -138,11 +146,22 @@ type AddressResolver interface {
 type MutationResolver interface {
 	CreateAccount(ctx context.Context, name *string) (*models.Asset, error)
 	Login(ctx context.Context, email string, password string) (*string, error)
-	CreatePresignedURL(ctx context.Context, input []*models.AssetInput) ([]*models.AssetUploadOutput, error)
+	CreatePresignedURL(ctx context.Context, input []*models.AssetInput, owner models.AssetOwner, id *string) ([]*models.AssetUploadOutput, error)
+	CreateVendorCategory(ctx context.Context, input models.VendorCategoryInput) (*models.VendorCategory, error)
+	UpdateVendorCategory(ctx context.Context, input models.VendorCategoryInputUpdate, categoryID int) (*models.VendorCategory, error)
+	DeleteVendorCategory(ctx context.Context, categoryID int) (*bool, error)
+	CreateService(ctx context.Context, input models.ServiceInput) (*models.Service, error)
+	UpdateService(ctx context.Context, input models.ServiceInputUpdate, serviceID int) (*models.Service, error)
+	DeleteService(ctx context.Context, serviceID int) (*bool, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
 	GetAsset(ctx context.Context, id string) (*models.Asset, error)
+	GetAllCategories(ctx context.Context, vendorID *string) ([]*models.VendorCategory, error)
+	GetAllVendorService(ctx context.Context, vendorID string) ([]*models.Service, error)
+}
+type ServiceResolver interface {
+	Duration(ctx context.Context, obj *models.Service) (*int, error)
 }
 type VendorResolver interface {
 	Phone(ctx context.Context, obj *models.Vendor) (*string, error)
@@ -320,41 +339,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AssetUploadOutput.UploadURL(childComplexity), true
 
-	case "Category.description":
-		if e.complexity.Category.Description == nil {
-			break
-		}
-
-		return e.complexity.Category.Description(childComplexity), true
-
-	case "Category.ID":
-		if e.complexity.Category.ID == nil {
-			break
-		}
-
-		return e.complexity.Category.ID(childComplexity), true
-
-	case "Category.image":
-		if e.complexity.Category.Image == nil {
-			break
-		}
-
-		return e.complexity.Category.Image(childComplexity), true
-
-	case "Category.name":
-		if e.complexity.Category.Name == nil {
-			break
-		}
-
-		return e.complexity.Category.Name(childComplexity), true
-
-	case "Category.shopID":
-		if e.complexity.Category.ShopID == nil {
-			break
-		}
-
-		return e.complexity.Category.ShopID(childComplexity), true
-
 	case "Mutation.createAccount":
 		if e.complexity.Mutation.CreateAccount == nil {
 			break
@@ -377,7 +361,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput)), true
+		return e.complexity.Mutation.CreatePresignedURL(childComplexity, args["input"].([]*models.AssetInput), args["owner"].(models.AssetOwner), args["id"].(*string)), true
+
+	case "Mutation.createService":
+		if e.complexity.Mutation.CreateService == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateService(childComplexity, args["input"].(models.ServiceInput)), true
+
+	case "Mutation.createVendorCategory":
+		if e.complexity.Mutation.CreateVendorCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createVendorCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInput)), true
+
+	case "Mutation.deleteService":
+		if e.complexity.Mutation.DeleteService == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteService(childComplexity, args["serviceId"].(int)), true
+
+	case "Mutation.deleteVendorCategory":
+		if e.complexity.Mutation.DeleteVendorCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteVendorCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["category_id"].(int)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -390,6 +422,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Login(childComplexity, args["email"].(string), args["password"].(string)), true
+
+	case "Mutation.updateService":
+		if e.complexity.Mutation.UpdateService == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateService(childComplexity, args["input"].(models.ServiceInputUpdate), args["serviceId"].(int)), true
+
+	case "Mutation.updateVendorCategory":
+		if e.complexity.Mutation.UpdateVendorCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateVendorCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int)), true
+
+	case "Query.getAllCategories":
+		if e.complexity.Query.GetAllCategories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getAllCategories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetAllCategories(childComplexity, args["vendorId"].(*string)), true
+
+	case "Query.getAllVendorService":
+		if e.complexity.Query.GetAllVendorService == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getAllVendorService_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetAllVendorService(childComplexity, args["vendorId"].(string)), true
 
 	case "Query.getAsset":
 		if e.complexity.Query.GetAsset == nil {
@@ -415,12 +495,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
+	case "Service.CategoryId":
+		if e.complexity.Service.CategoryID == nil {
+			break
+		}
+
+		return e.complexity.Service.CategoryID(childComplexity), true
+
 	case "Service.duration":
 		if e.complexity.Service.Duration == nil {
 			break
 		}
 
 		return e.complexity.Service.Duration(childComplexity), true
+
+	case "Service.durationType":
+		if e.complexity.Service.DurationType == nil {
+			break
+		}
+
+		return e.complexity.Service.DurationType(childComplexity), true
 
 	case "Service.ID":
 		if e.complexity.Service.ID == nil {
@@ -443,21 +537,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Service.Price(childComplexity), true
 
-	case "Service.status":
-		if e.complexity.Service.Status == nil {
+	case "Service.Trending":
+		if e.complexity.Service.Trending == nil {
 			break
 		}
 
-		return e.complexity.Service.Status(childComplexity), true
+		return e.complexity.Service.Trending(childComplexity), true
 
-	case "Service.Trend":
-		if e.complexity.Service.Trend == nil {
-			break
-		}
-
-		return e.complexity.Service.Trend(childComplexity), true
-
-	case "Service.VendorID":
+	case "Service.VendorId":
 		if e.complexity.Service.VendorID == nil {
 			break
 		}
@@ -590,6 +677,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vendor.User(childComplexity), true
 
+	case "VendorCategory.description":
+		if e.complexity.VendorCategory.Description == nil {
+			break
+		}
+
+		return e.complexity.VendorCategory.Description(childComplexity), true
+
+	case "VendorCategory.ID":
+		if e.complexity.VendorCategory.ID == nil {
+			break
+		}
+
+		return e.complexity.VendorCategory.ID(childComplexity), true
+
+	case "VendorCategory.name":
+		if e.complexity.VendorCategory.Name == nil {
+			break
+		}
+
+		return e.complexity.VendorCategory.Name(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -707,28 +815,91 @@ input AssetInput {
   size: Int!
 }
 
+enum AssetOwner {
+  VENDOR
+  USER
+  SERVICE
+  CATEGORY
+}
+
 extend type Query {
   getAsset(id: String!): Asset
 }
 
 extend type Mutation {
-  createPresignedURL(input: [AssetInput]!): [AssetUploadOutput]
+  createPresignedURL(input: [AssetInput]!, owner: AssetOwner!, id: String): [AssetUploadOutput]
 }`},
-	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type Category {
+	&ast.Source{Name: "lambda/graphql/schema/types/category.gql", Input: `type VendorCategory {
 	ID:          ID!
 	name:        String
 	description: String
-	image:       String
-	shopID:      ID!
+}
+
+input VendorCategoryInput {
+	name: String!
+	description: String
+	vendor_id: String!
+}
+
+input VendorCategoryInputUpdate {
+	vendor_id: String!
+	name: String
+	description: String
+}
+
+extend type Mutation {
+	createVendorCategory(input: VendorCategoryInput!): VendorCategory
+	updateVendorCategory(input: VendorCategoryInputUpdate!, category_id: Int!): VendorCategory
+	deleteVendorCategory(category_id: Int!): Boolean
+}
+
+extend type Query {
+	getAllCategories(vendorId: String): [VendorCategory]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/service.gql", Input: `type Service {
     ID: ID!
     name: String
     duration: Int
-    price: Int
-    status: Boolean
-    Trend: Int
-    VendorID: ID
+    durationType: String
+    price: Float
+    Trending: Boolean
+    VendorId: ID
+    CategoryId: ID
+}
+
+enum DurationType {
+  days
+  hours
+  mins
+}
+
+input ServiceInput {
+    name: String!
+    Duration: Int!
+    DurationType: DurationType!
+    price: Float
+    trending: Boolean
+    VendorId: String!
+    CategoryId: Int!
+}
+
+input ServiceInputUpdate {
+    name: String
+    Duration: Int
+    DurationType: DurationType
+    price: Float
+    trending: Boolean
+    CategoryId: Int
+}
+
+extend type Mutation {
+	createService(input: ServiceInput!): Service
+	updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
+	deleteService(serviceId: Int!): Boolean
+}
+
+extend type Query {
+	getAllVendorService(vendorId: String!): [Service]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/user.gql", Input: `type User {
     # ID is a unique idetifer
@@ -785,6 +956,78 @@ func (ec *executionContext) field_Mutation_createPresignedURL_args(ctx context.C
 		}
 	}
 	args["input"] = arg0
+	var arg1 models.AssetOwner
+	if tmp, ok := rawArgs["owner"]; ok {
+		arg1, err = ec.unmarshalNAssetOwner2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetOwner(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["owner"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createVendorCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.VendorCategoryInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNVendorCategoryInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["serviceId"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["serviceId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteVendorCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["category_id"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["category_id"] = arg0
 	return args, nil
 }
 
@@ -810,6 +1053,50 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceInputUpdate
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInputUpdate(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["serviceId"]; ok {
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["serviceId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateVendorCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.VendorCategoryInputUpdate
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNVendorCategoryInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInputUpdate(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["category_id"]; ok {
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["category_id"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -821,6 +1108,34 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getAllCategories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["vendorId"]; ok {
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vendorId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getAllVendorService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["vendorId"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vendorId"] = arg0
 	return args, nil
 }
 
@@ -1660,182 +1975,6 @@ func (ec *executionContext) _AssetUploadOutput_assetURL(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Category_ID(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uint64)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2uint64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_name(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_description(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_image(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Image, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Category_shopID(ctx context.Context, field graphql.CollectedField, obj *models.Category) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Category",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ShopID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uint64)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2uint64(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -1944,7 +2083,7 @@ func (ec *executionContext) _Mutation_createPresignedURL(ctx context.Context, fi
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePresignedURL(rctx, args["input"].([]*models.AssetInput))
+		return ec.resolvers.Mutation().CreatePresignedURL(rctx, args["input"].([]*models.AssetInput), args["owner"].(models.AssetOwner), args["id"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1957,6 +2096,252 @@ func (ec *executionContext) _Mutation_createPresignedURL(ctx context.Context, fi
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOAssetUploadOutput2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetUploadOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createVendorCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createVendorCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateVendorCategory(rctx, args["input"].(models.VendorCategoryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.VendorCategory)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOVendorCategory2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateVendorCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateVendorCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.VendorCategory)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOVendorCategory2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteVendorCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteVendorCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["category_id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateService(rctx, args["input"].(models.ServiceInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateService(rctx, args["input"].(models.ServiceInputUpdate), args["serviceId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteService(rctx, args["serviceId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2039,6 +2424,88 @@ func (ec *executionContext) _Query_getAsset(ctx context.Context, field graphql.C
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOAsset2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAsset(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getAllCategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getAllCategories_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllCategories(rctx, args["vendorId"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.VendorCategory)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOVendorCategory2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getAllVendorService(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getAllVendorService_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllVendorService(rctx, args["vendorId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2200,13 +2667,13 @@ func (ec *executionContext) _Service_duration(ctx context.Context, field graphql
 		Object:   "Service",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Duration, nil
+		return ec.resolvers.Service().Duration(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2215,10 +2682,44 @@ func (ec *executionContext) _Service_duration(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_durationType(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Service",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DurationType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Service_price(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
@@ -2249,13 +2750,13 @@ func (ec *executionContext) _Service_price(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(float64)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Service_status(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+func (ec *executionContext) _Service_Trending(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2274,7 +2775,7 @@ func (ec *executionContext) _Service_status(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
+		return obj.Trending, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2289,41 +2790,7 @@ func (ec *executionContext) _Service_status(ctx context.Context, field graphql.C
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Service_Trend(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-		ec.Tracer.EndFieldExecution(ctx)
-	}()
-	rctx := &graphql.ResolverContext{
-		Object:   "Service",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Trend, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(int32)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Service_VendorID(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+func (ec *executionContext) _Service_VendorId(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2343,6 +2810,40 @@ func (ec *executionContext) _Service_VendorID(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.VendorID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_CategoryId(ctx context.Context, field graphql.CollectedField, obj *models.Service) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Service",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CategoryID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2524,10 +3025,10 @@ func (ec *executionContext) _User_phone(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_password(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
@@ -2979,6 +3480,111 @@ func (ec *executionContext) _Vendor_services(ctx context.Context, field graphql.
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOService2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorCategory_ID(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "VendorCategory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint64)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2uint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorCategory_name(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "VendorCategory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorCategory_description(ctx context.Context, field graphql.CollectedField, obj *models.VendorCategory) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "VendorCategory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -4198,6 +4804,168 @@ func (ec *executionContext) unmarshalInputAssetInput(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputServiceInput(ctx context.Context, obj interface{}) (models.ServiceInput, error) {
+	var it models.ServiceInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Duration":
+			var err error
+			it.Duration, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "DurationType":
+			var err error
+			it.DurationType, err = ec.unmarshalNDurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "price":
+			var err error
+			it.Price, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trending":
+			var err error
+			it.Trending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "VendorId":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "CategoryId":
+			var err error
+			it.CategoryID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputServiceInputUpdate(ctx context.Context, obj interface{}) (models.ServiceInputUpdate, error) {
+	var it models.ServiceInputUpdate
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "Duration":
+			var err error
+			it.Duration, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "DurationType":
+			var err error
+			it.DurationType, err = ec.unmarshalODurationType2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "price":
+			var err error
+			it.Price, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trending":
+			var err error
+			it.Trending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "CategoryId":
+			var err error
+			it.CategoryID, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Context, obj interface{}) (models.VendorCategoryInput, error) {
+	var it models.VendorCategoryInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "vendor_id":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputVendorCategoryInputUpdate(ctx context.Context, obj interface{}) (models.VendorCategoryInputUpdate, error) {
+	var it models.VendorCategoryInputUpdate
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "vendor_id":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -4358,44 +5126,6 @@ func (ec *executionContext) _AssetUploadOutput(ctx context.Context, sel ast.Sele
 	return out
 }
 
-var categoryImplementors = []string{"Category"}
-
-func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *models.Category) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.RequestContext, sel, categoryImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Category")
-		case "ID":
-			out.Values[i] = ec._Category_ID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Category_name(ctx, field, obj)
-		case "description":
-			out.Values[i] = ec._Category_description(ctx, field, obj)
-		case "image":
-			out.Values[i] = ec._Category_image(ctx, field, obj)
-		case "shopID":
-			out.Values[i] = ec._Category_shopID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -4417,6 +5147,18 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_login(ctx, field)
 		case "createPresignedURL":
 			out.Values[i] = ec._Mutation_createPresignedURL(ctx, field)
+		case "createVendorCategory":
+			out.Values[i] = ec._Mutation_createVendorCategory(ctx, field)
+		case "updateVendorCategory":
+			out.Values[i] = ec._Mutation_updateVendorCategory(ctx, field)
+		case "deleteVendorCategory":
+			out.Values[i] = ec._Mutation_deleteVendorCategory(ctx, field)
+		case "createService":
+			out.Values[i] = ec._Mutation_createService(ctx, field)
+		case "updateService":
+			out.Values[i] = ec._Mutation_updateService(ctx, field)
+		case "deleteService":
+			out.Values[i] = ec._Mutation_deleteService(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4465,6 +5207,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_getAsset(ctx, field)
 				return res
 			})
+		case "getAllCategories":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllCategories(ctx, field)
+				return res
+			})
+		case "getAllVendorService":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllVendorService(ctx, field)
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -4494,20 +5258,31 @@ func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, 
 		case "ID":
 			out.Values[i] = ec._Service_ID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Service_name(ctx, field, obj)
 		case "duration":
-			out.Values[i] = ec._Service_duration(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Service_duration(ctx, field, obj)
+				return res
+			})
+		case "durationType":
+			out.Values[i] = ec._Service_durationType(ctx, field, obj)
 		case "price":
 			out.Values[i] = ec._Service_price(ctx, field, obj)
-		case "status":
-			out.Values[i] = ec._Service_status(ctx, field, obj)
-		case "Trend":
-			out.Values[i] = ec._Service_Trend(ctx, field, obj)
-		case "VendorID":
-			out.Values[i] = ec._Service_VendorID(ctx, field, obj)
+		case "Trending":
+			out.Values[i] = ec._Service_Trending(ctx, field, obj)
+		case "VendorId":
+			out.Values[i] = ec._Service_VendorId(ctx, field, obj)
+		case "CategoryId":
+			out.Values[i] = ec._Service_CategoryId(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4627,6 +5402,37 @@ func (ec *executionContext) _Vendor(ctx context.Context, sel ast.SelectionSet, o
 				res = ec._Vendor_services(ctx, field, obj)
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var vendorCategoryImplementors = []string{"VendorCategory"}
+
+func (ec *executionContext) _VendorCategory(ctx context.Context, sel ast.SelectionSet, obj *models.VendorCategory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, vendorCategoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("VendorCategory")
+		case "ID":
+			out.Values[i] = ec._VendorCategory_ID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._VendorCategory_name(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._VendorCategory_description(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4903,6 +5709,15 @@ func (ec *executionContext) unmarshalNAssetInput2ᚕᚖgithubᚗcomᚋsynergydes
 	return res, nil
 }
 
+func (ec *executionContext) unmarshalNAssetOwner2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetOwner(ctx context.Context, v interface{}) (models.AssetOwner, error) {
+	var res models.AssetOwner
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNAssetOwner2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAssetOwner(ctx context.Context, sel ast.SelectionSet, v models.AssetOwner) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	return graphql.UnmarshalBoolean(v)
 }
@@ -4915,6 +5730,15 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNDurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, v interface{}) (models.DurationType, error) {
+	var res models.DurationType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNDurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, sel ast.SelectionSet, v models.DurationType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -4959,6 +5783,14 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNServiceInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInput(ctx context.Context, v interface{}) (models.ServiceInput, error) {
+	return ec.unmarshalInputServiceInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNServiceInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInputUpdate(ctx context.Context, v interface{}) (models.ServiceInputUpdate, error) {
+	return ec.unmarshalInputServiceInputUpdate(ctx, v)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalString(v)
 }
@@ -4985,6 +5817,14 @@ func (ec *executionContext) marshalNTimestamp2timeᚐTime(ctx context.Context, s
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNVendorCategoryInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInput(ctx context.Context, v interface{}) (models.VendorCategoryInput, error) {
+	return ec.unmarshalInputVendorCategoryInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNVendorCategoryInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategoryInputUpdate(ctx context.Context, v interface{}) (models.VendorCategoryInputUpdate, error) {
+	return ec.unmarshalInputVendorCategoryInputUpdate(ctx, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -5361,12 +6201,59 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
+func (ec *executionContext) unmarshalODurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, v interface{}) (models.DurationType, error) {
+	var res models.DurationType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalODurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, sel ast.SelectionSet, v models.DurationType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalODurationType2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, v interface{}) (*models.DurationType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalODurationType2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalODurationType2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐDurationType(ctx context.Context, sel ast.SelectionSet, v *models.DurationType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	return graphql.UnmarshalFloat(v)
 }
 
 func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
 	return graphql.MarshalFloat(v)
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOFloat2float64(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOFloat2float64(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
+	return models.UnmarshalCUID(v)
+}
+
+func (ec *executionContext) marshalOID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return models.MarshalCUID(v)
 }
 
 func (ec *executionContext) unmarshalOID2uint64(ctx context.Context, v interface{}) (uint64, error) {
@@ -5385,12 +6272,19 @@ func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.Selecti
 	return graphql.MarshalInt(v)
 }
 
-func (ec *executionContext) unmarshalOInt2int32(ctx context.Context, v interface{}) (int32, error) {
-	return graphql.UnmarshalInt32(v)
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOInt2int(ctx, v)
+	return &res, err
 }
 
-func (ec *executionContext) marshalOInt2int32(ctx context.Context, sel ast.SelectionSet, v int32) graphql.Marshaler {
-	return graphql.MarshalInt32(v)
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
 func (ec *executionContext) marshalOService2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx context.Context, sel ast.SelectionSet, v models.Service) graphql.Marshaler {
@@ -5476,6 +6370,57 @@ func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋsynergydesignsᚋstyl
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOVendorCategory2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx context.Context, sel ast.SelectionSet, v models.VendorCategory) graphql.Marshaler {
+	return ec._VendorCategory(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOVendorCategory2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx context.Context, sel ast.SelectionSet, v []*models.VendorCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOVendorCategory2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOVendorCategory2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐVendorCategory(ctx context.Context, sel ast.SelectionSet, v *models.VendorCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._VendorCategory(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValue(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

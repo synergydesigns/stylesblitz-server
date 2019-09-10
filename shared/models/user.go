@@ -18,12 +18,12 @@ type User struct {
 	Email        string
 	Password     string `json:"password,omitempty"`
 	Bio          string
-	Phone        string
+	Phone        *string
 	ProfileImage string
 	WallImage    string
 	AddressID    int
 	Assets       []*Asset `gorm:"many2many:user_assets;"`
-	Vendor       *Vendor `gorm:"foreignkey:user_id"`
+	Vendor       *Vendor  `gorm:"foreignkey:user_id"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -45,7 +45,7 @@ func (user *User) BeforeCreate(scope *gorm.Scope) error {
 	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	scope.SetColumn("Password", password)
 
-  return nil
+	return nil
 }
 
 func (service *UserDbService) GetUserByID(id string) (*User, error) {

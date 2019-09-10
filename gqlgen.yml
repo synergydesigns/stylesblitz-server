@@ -11,7 +11,7 @@ exec:
   package: genql
 
 model:
-  filename: lambda/graphql/models/models.go
+  filename: shared/models/generated.go
   package:  models
 
 models:
@@ -23,8 +23,8 @@ models:
       - github.com/synergydesigns/stylesblitz-server/shared/models.Phone
   Service:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Service
-  Category:
-    model: github.com/synergydesigns/stylesblitz-server/shared/models.Category
+  VendorCategory:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.VendorCategory
   Address:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.Address
   Asset:
@@ -39,6 +39,8 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.AssetInput
   AssetUploadOutput:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.AssetUploadOutput
+  VendorCategoryInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.VendorCategoryInput
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go

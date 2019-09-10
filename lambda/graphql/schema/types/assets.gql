@@ -31,10 +31,17 @@ input AssetInput {
   size: Int!
 }
 
+enum AssetOwner {
+  VENDOR
+  USER
+  SERVICE
+  CATEGORY
+}
+
 extend type Query {
   getAsset(id: String!): Asset
 }
 
 extend type Mutation {
-  createPresignedURL(input: [AssetInput]!): [AssetUploadOutput]
+  createPresignedURL(input: [AssetInput]!, owner: AssetOwner!, id: String): [AssetUploadOutput]
 }

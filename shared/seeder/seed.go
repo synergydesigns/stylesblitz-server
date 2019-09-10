@@ -111,11 +111,17 @@ func (s *Seeder) Seed(schema string) *Seeder {
 
 func (s *Seeder) Clean() *Seeder {
 	for _, value := range s.Tables {
-
-		if s.DB.HasTable(value) {
-			s.DB.Exec("TRUNCATE TABLE " + value)
-		}
+		s.Truncate(value)
 	}
+
+	return s
+}
+
+func (s *Seeder) Truncate(table string) *Seeder {
+	if s.DB.HasTable(table) {
+		s.DB.Exec("TRUNCATE TABLE " + table + " CASCADE")
+	}
+
 	return s
 }
 
@@ -154,4 +160,71 @@ func SeedVendorData() {
 		seed.LoadData(schema)
 		seed.Seed(schema)
 	}
+}
+
+func (s *Seeder) SeedUser(id string, username string, email string, phone *string) models.User {
+	user := models.User{
+		ID:        id,
+		Firstname: "john",
+		Lastname:  "doe",
+		Username:  username,
+		Email:     email,
+		Password:  "test1234",
+		Phone:     phone,
+	}
+
+	// if phone != nil {
+	// 	user.Phone = *phone
+	// }
+
+	s.DB.Create(&user)
+
+	return user
+}
+
+func (s *Seeder) SeedVendor(id string, userID, name string) models.Vendor {
+	vendor := models.Vendor{
+		ID:     id,
+		Name:   name,
+		UserID: userID,
+	}
+
+	s.DB.Create(&vendor)
+
+	return vendor
+}
+
+func (s *Seeder) VendorCategory(id uint64, vendorID, name string) models.VendorCategory {
+	category := models.VendorCategory{
+		Name:     name,
+		VendorID: vendorID,
+	}
+
+	if id != 0 {
+		category.ID = id
+	}
+
+	s.DB.Create(&category)
+
+	return category
+}
+
+func (s *Seeder) VendorService(id uint64, serviceInput models.ServiceInput) models.Service {
+	newService := models.Service{
+		Name:         serviceInput.Name,
+		Price:        *serviceInput.Price,
+		Duration:     uint(serviceInput.Duration),
+		DurationType: serviceInput.DurationType.String(),
+		Trending:     *serviceInput.Trending,
+		CategoryID:   uint64(serviceInput.CategoryID),
+		VendorID:     serviceInput.VendorID,
+	}
+
+	if id != 0 {
+		newService.ID = id
+	}
+
+	s.DB.Create(&newService)
+
+	return newService
 }

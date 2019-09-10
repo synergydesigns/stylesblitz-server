@@ -4,10 +4,9 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/lucsky/cuid"
 )
 
-// Vendor defines the Vendor models for graphql
-// for getting a single Vendor
 type Vendor struct {
 	ID           string `gorm:"primary_key"`
 	Name         string
@@ -35,7 +34,13 @@ type VendorDB interface {
 	GetVendorsByServiceAndLocation(serviceName string, lat, long, radius float64) ([]*Vendor, error)
 }
 
-// GetVendorsByServiceAndLocation gets all services by query
+func (vendor *Vendor) BeforeCreate(scope *gorm.Scope) error {
+	if vendor.ID == "" {
+		scope.SetColumn("ID", cuid.New())
+	}
+	return nil
+}
+
 func (service *VendorDbService) GetVendorsByServiceAndLocation(serviceName string, lat float64, long float64, radius float64) ([]*Vendor, error) {
 	var Vendors []*Vendor
 

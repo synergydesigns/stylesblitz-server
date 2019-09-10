@@ -53,7 +53,7 @@ func (service *AssetDBService) CreateAssets(assets []Asset) ([]Asset, error) {
 
 		if result.Error != nil {
 			log.Printf("Could not find User: %v", result.Error)
-			return nil, fmt.Errorf("Error occurred creating assets")
+			return nil, fmt.Errorf("Error occurred creating assets %s", result.Error.Error())
 		}
 	}
 
