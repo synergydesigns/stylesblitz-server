@@ -89,7 +89,66 @@ func (suite *CategoryServiceTestSuite) TestGetServicesByVendor() {
 	for _, test := range testcases {
 		services, err := categoryService.GetServicesByVendor(test.vendorID)
 		suite.Nil(err)
-		suite.Equal(len(services), test.expectedCount)
+		suite.Equal(len(services), test.expectedCount, test.title)
+	}
+}
+
+func (suite *CategoryServiceTestSuite) TestGetServicesByCategory() {
+	for _, value := range utils.MakeRange(1, 30) {
+		data := models.ServiceInput{
+			Name:         fmt.Sprintf("braiding %d", value),
+			Price:        utils.Float64ToPointer(40),
+			Duration:     40,
+			DurationType: "mins",
+			Trending:     utils.BoolToPointer(true),
+		}
+
+		if value <= 20 {
+			data.VendorID = suite.vendor.ID
+			data.CategoryID = int(suite.category.ID)
+			suite.seed.VendorService(
+				0,
+				data,
+			)
+		} else {
+			data.VendorID = suite.vendor2.ID
+			data.CategoryID = int(suite.category3.ID)
+			suite.seed.VendorService(
+				0,
+				data,
+			)
+		}
+	}
+	testcases := []struct {
+		title         string
+		vendorID      string
+		expectedCount int
+		categoryID    uint64
+	}{
+		{
+			title:         fmt.Sprintf("Should get all 20 services for a category %d", suite.category.ID),
+			vendorID:      suite.vendor.ID,
+			categoryID:    suite.category.ID,
+			expectedCount: 20,
+		},
+		{
+			title:         fmt.Sprintf("Should get all 10 services for a category %d", suite.category3.ID),
+			vendorID:      suite.vendor2.ID,
+			categoryID:    suite.category3.ID,
+			expectedCount: 10,
+		},
+		{
+			title:         "Should return 0 services if category  does not belong to vendor",
+			vendorID:      suite.vendor2.ID,
+			categoryID:    suite.category.ID,
+			expectedCount: 0,
+		},
+	}
+
+	for _, test := range testcases {
+		services, err := categoryService.GetServicesByCategory(test.vendorID, test.categoryID)
+		suite.Nil(err)
+		suite.Equal(len(services), test.expectedCount, test.title)
 	}
 }
 

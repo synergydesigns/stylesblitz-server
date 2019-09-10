@@ -60,8 +60,8 @@ func (service *ServiceDBService) GetServicesByCategory(vendorID string, category
 	result := service.DB.Where("vendor_id = ?", vendorID).Where("category_id = ?", categoryID).Find(&vendorServices)
 
 	if result.Error != nil {
-		log.Printf("An error occurred getting all vendor services %v", result.Error.Error())
-		return vendorServices, fmt.Errorf("An error occurred getting all vendor services %s", result.Error.Error())
+		log.Printf("An error occurred getting all category services %v", result.Error.Error())
+		return vendorServices, fmt.Errorf("An error occurred getting all category services %s", result.Error.Error())
 	}
 
 	return vendorServices, nil
