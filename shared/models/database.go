@@ -30,7 +30,9 @@ func Connect(conf *config.Config) *gorm.DB {
 
 	database = db
 
-	db.LogMode(true)
+	if conf.GoEnv == "development" {
+		db.LogMode(true)
+	}
 
 	return database
 }

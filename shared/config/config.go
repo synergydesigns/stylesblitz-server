@@ -22,7 +22,7 @@ type Config struct {
 	AwsS3Bucket          string
 	AuthenticationSecret string
 	PasswordSecret       string
-	goEnv                string
+	GoEnv                string
 }
 
 // LoadConfig loads all configuration
@@ -43,6 +43,6 @@ func LoadConfig() *Config {
 		AwsS3Bucket:          os.Getenv("AWS_S3_BUCKET"),
 		AuthenticationSecret: os.Getenv("AUTHENTICATION_SECRET"),
 		PasswordSecret:       os.Getenv("PASSWORD_SECRET"),
-		goEnv:                os.Getenv("GO_ENV"),
+		GoEnv:                os.Getenv("GO_ENV"),
 	}
 }
