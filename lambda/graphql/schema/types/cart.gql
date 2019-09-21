@@ -1,0 +1,6 @@
+type Cart {
+	id: ID!
+	userId: Int
+	createdAt: Timestamp
+	updatedAt: Timestamp
+}
