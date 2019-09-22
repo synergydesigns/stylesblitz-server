@@ -6,5 +6,16 @@
         "qraphql"
     ],
     "go.gopath": "/Users/enahomurphy/Desktop/projects/synergydesigns/go",
-    "go.lintTool": "golangci-lint"
+    "go.lintTool": "golangci-lint",
+    "sqltools.connections": [
+        {
+            "database": "styleblitz",
+            "dialect": "PostgreSQL",
+            "name": "stylebkitz",
+            "password": "styleblitz",
+            "port": 5432,
+            "server": "localhost",
+            "username": "root"
+        }
+    ]
 }
