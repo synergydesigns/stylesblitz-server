@@ -50,3 +50,19 @@ func (categoryService *mutationResolver) DeleteService(ctx context.Context, serv
 
 	return &ok, err
 }
+
+func (query *queryResolver) SearchServices(
+	ctx context.Context, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice,
+) ([]*models.Service, error) {
+	service := config.GetServices(ctx)
+
+	services, err := service.Datastore.ServiceDB.SearchService(
+		lat,
+		lng,
+		name,
+		rating,
+		price,
+	)
+
+	return services, err
+}
