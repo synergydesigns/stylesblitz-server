@@ -6,8 +6,8 @@
     "id" : 1,
     "zipcode" : 0,
     "latitude" : 6.6411857604980469,
-    "country_id" : 1,
-    "state_id" : 19
+    "countryId" : 1,
+    "stateId" : 19
   },
   {
     "street" : "647 Grim Plaza",
@@ -16,8 +16,8 @@
     "id" : 2,
     "zipcode" : 0,
     "latitude" : 6.6366024017333984,
-    "country_id" : 1,
-    "state_id" : 13
+    "countryId" : 1,
+    "stateId" : 13
   },
   {
     "street" : "78 Buena Vista Center",
@@ -26,8 +26,8 @@
     "id" : 3,
     "zipcode" : 0,
     "latitude" : 6.4503135681152344,
-    "country_id" : 1,
-    "state_id" : 13
+    "countryId" : 1,
+    "stateId" : 13
   },
   {
     "street" : "71915 Tony Center",
@@ -36,8 +36,8 @@
     "id" : 4,
     "zipcode" : 0,
     "latitude" : 6.5909533500671387,
-    "country_id" : 1,
-    "state_id" : 27
+    "countryId" : 1,
+    "stateId" : 27
   },
   {
     "street" : "102 Heath Crossing",
@@ -46,8 +46,8 @@
     "id" : 5,
     "zipcode" : 0,
     "latitude" : 6.5931105613708496,
-    "country_id" : 1,
-    "state_id" : 26
+    "countryId" : 1,
+    "stateId" : 26
   },
   {
     "street" : "2043 Fuller Alley",
@@ -56,8 +56,8 @@
     "id" : 6,
     "zipcode" : 0,
     "latitude" : 6.4682588577270508,
-    "country_id" : 1,
-    "state_id" : 1
+    "countryId" : 1,
+    "stateId" : 1
   },
   {
     "street" : "7694 Esker Pass",
@@ -66,8 +66,8 @@
     "id" : 7,
     "zipcode" : 0,
     "latitude" : 6.4331073760986328,
-    "country_id" : 1,
-    "state_id" : 16
+    "countryId" : 1,
+    "stateId" : 16
   },
   {
     "street" : "38236 Derek Center",
@@ -76,8 +76,8 @@
     "id" : 8,
     "zipcode" : 0,
     "latitude" : 6.4289650917053223,
-    "country_id" : 1,
-    "state_id" : 3
+    "countryId" : 1,
+    "stateId" : 3
   },
   {
     "street" : "4995 Shopko Center",
@@ -86,8 +86,8 @@
     "id" : 9,
     "zipcode" : 0,
     "latitude" : 6.427248477935791,
-    "country_id" : 1,
-    "state_id" : 16
+    "countryId" : 1,
+    "stateId" : 16
   },
   {
     "street" : "7970 Calypso Place",
@@ -96,8 +96,8 @@
     "id" : 10,
     "zipcode" : 0,
     "latitude" : 6.4584550857543945,
-    "country_id" : 1,
-    "state_id" : 30
+    "countryId" : 1,
+    "stateId" : 30
   },
   {
     "street" : "16 Thackeray Road",
@@ -106,8 +106,8 @@
     "id" : 11,
     "zipcode" : 0,
     "latitude" : 6.6200523376464844,
-    "country_id" : 1,
-    "state_id" : 16
+    "countryId" : 1,
+    "stateId" : 16
   },
   {
     "street" : "63 Hermina Avenue",
@@ -116,8 +116,8 @@
     "id" : 12,
     "zipcode" : 0,
     "latitude" : 6.6160802841186523,
-    "country_id" : 1,
-    "state_id" : 7
+    "countryId" : 1,
+    "stateId" : 7
   },
   {
     "street" : "329 Beilfuss Junction",
@@ -126,8 +126,8 @@
     "id" : 13,
     "zipcode" : 0,
     "latitude" : 6.5270047187805176,
-    "country_id" : 1,
-    "state_id" : 21
+    "countryId" : 1,
+    "stateId" : 21
   },
   {
     "street" : "6 Service Plaza",
@@ -136,8 +136,8 @@
     "id" : 14,
     "zipcode" : 0,
     "latitude" : 6.5793118476867676,
-    "country_id" : 1,
-    "state_id" : 26
+    "countryId" : 1,
+    "stateId" : 26
   },
   {
     "street" : "609 Gerald Lane",
@@ -146,8 +146,8 @@
     "id" : 15,
     "zipcode" : 0,
     "latitude" : 6.5770182609558105,
-    "country_id" : 1,
-    "state_id" : 3
+    "countryId" : 1,
+    "stateId" : 3
   },
   {
     "street" : "7068 Starling Pass",
@@ -156,8 +156,8 @@
     "id" : 16,
     "zipcode" : 0,
     "latitude" : 6.560704231262207,
-    "country_id" : 1,
-    "state_id" : 10
+    "countryId" : 1,
+    "stateId" : 10
   },
   {
     "street" : "40 Montana Terrace",
@@ -166,8 +166,8 @@
     "id" : 17,
     "zipcode" : 0,
     "latitude" : 6.5552821159362793,
-    "country_id" : 1,
-    "state_id" : 33
+    "countryId" : 1,
+    "stateId" : 33
   },
   {
     "street" : "65090 Chive Drive",
@@ -176,8 +176,8 @@
     "id" : 18,
     "zipcode" : 0,
     "latitude" : 6.4953680038452148,
-    "country_id" : 1,
-    "state_id" : 6
+    "countryId" : 1,
+    "stateId" : 6
   },
   {
     "street" : "7590 Main Way",
@@ -186,8 +186,8 @@
     "id" : 19,
     "zipcode" : 0,
     "latitude" : 6.494870662689209,
-    "country_id" : 1,
-    "state_id" : 20
+    "countryId" : 1,
+    "stateId" : 20
   },
   {
     "street" : "28206 Amoth Parkway",
@@ -196,8 +196,8 @@
     "id" : 20,
     "zipcode" : 0,
     "latitude" : 6.4926943778991699,
-    "country_id" : 1,
-    "state_id" : 21
+    "countryId" : 1,
+    "stateId" : 21
   },
   {
     "street" : "28206 Amoth Parkway",
@@ -206,7 +206,7 @@
     "id" : 21,
     "zipcode" : 0,
     "latitude" : 6.6287841796875,
-    "country_id" : 1,
-    "state_id" : 21
+    "countryId" : 1,
+    "stateId" : 21
   }
 ]

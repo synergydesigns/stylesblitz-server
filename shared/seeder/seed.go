@@ -59,8 +59,7 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		}
 	case "vendors":
 		var data []models.Vendor
-		fmt.Println(data)
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			fmt.Println(v)
 			func(v models.Vendor) {
@@ -70,7 +69,7 @@ func (s *Seeder) Seed(schema string) *Seeder {
 	case "address":
 		var data []models.Address
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Address) {
 				s.DB.Table(schema).Create(&v)
@@ -79,7 +78,7 @@ func (s *Seeder) Seed(schema string) *Seeder {
 	case "services":
 		var data []models.Service
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		fmt.Println(data)
 		for _, v := range data {
 			func(v models.Service) {
@@ -89,7 +88,7 @@ func (s *Seeder) Seed(schema string) *Seeder {
 	case "assets":
 		var data []models.Asset
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Asset) {
 				s.DB.Table(schema).Create(&v)
@@ -98,7 +97,7 @@ func (s *Seeder) Seed(schema string) *Seeder {
 	case "users":
 		var data []models.User
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.User) {
 				s.DB.Table(schema).Create(&v)

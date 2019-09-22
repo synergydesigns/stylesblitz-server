@@ -101,5 +101,9 @@ func main() {
 		if os.Args[2] == "vendors" {
 			seeder.New().LoadData("vendors").Seed("vendors")
 		}
+
+		if os.Args[2] == "address" {
+			seeder.New().LoadData("address").Seed("address")
+		}
 	}
 }

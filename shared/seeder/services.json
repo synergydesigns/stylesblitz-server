@@ -10,7 +10,7 @@
     "created_at" : "2019-09-18 19:56:44.327476",
     "updated_at" : "2019-09-18 19:56:44.327476",
     "name" : "Acrylic Nails",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -23,7 +23,7 @@
     "created_at" : "2019-09-18 19:56:44.324361",
     "updated_at" : "2019-09-18 19:56:44.324361",
     "name" : "Extensions",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -36,7 +36,7 @@
     "created_at" : "2019-09-18 19:56:44.325866",
     "updated_at" : "2019-09-18 19:56:44.325866",
     "name" : "Gel Manicure",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -49,7 +49,7 @@
     "created_at" : "2019-09-18 19:56:44.319917",
     "updated_at" : "2019-09-18 19:56:44.319917",
     "name" : "Havana",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -62,7 +62,7 @@
     "created_at" : "2019-09-18 19:56:44.321352",
     "updated_at" : "2019-09-18 19:56:44.321352",
     "name" : "Marley",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -75,7 +75,7 @@
     "created_at" : "2019-09-18 19:56:44.33185",
     "updated_at" : "2019-09-18 19:56:44.33185",
     "name" : "Relax hair",
-    "duration_type" : "mins"
+    "durationType" : "mins"
   },
   {
     "deleted_at" : null,
@@ -88,7 +88,7 @@
     "created_at" : "2019-09-18 19:56:44.330374",
     "updated_at" : "2019-09-18 19:56:44.330374",
     "name" : "Relax spa",
-    "duration_type" : "mins"
+    "durationType" : "mins"
   },
   {
     "deleted_at" : null,
@@ -101,7 +101,7 @@
     "created_at" : "2019-09-18 19:56:44.328956",
     "updated_at" : "2019-09-18 19:56:44.328956",
     "name" : "Relaxation",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -114,7 +114,7 @@
     "created_at" : "2019-09-18 19:56:44.333363",
     "updated_at" : "2019-09-18 19:56:44.333363",
     "name" : "Relaxation massage",
-    "duration_type" : "mins"
+    "durationType" : "mins"
   },
   {
     "deleted_at" : null,
@@ -127,7 +127,7 @@
     "created_at" : "2019-09-18 19:56:44.322797",
     "updated_at" : "2019-09-18 19:56:44.322797",
     "name" : "Relaxer",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -140,7 +140,7 @@
     "created_at" : "2019-09-18 19:56:44.318462",
     "updated_at" : "2019-09-18 19:56:44.318462",
     "name" : "Relaxing touch",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -153,7 +153,7 @@
     "created_at" : "2019-09-18 19:56:44.315194",
     "updated_at" : "2019-09-18 19:56:44.315194",
     "name" : "braiding",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -166,7 +166,7 @@
     "created_at" : "2019-09-18 19:56:44.318462",
     "updated_at" : "2019-09-18 19:56:44.318462",
     "name" : "weaving",
-    "duration_type" : "days"
+    "durationType" : "days"
   },
   {
     "deleted_at" : null,
@@ -179,6 +179,6 @@
     "created_at" : null,
     "updated_at" : null,
     "name" : "Relaxer",
-    "duration_type" : "hours"
+    "durationType" : "hours"
   }
 ]
