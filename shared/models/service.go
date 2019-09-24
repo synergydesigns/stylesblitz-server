@@ -155,7 +155,7 @@ func (service *ServiceDBService) SearchService(
 	result := service.DB.Raw(query).Scan(&allServices)
 
 	if result.Error != nil {
-		log.Printf("An error occurred updating service %v", result.Error.Error())
+		log.Printf("An error getting all services %v", result.Error.Error())
 		return allServices, fmt.Errorf("An error getting all services %s", result.Error.Error())
 	}
 

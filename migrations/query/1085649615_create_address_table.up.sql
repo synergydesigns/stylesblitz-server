@@ -7,7 +7,5 @@ CREATE TABLE IF NOT EXISTS address (
   street VARCHAR (250),
   longitude FLOAT(5),
   latitude FLOAT(5),
-  geog geography(POINT, 4326),
-  FOREIGN KEY (country_id) REFERENCES countries(id),
-  FOREIGN KEY (state_id) REFERENCES states(id)
+  geog geography(POINT, 4326)
 );

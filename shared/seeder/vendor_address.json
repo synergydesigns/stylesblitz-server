@@ -1,22 +1,14 @@
 [
   {
-    "vendor_id" : "cjy7lze9g000201l47p54994m",
-    "address_id" : 20
+    "vendorId" : "cjy7m3xqo000301l4fmg20a8l",
+    "addressId" : 1
   },
   {
-    "vendor_id" : "cjy7m3xqo000301l4fmg20a8l",
-    "address_id" : 1
+    "vendorId" : "cjy7lze9g000201l47p54994m",
+    "addressId" : 2
   },
   {
-    "vendor_id" : "cjy7m4aaq000401l4fql1139a",
-    "address_id" : 2
-  },
-  {
-    "vendor_id" : "cjy7lze9g000201l47p54994m",
-    "address_id" : 5
-  },
-  {
-    "vendor_id" : "cjy7m4wye000701l4b3740dyf",
-    "address_id" : 21
+    "vendorId" : "cjy7m4aaq000401l4fql1139a",
+    "addressId" : 21
   }
 ]

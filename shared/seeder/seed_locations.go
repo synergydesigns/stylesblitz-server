@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/synergydesigns/stylesblitz-server/shared/models"
 )
@@ -28,10 +29,12 @@ type cityData struct {
 func SeedCountries() {
 	var countries []models.Country
 
-	json.Unmarshal(
+	if err := json.Unmarshal(
 		getData("countries"),
 		&countries,
-	)
+	); err != nil {
+		log.Println(err)
+	}
 
 	for _, country := range countries {
 		func(country models.Country) {
@@ -47,10 +50,12 @@ func SeedStates() {
 
 	seeder.DB.Table("countries").Select("*").Scan(&countries)
 
-	json.Unmarshal(
+	if err := json.Unmarshal(
 		getData("states"),
 		&states,
-	)
+	); err != nil {
+		log.Println(err)
+	}
 
 	for _, country := range countries {
 		for _, state := range states {
@@ -77,10 +82,12 @@ func SeedCities() {
 
 	seeder.DB.Table("states").Select("*").Scan(&states)
 
-	json.Unmarshal(
+	if err := json.Unmarshal(
 		getData("cities"),
 		&cities,
-	)
+	); err != nil {
+		log.Println(err)
+	}
 
 	for _, state := range states {
 		for _, city := range cities {

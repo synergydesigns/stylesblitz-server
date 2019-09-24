@@ -55,7 +55,7 @@ func searchServiceQuery(lat *float64, lng *float64, name string, rating *SortRat
 				%s
 				ORDER BY services.price %s
 		) search
-		WHERE search.name @@ to_tsquery('%s:*')
+		WHERE search.name @@ plainto_tsquery('%s')
 	`, selects, assignments, joins, priceQuery, name)
 
 	if queryLocation {

@@ -41,7 +41,7 @@ func (suite *CategoryServiceTestSuite) TearDownTest() {
 }
 
 func (suite *CategoryServiceTestSuite) AfterTest() {
-	suite.seed.Truncate("services")
+	suite.seed.Truncate("services").Truncate("categories")
 }
 
 func (suite *CategoryServiceTestSuite) TestGetServicesByVendor() {
@@ -298,6 +298,104 @@ func (suite *CategoryServiceTestSuite) TestUpdateService() {
 		suite.Equal(uint(*test.payload.Duration), service.Duration, test.title)
 		suite.Equal(*test.payload.Trending, service.Trending, test.title)
 		suite.Equal(uint64(*test.payload.CategoryID), service.CategoryID, test.title)
+	}
+}
+
+func checkSortOrder(services []*models.Service, order models.SortPrice) bool {
+	var lastValue float64
+	result := true
+	for index, service := range services {
+		if index == 0 {
+			lastValue = service.Price
+			continue
+		}
+
+		if lastValue > service.Price && order == models.SortPriceLowest {
+			return false
+		}
+
+		if lastValue < service.Price && order == models.SortPriceLowest {
+			lastValue = service.Price
+			continue
+		}
+
+		if lastValue < service.Price && order == models.SortPriceHighest {
+			return false
+		}
+
+		if lastValue > service.Price && order == models.SortPriceHighest {
+			lastValue = service.Price
+			continue
+		}
+	}
+
+	return result
+}
+
+func (suite *CategoryServiceTestSuite) TestSearchService() {
+	suite.seed.
+		LoadAndSeed("users").
+		LoadAndSeed("vendors").
+		LoadAndSeed("address").
+		LoadAndSeed("categories").
+		LoadAndSeed("services").
+		LoadAndSeed("vendor_address")
+
+	testCases := []struct {
+		title          string
+		lng            *float64
+		lat            *float64
+		name           string
+		price          models.SortPrice
+		expectedLength int
+	}{
+		{
+			title:          "Should return 9 services with the name matching relax",
+			name:           "relax",
+			expectedLength: 9,
+		},
+		{
+			title:          "Should return 6 services with the name matching relax when users includes longitude, latitude around agegee",
+			lat:            utils.Float64ToPointer(6.6411857604980469),
+			lng:            utils.Float64ToPointer(3.3054516315460205),
+			name:           "relax",
+			expectedLength: 6,
+		},
+		{
+			title:          "Should return 9 services and sort by highest to lowest when sort is set to highest",
+			name:           "relax",
+			price:          models.SortPriceHighest,
+			expectedLength: 9,
+		},
+		{
+			title:          "Should return 9 services and sort by lowest to highest when sort is set to lowest",
+			price:          models.SortPriceLowest,
+			name:           "relax",
+			expectedLength: 9,
+		},
+		{
+			title:          "Should return 1 service when user search for name Gel Manicure",
+			name:           "Gel Manicure",
+			expectedLength: 1,
+		},
+		{
+			title:          "Search should be case insensitive",
+			name:           "gel manicure",
+			expectedLength: 1,
+		},
+	}
+
+	for _, test := range testCases {
+		services, err := categoryService.SearchService(
+			test.lat, test.lng, test.name, nil, &test.price,
+		)
+
+		if test.price != "" {
+			suite.True(checkSortOrder(services, test.price))
+		}
+
+		suite.Nil(err)
+		suite.Equal(len(services), test.expectedLength, test.title)
 	}
 }
 

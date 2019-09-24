@@ -79,7 +79,6 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		var data []models.Service
 
 		err = json.Unmarshal(s.File, &data)
-		fmt.Println(data)
 		for _, v := range data {
 			func(v models.Service) {
 				s.DB.Table(schema).Create(&v)
@@ -100,6 +99,20 @@ func (s *Seeder) Seed(schema string) *Seeder {
 		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.User) {
+				s.DB.Table(schema).Create(&v)
+			}(v)
+		}
+	case "vendor_address":
+		type vendorAddress struct {
+			VendorID  string
+			AddressID uint64
+		}
+
+		var data []vendorAddress
+
+		err = json.Unmarshal(s.File, &data)
+		for _, v := range data {
+			func(v vendorAddress) {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
@@ -227,4 +240,11 @@ func (s *Seeder) VendorService(id uint64, serviceInput models.ServiceInput) mode
 	s.DB.Create(&newService)
 
 	return newService
+}
+
+func (s *Seeder) LoadAndSeed(fileName string) *Seeder {
+	s.LoadData(fileName).
+		Seed(fileName)
+
+	return s
 }

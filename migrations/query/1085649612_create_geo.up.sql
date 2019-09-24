@@ -15,7 +15,7 @@ CREATE EXTENSION IF NOT EXISTS  fuzzystrmatch;
 CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
 
 -- geometry table is faster but harder to query and the result tends to be less accurate
--- we eill stick to geography util speed becomes an issue
+-- we will stick to geography until speed becomes an issue
 -- https://medium.com/coord/postgis-performance-showdown-geometry-vs-geography-ec99967da4f0
 -- ALTER TABLE address ADD COLUMN geom geometry(Point, 4326);
 -- UPDATE address SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326);
