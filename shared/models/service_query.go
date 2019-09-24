@@ -39,7 +39,7 @@ func searchServiceQuery(lat *float64, lng *float64, name string, rating *SortRat
 		`
 	}
 
-	query := fmt.Sprintf(`SELECT id, name, duration, duration_type, price, trending, vendor_id %s
+	query := fmt.Sprintf(`SELECT id, name, duration, duration_type, price, trending, vendor_id, tvs %s
 		FROM (
 				SELECT
 					services.id as id,
@@ -49,13 +49,13 @@ func searchServiceQuery(lat *float64, lng *float64, name string, rating *SortRat
 					services.duration_type as duration_type,
 					services.price as price,
 					services.trending as trending,
-					to_tsvector(services.name)
+					services.tsv as tsv,
 					%s
 				FROM services
 				%s
 				ORDER BY services.price %s
 		) search
-		WHERE search.name @@ plainto_tsquery('%s')
+		WHERE search.tsv @@ plainto_tsquery('%s')
 	`, selects, assignments, joins, priceQuery, name)
 
 	if queryLocation {
