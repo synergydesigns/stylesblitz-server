@@ -1,12 +1,12 @@
 type Service {
-    ID: ID!
-    name: String
-    duration: Int
-    durationType: String
-    price: Float
-    Trending: Boolean
-    VendorId: ID
-    CategoryId: ID
+  ID: ID!
+  name: String
+  duration: Int
+  durationType: String
+  price: Float
+  Trending: Boolean
+  VendorId: ID
+  CategoryId: ID
 }
 
 enum DurationType {
@@ -15,50 +15,48 @@ enum DurationType {
   mins
 }
 
-
-
 enum SortRating {
-    HIGHEST
-    LOWEST
+  HIGHEST
+  LOWEST
 }
 
 enum SortPrice {
-    HIGHEST
-    LOWEST
+  HIGHEST
+  LOWEST
 }
 
 input ServiceInput {
-    name: String!
-    Duration: Int!
-    DurationType: DurationType!
-    price: Float
-    trending: Boolean
-    VendorId: String!
-    CategoryId: Int!
+  name: String!
+  Duration: Int!
+  DurationType: DurationType!
+  price: Float
+  trending: Boolean
+  VendorId: String!
+  CategoryId: Int!
 }
 
 input ServiceInputUpdate {
-    name: String
-    Duration: Int
-    DurationType: DurationType
-    price: Float
-    trending: Boolean
-    CategoryId: Int
+  name: String
+  Duration: Int
+  DurationType: DurationType
+  price: Float
+  trending: Boolean
+  CategoryId: Int
 }
 
 extend type Mutation {
-	createService(input: ServiceInput!): Service
-	updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
-	deleteService(serviceId: Int!): Boolean
+  createService(input: ServiceInput!): Service
+  updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
+  deleteService(serviceId: Int!): Boolean
 }
 
 extend type Query {
-	getAllVendorService(vendorId: String!): [Service]
-    searchServices(
-        lat: Float
-        lng: Float
-        name: String!
-        rating: SortRating
-        price: SortPrice
-    ): [Service]
+  getAllVendorService(vendorId: String!): [Service]
+  searchServices(
+    lat: Float
+    lng: Float
+    name: String!
+    rating: SortRating
+    price: SortPrice
+  ): [Service]
 }
