@@ -26,7 +26,7 @@ services:
 
   styleblitz-pg:
     container_name: styleblitz-pg
-    image: postgres:latest
+    image: mdillon/postgis:11-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: styleblitz

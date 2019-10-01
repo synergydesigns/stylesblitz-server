@@ -120,3 +120,85 @@ func (e *DurationType) UnmarshalGQL(v interface{}) error {
 func (e DurationType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
+
+type SortPrice string
+
+const (
+	SortPriceHighest SortPrice = "HIGHEST"
+	SortPriceLowest  SortPrice = "LOWEST"
+)
+
+var AllSortPrice = []SortPrice{
+	SortPriceHighest,
+	SortPriceLowest,
+}
+
+func (e SortPrice) IsValid() bool {
+	switch e {
+	case SortPriceHighest, SortPriceLowest:
+		return true
+	}
+	return false
+}
+
+func (e SortPrice) String() string {
+	return string(e)
+}
+
+func (e *SortPrice) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = SortPrice(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid SortPrice", str)
+	}
+	return nil
+}
+
+func (e SortPrice) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type SortRating string
+
+const (
+	SortRatingHighest SortRating = "HIGHEST"
+	SortRatingLowest  SortRating = "LOWEST"
+)
+
+var AllSortRating = []SortRating{
+	SortRatingHighest,
+	SortRatingLowest,
+}
+
+func (e SortRating) IsValid() bool {
+	switch e {
+	case SortRatingHighest, SortRatingLowest:
+		return true
+	}
+	return false
+}
+
+func (e SortRating) String() string {
+	return string(e)
+}
+
+func (e *SortRating) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = SortRating(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid SortRating", str)
+	}
+	return nil
+}
+
+func (e SortRating) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}

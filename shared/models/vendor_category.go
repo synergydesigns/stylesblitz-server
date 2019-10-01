@@ -12,7 +12,7 @@ type VendorCategory struct {
 	ID          uint64 `gorm:"primary_key"`
 	Name        string
 	Description string
-	VendorID    string `gorm:"foreignkey:vendor_id"`
+	VendorID    string `json:"vendor_id" gorm:"foreignkey:vendor_id"`
 	Vendor      Vendor
 }
 

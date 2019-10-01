@@ -94,6 +94,7 @@ type ComplexityRoot struct {
 		GetAllCategories    func(childComplexity int, vendorID *string) int
 		GetAllVendorService func(childComplexity int, vendorID string) int
 		GetAsset            func(childComplexity int, id string) int
+		SearchServices      func(childComplexity int, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) int
 		User                func(childComplexity int, id string) int
 	}
 
@@ -159,6 +160,7 @@ type QueryResolver interface {
 	GetAsset(ctx context.Context, id string) (*models.Asset, error)
 	GetAllCategories(ctx context.Context, vendorID *string) ([]*models.VendorCategory, error)
 	GetAllVendorService(ctx context.Context, vendorID string) ([]*models.Service, error)
+	SearchServices(ctx context.Context, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) ([]*models.Service, error)
 }
 type ServiceResolver interface {
 	Duration(ctx context.Context, obj *models.Service) (*int, error)
@@ -482,6 +484,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetAsset(childComplexity, args["id"].(string)), true
+
+	case "Query.searchServices":
+		if e.complexity.Query.SearchServices == nil {
+			break
+		}
+
+		args, err := ec.field_Query_searchServices_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SearchServices(childComplexity, args["lat"].(*float64), args["lng"].(*float64), args["name"].(string), args["rating"].(*models.SortRating), args["price"].(*models.SortPrice)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -873,6 +887,18 @@ enum DurationType {
   mins
 }
 
+
+
+enum SortRating {
+    HIGHEST
+    LOWEST
+}
+
+enum SortPrice {
+    HIGHEST
+    LOWEST
+}
+
 input ServiceInput {
     name: String!
     Duration: Int!
@@ -900,6 +926,13 @@ extend type Mutation {
 
 extend type Query {
 	getAllVendorService(vendorId: String!): [Service]
+    searchServices(
+        lat: Float
+        lng: Float
+        name: String!
+        rating: SortRating
+        price: SortPrice
+    ): [Service]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/user.gql", Input: `type User {
     # ID is a unique idetifer
@@ -1150,6 +1183,52 @@ func (ec *executionContext) field_Query_getAsset_args(ctx context.Context, rawAr
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_searchServices_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *float64
+	if tmp, ok := rawArgs["lat"]; ok {
+		arg0, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["lat"] = arg0
+	var arg1 *float64
+	if tmp, ok := rawArgs["lng"]; ok {
+		arg1, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["lng"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["name"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg2
+	var arg3 *models.SortRating
+	if tmp, ok := rawArgs["rating"]; ok {
+		arg3, err = ec.unmarshalOSortRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortRating(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["rating"] = arg3
+	var arg4 *models.SortPrice
+	if tmp, ok := rawArgs["price"]; ok {
+		arg4, err = ec.unmarshalOSortPrice2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["price"] = arg4
 	return args, nil
 }
 
@@ -2494,6 +2573,47 @@ func (ec *executionContext) _Query_getAllVendorService(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetAllVendorService(rctx, args["vendorId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Service)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOService2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_searchServices(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_searchServices_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SearchServices(rctx, args["lat"].(*float64), args["lng"].(*float64), args["name"].(string), args["rating"].(*models.SortRating), args["price"].(*models.SortPrice))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5229,6 +5349,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_getAllVendorService(ctx, field)
 				return res
 			})
+		case "searchServices":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_searchServices(ctx, field)
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -6336,6 +6467,54 @@ func (ec *executionContext) marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋs
 		return graphql.Null
 	}
 	return ec._Service(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOSortPrice2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx context.Context, v interface{}) (models.SortPrice, error) {
+	var res models.SortPrice
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOSortPrice2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx context.Context, sel ast.SelectionSet, v models.SortPrice) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOSortPrice2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx context.Context, v interface{}) (*models.SortPrice, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOSortPrice2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOSortPrice2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx context.Context, sel ast.SelectionSet, v *models.SortPrice) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOSortRating2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortRating(ctx context.Context, v interface{}) (models.SortRating, error) {
+	var res models.SortRating
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOSortRating2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortRating(ctx context.Context, sel ast.SelectionSet, v models.SortRating) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOSortRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortRating(ctx context.Context, v interface{}) (*models.SortRating, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOSortRating2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortRating(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOSortRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortRating(ctx context.Context, sel ast.SelectionSet, v *models.SortRating) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

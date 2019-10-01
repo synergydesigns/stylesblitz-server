@@ -10,7 +10,7 @@ jobs:
           AUTHENTICATION_SECRET: saasdasasdsadasdasdsaasdsaddsadd
           PASSWORD_SECRET: asdadasddasas
 
-      - image: circleci/postgres:9.6-alpine
+      - image: mdillon/postgis:11-alpine
         environment:
           POSTGRES_USER: style
           POSTGRES_DB: style

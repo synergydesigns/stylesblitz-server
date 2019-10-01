@@ -33,6 +33,7 @@ type ServiceDB interface {
 	CreateService(service ServiceInput) (*Service, error)
 	UpdateService(id uint64, service ServiceInputUpdate) (*Service, error)
 	DeleteService(id uint64) (bool, error)
+	SearchService(lat *float64, lng *float64, name string, rating *SortRating, price *SortPrice) ([]*Service, error)
 }
 
 func (service *ServiceDBService) GetServices(serviceName string, lat float64, long float64, radius float64) ([]*Service, error) {
@@ -142,4 +143,21 @@ func (service *ServiceDBService) DeleteService(id uint64) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (service *ServiceDBService) SearchService(
+	lat *float64, lng *float64, name string, rating *SortRating, price *SortPrice,
+) ([]*Service, error) {
+	var allServices []*Service
+
+	query := searchServiceQuery(lat, lng, name, rating, price)
+
+	result := service.DB.Raw(query).Scan(&allServices)
+
+	if result.Error != nil {
+		log.Printf("An error getting all services %v", result.Error.Error())
+		return allServices, fmt.Errorf("An error getting all services %s", result.Error.Error())
+	}
+
+	return allServices, nil
 }

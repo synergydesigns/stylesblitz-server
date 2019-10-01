@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name" : "saloon",
+    "vendor_id" : "cjy7lze9g000201l47p54994m"
+  },
+  {
+    "id": 2,
+    "name" : "saloon",
+    "vendor_id" : "cjy7m3xqo000301l4fmg20a8l"
+  },
+  {
+    "id": 3,
+    "name" : "saloon",
+    "vendor_id" : "cjy7m4aaq000401l4fql1139a"
+  },
+  {
+    "id": 4,
+    "name" : "saloon",
+    "vendor_id" : "cjy7m4wye000701l4b3740dyf"
+  }
+]

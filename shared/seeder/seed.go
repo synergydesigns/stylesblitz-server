@@ -46,40 +46,39 @@ func (s *Seeder) Init() *Seeder {
 
 // Seed seed the Loaded data
 func (s *Seeder) Seed(schema string) *Seeder {
+	var err error
 	switch schema {
 	case "categories":
-		var data []models.Category
+		var data []models.VendorCategory
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
-			func(v models.Category) {
+			func(v models.VendorCategory) {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
 	case "vendors":
 		var data []models.Vendor
-
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
+			fmt.Println(v)
 			func(v models.Vendor) {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
-		break
 	case "address":
 		var data []models.Address
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Address) {
-				fmt.Println(v)
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
 	case "services":
 		var data []models.Service
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Service) {
 				s.DB.Table(schema).Create(&v)
@@ -88,7 +87,7 @@ func (s *Seeder) Seed(schema string) *Seeder {
 	case "assets":
 		var data []models.Asset
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.Asset) {
 				s.DB.Table(schema).Create(&v)
@@ -97,13 +96,29 @@ func (s *Seeder) Seed(schema string) *Seeder {
 	case "users":
 		var data []models.User
 
-		json.Unmarshal(s.File, &data)
+		err = json.Unmarshal(s.File, &data)
 		for _, v := range data {
 			func(v models.User) {
 				s.DB.Table(schema).Create(&v)
 			}(v)
 		}
+	case "vendor_address":
+		type vendorAddress struct {
+			VendorID  string
+			AddressID uint64
+		}
+
+		var data []vendorAddress
+
+		err = json.Unmarshal(s.File, &data)
+		for _, v := range data {
+			func(v vendorAddress) {
+				s.DB.Table(schema).Create(&v)
+			}(v)
+		}
 	}
+
+	fmt.Println(err)
 
 	s.Tables = append(s.Tables, schema)
 	return s
@@ -154,6 +169,8 @@ func SeedVendorData() {
 		"assets",
 		"users",
 		"vendors",
+		"categories",
+		"services",
 	}
 
 	for _, schema := range schemas {
@@ -172,10 +189,6 @@ func (s *Seeder) SeedUser(id string, username string, email string, phone *strin
 		Password:  "test1234",
 		Phone:     phone,
 	}
-
-	// if phone != nil {
-	// 	user.Phone = *phone
-	// }
 
 	s.DB.Create(&user)
 
@@ -227,4 +240,11 @@ func (s *Seeder) VendorService(id uint64, serviceInput models.ServiceInput) mode
 	s.DB.Create(&newService)
 
 	return newService
+}
+
+func (s *Seeder) LoadAndSeed(fileName string) *Seeder {
+	s.LoadData(fileName).
+		Seed(fileName)
+
+	return s
 }

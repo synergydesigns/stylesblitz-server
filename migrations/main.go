@@ -89,5 +89,21 @@ func main() {
 		if os.Args[2] == "vendors_all" {
 			seeder.SeedVendorData()
 		}
+
+		if os.Args[2] == "services" {
+			seeder.New().LoadData("services").Seed("services")
+		}
+
+		if os.Args[2] == "categories" {
+			seeder.New().LoadData("categories").Seed("categories")
+		}
+
+		if os.Args[2] == "vendors" {
+			seeder.New().LoadData("vendors").Seed("vendors")
+		}
+
+		if os.Args[2] == "address" {
+			seeder.New().LoadData("address").Seed("address")
+		}
 	}
 }

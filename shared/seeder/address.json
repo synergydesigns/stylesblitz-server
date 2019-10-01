@@ -1,181 +1,212 @@
-[{
-  "id": 1,
-  "countryId": 1,
-  "stateId": 19,
-  "city": "agege",
-  "zipcode": null,
-  "latitude": 6.64118582,
-  "longitude": 3.30545167,
-  "street": "48 Kingsford Center"
-}, {
-  "id": 2,
-  "countryId": 1,
-  "stateId": 13,
-  "city": "agege",
-  "zipcode": null,
-  "latitude": 6.63660256,
-  "longitude": 3.30610808,
-  "street": "647 Grim Plaza"
-}, {
-  "id": 3,
-  "countryId": 1,
-  "stateId": 13,
-  "city": "ijeromi/ifelodun",
-  "zipcode": null,
-  "latitude": 6.45031357,
-  "longitude": 3.34802214,
-  "street": "78 Buena Vista Center"
-}, {
-  "id": 4,
-  "countryId": 1,
-  "stateId": 27,
-  "city": "alimosho",
-  "zipcode": null,
-  "latitude": 6.59095342,
-  "longitude": 3.24997121,
-  "street": "71915 Tony Center"
-}, {
-  "id": 5,
-  "countryId": 1,
-  "stateId": 26,
-  "city": "alimosho",
-  "zipcode": null,
-  "latitude": 6.5931107,
-  "longitude": 3.24786108,
-  "street": "102 Heath Crossing"
-}, {
-  "id": 6,
-  "countryId": 1,
-  "stateId": 1,
-  "city": "amuwo odofin",
-  "zipcode": null,
-  "latitude": 6.46825865,
-  "longitude": 3.26212832,
-  "street": "2043 Fuller Alley"
-}, {
-  "id": 7,
-  "countryId": 1,
-  "stateId": 16,
-  "city": "apapa",
-  "zipcode": null,
-  "latitude": 6.43310744,
-  "longitude": 3.35020662,
-  "street": "7694 Esker Pass"
-}, {
-  "id": 8,
-  "countryId": 1,
-  "stateId": 3,
-  "city": "apapa",
-  "zipcode": null,
-  "latitude": 6.4289653,
-  "longitude": 3.34500289,
-  "street": "38236 Derek Center"
-}, {
-  "id": 9,
-  "countryId": 1,
-  "stateId": 16,
-  "city": "apapa",
-  "zipcode": null,
-  "latitude": 6.4272486,
-  "longitude": 3.34829137,
-  "street": "4995 Shopko Center"
-}, {
-  "id": 10,
-  "countryId": 1,
-  "stateId": 30,
-  "city": "ibeju lekki",
-  "zipcode": null,
-  "latitude": 6.45845505,
-  "longitude": 3.94265026,
-  "street": "7970 Calypso Place"
-}, {
-  "id": 11,
-  "countryId": 1,
-  "stateId": 16,
-  "city": "ikeja",
-  "zipcode": null,
-  "latitude": 6.62005248,
-  "longitude": 3.34149981,
-  "street": "16 Thackeray Road"
-}, {
-  "id": 12,
-  "countryId": 1,
-  "stateId": 7,
-  "city": "ikeja",
-  "zipcode": null,
-  "latitude": 6.61608029,
-  "longitude": 3.34547035,
-  "street": "63 Hermina Avenue"
-}, {
-  "id": 13,
-  "countryId": 1,
-  "stateId": 21,
-  "city": "mushin",
-  "zipcode": null,
-  "latitude": 6.52700458,
-  "longitude": 3.36137755,
-  "street": "329 Beilfuss Junction"
-}, {
-  "id": 14,
-  "countryId": 1,
-  "stateId": 26,
-  "city": "maryland",
-  "zipcode": null,
-  "latitude": 6.57931168,
-  "longitude": 3.36305473,
-  "street": "6 Service Plaza"
-}, {
-  "id": 15,
-  "countryId": 1,
-  "stateId": 3,
-  "city": "maryland",
-  "zipcode": null,
-  "latitude": 6.57701813,
-  "longitude": 3.36244767,
-  "street": "609 Gerald Lane"
-}, {
-  "id": 16,
-  "countryId": 1,
-  "stateId": 10,
-  "city": "oshodi/isolo",
-  "zipcode": null,
-  "latitude": 6.56070444,
-  "longitude": 3.30137447,
-  "street": "7068 Starling Pass"
-}, {
-  "id": 17,
-  "countryId": 1,
-  "stateId": 33,
-  "city": "oshodi/isolo",
-  "zipcode": null,
-  "latitude": 6.55528202,
-  "longitude": 3.30308357,
-  "street": "40 Montana Terrace"
-}, {
-  "id": 18,
-  "countryId": 1,
-  "stateId": 6,
-  "city": "surulere",
-  "zipcode": null,
-  "latitude": 6.49536802,
-  "longitude": 3.34727766,
-  "street": "65090 Chive Drive"
-}, {
-  "id": 19,
-  "countryId": 1,
-  "stateId": 20,
-  "city": "surulere",
-  "zipcode": null,
-  "latitude": 6.49487082,
-  "longitude": 3.34824137,
-  "street": "7590 Main Way"
-}, {
-  "id": 20,
-  "countryId": 1,
-  "stateId": 21,
-  "city": "surulere",
-  "zipcode": null,
-  "latitude": 6.49269425,
-  "longitude": 3.34840762,
-  "street": "28206 Amoth Parkway"
-}]
+[
+  {
+    "street" : "48 Kingsford Center",
+    "city" : "agege",
+    "longitude" : 3.3054516315460205,
+    "id" : 1,
+    "zipcode" : 0,
+    "latitude" : 6.6411857604980469,
+    "countryId" : 1,
+    "stateId" : 19
+  },
+  {
+    "street" : "647 Grim Plaza",
+    "city" : "agege",
+    "longitude" : 3.3061079978942871,
+    "id" : 2,
+    "zipcode" : 0,
+    "latitude" : 6.6366024017333984,
+    "countryId" : 1,
+    "stateId" : 13
+  },
+  {
+    "street" : "78 Buena Vista Center",
+    "city" : "ijeromi\/ifelodun",
+    "longitude" : 3.3480222225189209,
+    "id" : 3,
+    "zipcode" : 0,
+    "latitude" : 6.4503135681152344,
+    "countryId" : 1,
+    "stateId" : 13
+  },
+  {
+    "street" : "71915 Tony Center",
+    "city" : "alimosho",
+    "longitude" : 3.2499711513519287,
+    "id" : 4,
+    "zipcode" : 0,
+    "latitude" : 6.5909533500671387,
+    "countryId" : 1,
+    "stateId" : 27
+  },
+  {
+    "street" : "102 Heath Crossing",
+    "city" : "alimosho",
+    "longitude" : 3.2478611469268799,
+    "id" : 5,
+    "zipcode" : 0,
+    "latitude" : 6.5931105613708496,
+    "countryId" : 1,
+    "stateId" : 26
+  },
+  {
+    "street" : "2043 Fuller Alley",
+    "city" : "amuwo odofin",
+    "longitude" : 3.2621283531188965,
+    "id" : 6,
+    "zipcode" : 0,
+    "latitude" : 6.4682588577270508,
+    "countryId" : 1,
+    "stateId" : 1
+  },
+  {
+    "street" : "7694 Esker Pass",
+    "city" : "apapa",
+    "longitude" : 3.3502066135406494,
+    "id" : 7,
+    "zipcode" : 0,
+    "latitude" : 6.4331073760986328,
+    "countryId" : 1,
+    "stateId" : 16
+  },
+  {
+    "street" : "38236 Derek Center",
+    "city" : "apapa",
+    "longitude" : 3.3450028896331787,
+    "id" : 8,
+    "zipcode" : 0,
+    "latitude" : 6.4289650917053223,
+    "countryId" : 1,
+    "stateId" : 3
+  },
+  {
+    "street" : "4995 Shopko Center",
+    "city" : "apapa",
+    "longitude" : 3.3482913970947266,
+    "id" : 9,
+    "zipcode" : 0,
+    "latitude" : 6.427248477935791,
+    "countryId" : 1,
+    "stateId" : 16
+  },
+  {
+    "street" : "7970 Calypso Place",
+    "city" : "ibeju lekki",
+    "longitude" : 3.942650318145752,
+    "id" : 10,
+    "zipcode" : 0,
+    "latitude" : 6.4584550857543945,
+    "countryId" : 1,
+    "stateId" : 30
+  },
+  {
+    "street" : "16 Thackeray Road",
+    "city" : "ikeja",
+    "longitude" : 3.3414998054504395,
+    "id" : 11,
+    "zipcode" : 0,
+    "latitude" : 6.6200523376464844,
+    "countryId" : 1,
+    "stateId" : 16
+  },
+  {
+    "street" : "63 Hermina Avenue",
+    "city" : "ikeja",
+    "longitude" : 3.3454704284667969,
+    "id" : 12,
+    "zipcode" : 0,
+    "latitude" : 6.6160802841186523,
+    "countryId" : 1,
+    "stateId" : 7
+  },
+  {
+    "street" : "329 Beilfuss Junction",
+    "city" : "mushin",
+    "longitude" : 3.361377477645874,
+    "id" : 13,
+    "zipcode" : 0,
+    "latitude" : 6.5270047187805176,
+    "countryId" : 1,
+    "stateId" : 21
+  },
+  {
+    "street" : "6 Service Plaza",
+    "city" : "maryland",
+    "longitude" : 3.3630547523498535,
+    "id" : 14,
+    "zipcode" : 0,
+    "latitude" : 6.5793118476867676,
+    "countryId" : 1,
+    "stateId" : 26
+  },
+  {
+    "street" : "609 Gerald Lane",
+    "city" : "maryland",
+    "longitude" : 3.3624477386474609,
+    "id" : 15,
+    "zipcode" : 0,
+    "latitude" : 6.5770182609558105,
+    "countryId" : 1,
+    "stateId" : 3
+  },
+  {
+    "street" : "7068 Starling Pass",
+    "city" : "oshodi\/isolo",
+    "longitude" : 3.3013744354248047,
+    "id" : 16,
+    "zipcode" : 0,
+    "latitude" : 6.560704231262207,
+    "countryId" : 1,
+    "stateId" : 10
+  },
+  {
+    "street" : "40 Montana Terrace",
+    "city" : "oshodi\/isolo",
+    "longitude" : 3.3030836582183838,
+    "id" : 17,
+    "zipcode" : 0,
+    "latitude" : 6.5552821159362793,
+    "countryId" : 1,
+    "stateId" : 33
+  },
+  {
+    "street" : "65090 Chive Drive",
+    "city" : "surulere",
+    "longitude" : 3.3472776412963867,
+    "id" : 18,
+    "zipcode" : 0,
+    "latitude" : 6.4953680038452148,
+    "countryId" : 1,
+    "stateId" : 6
+  },
+  {
+    "street" : "7590 Main Way",
+    "city" : "surulere",
+    "longitude" : 3.3482413291931152,
+    "id" : 19,
+    "zipcode" : 0,
+    "latitude" : 6.494870662689209,
+    "countryId" : 1,
+    "stateId" : 20
+  },
+  {
+    "street" : "28206 Amoth Parkway",
+    "city" : "surulere",
+    "longitude" : 3.348407506942749,
+    "id" : 20,
+    "zipcode" : 0,
+    "latitude" : 6.4926943778991699,
+    "countryId" : 1,
+    "stateId" : 21
+  },
+  {
+    "street" : "28206 Amoth Parkway",
+    "city" : "agege",
+    "longitude" : 3.3026807308197021,
+    "id" : 21,
+    "zipcode" : 0,
+    "latitude" : 6.6287841796875,
+    "countryId" : 1,
+    "stateId" : 21
+  }
+]
