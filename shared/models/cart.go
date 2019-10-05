@@ -10,6 +10,7 @@ import (
 type Cart struct {
 	ID string `gorm:"primary_key"`
 	UserID string `json:"user_id"`
+
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -26,6 +27,4 @@ func (cart *Cart) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
-type CartDB interface {
-	Cart(userID string) (string, error)
-}
+type CartDB interface {}

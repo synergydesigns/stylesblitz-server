@@ -108,14 +108,3 @@ func (query *queryResolver) GetServicesCart(ctx context.Context, userID *string)
 
 	return servicesCart, err
 }
-
-func (query *queryResolver) Cart(ctx context.Context, userID *string) (*string, error) {
-	service := config.GetServices(ctx)
-	user := config.GetUser(ctx)
-
-	newUserID, err := service.Datastore.CartDB.Cart(
-		user.ID,
-	)
-
-	return &newUserID, err
-}
