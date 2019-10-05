@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS service_cart;
+DROP TABLE IF EXISTS service_carts;

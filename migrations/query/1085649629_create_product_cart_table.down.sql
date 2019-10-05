@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS product_cart;
+DROP TABLE IF EXISTS product_carts;
