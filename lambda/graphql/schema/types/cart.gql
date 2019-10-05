@@ -1,6 +1,48 @@
 type Cart {
 	id: ID!
-	userId: Int
+	userId: String
 	createdAt: Timestamp
 	updatedAt: Timestamp
+}
+
+type ProductCart {
+	id: ID!
+	vendorId: String
+	productId: String
+	shopId: String
+  cartId: String
+  quantity: Int
+	product: Product
+}
+
+input ServiceCartInput {
+	vendorID: String!
+	serviceID: Int!
+	quantity: Int
+}
+
+input ProductCartInput {
+	vendorID: String!
+	productID: String!
+	quantity: Int
+}
+
+input CartUpdateInput {
+	cartID:   String!
+	quantity: Int!
+}
+
+extend type Mutation {
+	createProductCart(input: ProductCartInput!): ProductCart
+	updateProductCart(input: CartUpdateInput!): ProductCart
+	deleteProductCart(cart_id: ID!): Boolean
+	createServiceCart(input: ServiceCartInput!): ServiceCart
+	updateServiceCart(input: CartUpdateInput!): ServiceCart
+	deleteServiceCart(cart_id: ID!): Boolean
+}
+
+extend type Query {
+	cart(user_id: ID): String
+	getProductsCart(user_id: ID): [ProductCart]
+	getServicesCart(user_id: ID): [ServiceCart]
 }

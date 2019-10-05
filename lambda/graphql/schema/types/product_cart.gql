@@ -1,8 +1,0 @@
-type ProductCart {
-	id: ID!
-	vendorId: String
-	productId: String
-	shopId: String
-  cartId: String
-  quantity: Int
-}
