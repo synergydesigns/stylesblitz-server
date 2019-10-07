@@ -411,7 +411,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["category_id"].(int)), true
+		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["categoryId"].(int)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -447,7 +447,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int)), true
+		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInputUpdate), args["categoryId"].(int)), true
 
 	case "Query.getAllCategories":
 		if e.complexity.Query.GetAllCategories == nil {
@@ -852,33 +852,33 @@ extend type Mutation {
 input VendorCategoryInput {
 	name: String!
 	description: String
-	vendor_id: String!
+	vendorId: String!
 }
 
 input VendorCategoryInputUpdate {
-	vendor_id: String!
+	vendorId: String!
 	name: String
 	description: String
 }
 
 extend type Mutation {
 	createVendorCategory(input: VendorCategoryInput!): VendorCategory
-	updateVendorCategory(input: VendorCategoryInputUpdate!, category_id: Int!): VendorCategory
-	deleteVendorCategory(category_id: Int!): Boolean
+	updateVendorCategory(input: VendorCategoryInputUpdate!, categoryId: Int!): VendorCategory
+	deleteVendorCategory(categoryId: Int!): Boolean
 }
 
 extend type Query {
 	getAllCategories(vendorId: String): [VendorCategory]
 }`},
 	&ast.Source{Name: "lambda/graphql/schema/types/service.gql", Input: `type Service {
-    ID: ID!
-    name: String
-    duration: Int
-    durationType: String
-    price: Float
-    Trending: Boolean
-    VendorId: ID
-    CategoryId: ID
+  ID: ID!
+  name: String
+  duration: Int
+  durationType: String
+  price: Float
+  Trending: Boolean
+  VendorId: ID
+  CategoryId: ID
 }
 
 enum DurationType {
@@ -887,53 +887,52 @@ enum DurationType {
   mins
 }
 
-
-
 enum SortRating {
-    HIGHEST
-    LOWEST
+  HIGHEST
+  LOWEST
 }
 
 enum SortPrice {
-    HIGHEST
-    LOWEST
+  HIGHEST
+  LOWEST
 }
 
 input ServiceInput {
-    name: String!
-    Duration: Int!
-    DurationType: DurationType!
-    price: Float
-    trending: Boolean
-    VendorId: String!
-    CategoryId: Int!
+  name: String!
+  Duration: Int!
+  DurationType: DurationType!
+  price: Float
+  trending: Boolean
+  VendorId: String!
+  CategoryId: Int!
 }
 
 input ServiceInputUpdate {
-    name: String
-    Duration: Int
-    DurationType: DurationType
-    price: Float
-    trending: Boolean
-    CategoryId: Int
+  name: String
+  Duration: Int
+  DurationType: DurationType
+  price: Float
+  trending: Boolean
+  CategoryId: Int
 }
 
 extend type Mutation {
-	createService(input: ServiceInput!): Service
-	updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
-	deleteService(serviceId: Int!): Boolean
+  createService(input: ServiceInput!): Service
+  updateService(input: ServiceInputUpdate!, serviceId: Int!): Service
+  deleteService(serviceId: Int!): Boolean
 }
 
 extend type Query {
-	getAllVendorService(vendorId: String!): [Service]
-    searchServices(
-        lat: Float
-        lng: Float
-        name: String!
-        rating: SortRating
-        price: SortPrice
-    ): [Service]
-}`},
+  getAllVendorService(vendorId: String!): [Service]
+  searchServices(
+    lat: Float
+    lng: Float
+    name: String!
+    rating: SortRating
+    price: SortPrice
+  ): [Service]
+}
+`},
 	&ast.Source{Name: "lambda/graphql/schema/types/user.gql", Input: `type User {
     # ID is a unique idetifer
     # Of the user that owns this resource
@@ -1054,13 +1053,13 @@ func (ec *executionContext) field_Mutation_deleteVendorCategory_args(ctx context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
-	if tmp, ok := rawArgs["category_id"]; ok {
+	if tmp, ok := rawArgs["categoryId"]; ok {
 		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["category_id"] = arg0
+	args["categoryId"] = arg0
 	return args, nil
 }
 
@@ -1120,13 +1119,13 @@ func (ec *executionContext) field_Mutation_updateVendorCategory_args(ctx context
 	}
 	args["input"] = arg0
 	var arg1 int
-	if tmp, ok := rawArgs["category_id"]; ok {
+	if tmp, ok := rawArgs["categoryId"]; ok {
 		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["category_id"] = arg1
+	args["categoryId"] = arg1
 	return args, nil
 }
 
@@ -2244,7 +2243,7 @@ func (ec *executionContext) _Mutation_updateVendorCategory(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int))
+		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInputUpdate), args["categoryId"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2285,7 +2284,7 @@ func (ec *executionContext) _Mutation_deleteVendorCategory(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["category_id"].(int))
+		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["categoryId"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5044,7 +5043,7 @@ func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-		case "vendor_id":
+		case "vendorId":
 			var err error
 			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -5062,7 +5061,7 @@ func (ec *executionContext) unmarshalInputVendorCategoryInputUpdate(ctx context.
 
 	for k, v := range asMap {
 		switch k {
-		case "vendor_id":
+		case "vendorId":
 			var err error
 			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {

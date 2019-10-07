@@ -28,7 +28,7 @@ type ServiceInputUpdate struct {
 }
 
 type VendorCategoryInputUpdate struct {
-	VendorID    string  `json:"vendor_id"`
+	VendorID    string  `json:"vendorId"`
 	Name        *string `json:"name"`
 	Description *string `json:"description"`
 }
