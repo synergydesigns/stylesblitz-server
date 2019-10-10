@@ -59,6 +59,10 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.CartUpdateInput
   ProductInput:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductInput
+  CartInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.CartInput
+  CartType:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.CartType
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go

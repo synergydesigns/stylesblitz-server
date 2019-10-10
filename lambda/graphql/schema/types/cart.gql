@@ -1,8 +1,17 @@
+type CartType {
+	product: Product
+	service: Service
+}
+
 type Cart {
 	id: ID!
 	userId: String
+	vendorID: String
 	createdAt: Timestamp
 	updatedAt: Timestamp
+	cartType: CartType
+	type: String
+	quantity: Int
 }
 
 type ProductCart {
@@ -30,6 +39,15 @@ input ProductCartInput {
 input CartUpdateInput {
 	cartID:   String!
 	quantity: Int!
+	type:     String!
+	typeID:   String!
+}
+
+input CartInput {
+	vendorID:   String!
+	quantity:   Int!
+	type:       String!
+	typeID:     String!
 }
 
 extend type Mutation {
@@ -39,10 +57,13 @@ extend type Mutation {
 	createServiceCart(input: ServiceCartInput!): ServiceCart
 	updateServiceCart(input: CartUpdateInput!): ServiceCart
 	deleteServiceCart(cart_id: ID!): Boolean
+	createCart(input: CartInput!): Cart
+	updateCart(input: CartUpdateInput!): Cart
+	deleteCart(cart_id: ID!): Boolean
 }
 
 extend type Query {
-	cart(user_id: ID): String
 	getProductsCart(user_id: ID): [ProductCart]
 	getServicesCart(user_id: ID): [ServiceCart]
+	getAllCarts(user_id: ID): [Cart]
 }

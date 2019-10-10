@@ -47,5 +47,14 @@ type ProductCartInput struct {
 
 type CartUpdateInput struct {
 	CartID   string  `json:"cart_id"`
-	Quantity int `json:"quantity"`
+	Quantity int     `json:"quantity"`
+	TypeID   string  `json:"type_id"`
+	Type     string   `json:"type"`
+}
+
+type CartInput struct {
+	VendorID    string      `json:"vendor_id"`
+	TypeID      string      `json:"type_id"`
+	Type     		string      `json:"type"`
+	Quantity    int         `json:"quantity"`
 }
