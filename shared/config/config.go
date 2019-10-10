@@ -41,9 +41,8 @@ func LoadConfig() *Config {
 		AwsAssesKeyID:        os.Getenv("AWS_ACCESS_KEY_ID"),
 		AwsSecretAccessKey:   os.Getenv("AWS_SECRET_ACCESS_KEY"),
 		AwsS3Bucket:          os.Getenv("AWS_S3_BUCKET"),
-		// AuthenticationSecret: os.Getenv("AUTHENTICATION_SECRET"),
-		AuthenticationSecret: "secret",
-		PasswordSecret:       "secret",
+		AuthenticationSecret: "os.Getenv("AUTHENTICATION_SECRET")",
+		PasswordSecret:       os.Getenv("PASSWORD_SECRET"),
 		GoEnv:                os.Getenv("GO_ENV"),
 	}
 }
