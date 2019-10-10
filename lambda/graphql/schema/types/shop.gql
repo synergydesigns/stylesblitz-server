@@ -1,0 +1,7 @@
+type Shop {
+	id: ID!
+  name: String
+	vendorId: Int
+	createdAt: Timestamp
+	updatedAt: Timestamp
+}

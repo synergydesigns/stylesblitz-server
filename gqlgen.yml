@@ -41,6 +41,28 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.AssetUploadOutput
   VendorCategoryInput:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.VendorCategoryInput
+  Cart:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Cart
+  Product:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Product
+  Shop:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Shop
+  ProductCart:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductCart
+  ServiceCart:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceCart
+  ServiceCartInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceCartInput
+  ProductCartInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductCartInput
+  CartUpdateInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.CartUpdateInput
+  ProductInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductInput
+  CartInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.CartInput
+  CartType:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.CartType
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go
