@@ -6,40 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"time"
 )
-
-type Cart struct {
-	ID        string     `json:"id"`
-	UserID    *int       `json:"userId"`
-	CreatedAt *time.Time `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
-}
-
-type Product struct {
-	ID         string  `json:"id"`
-	CategoryID *string `json:"categoryId"`
-	Available  *int    `json:"available"`
-	Hot        *bool   `json:"hot"`
-	BrandID    *string `json:"brandId"`
-}
-
-type ProductCart struct {
-	ID        string  `json:"id"`
-	VendorID  *string `json:"vendorId"`
-	ProductID *string `json:"productId"`
-	ShopID    *string `json:"shopId"`
-	CartID    *string `json:"cartId"`
-	Quantity  *int    `json:"quantity"`
-}
-
-type ServiceCart struct {
-	ID        string  `json:"id"`
-	VendorID  *string `json:"vendorId"`
-	ServiceID *string `json:"serviceId"`
-	CartID    *string `json:"cartId"`
-	Quantity  *int    `json:"quantity"`
-}
 
 type ServiceInput struct {
 	Name         string       `json:"name"`
@@ -58,14 +25,6 @@ type ServiceInputUpdate struct {
 	Price        *float64      `json:"price"`
 	Trending     *bool         `json:"trending"`
 	CategoryID   *int          `json:"CategoryId"`
-}
-
-type Shop struct {
-	ID        string     `json:"id"`
-	Name      *string    `json:"name"`
-	VendorID  *int       `json:"vendorId"`
-	CreatedAt *time.Time `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
 }
 
 type VendorCategoryInputUpdate struct {
