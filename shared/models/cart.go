@@ -75,14 +75,12 @@ func (service *CartDBService) CreateCart(userID string, vendorID string, cartTyp
 
 	if cartResult.Error != nil {
 		log.Printf("An error occurred creating cart %v", cartResult.Error.Error())
-		fmt.Println(cartResult.Error.Error(), "from create cart")
 
 		if utils.ForeignKeyNotExist(cartResult.Error) {
 			return nil, fmt.Errorf("Vendor with id %s does not exist", vendorID)
 		}
 
-		fmt.Println(cart)
-		return nil, fmt.Errorf("see here an error occurred creating cart %s", cartResult.Error.Error())
+		return nil, fmt.Errorf("an error occurred creating cart %s", cartResult.Error.Error())
 	}
 
 	return &cart, nil
@@ -125,7 +123,6 @@ func (cart *Cart) CartType() (CartType, error) {
 func (service *CartDBService) DeleteCart(userID string, cartID string)(bool, error) {
 	cartResult := service.DB.Delete(&Cart{}, "id = ? AND user_id = ?", cartID, userID)
 	if cartResult.Error != nil {
-
 		log.Printf("An error occurred deleting cart %v", cartResult.Error.Error())
 		return false, fmt.Errorf("An error occurred deleting cart. %s", cartResult.Error.Error())
 	}
