@@ -1,3 +1,3 @@
-DROP TYPE IF EXISTS cart_types;
-
 DROP TABLE IF EXISTS carts;
+
+DROP TYPE IF EXISTS cart_types;
