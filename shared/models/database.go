@@ -46,8 +46,6 @@ func NewDB(config *config.Config) *Datastore {
 		ServiceDB:        &ServiceDBService{DB},
 		AssetDB:          &AssetDBService{DB},
 		VendorCategoryDB: &VendorCategoryDBService{DB},
-		ProductCartDB:    &ProductCartDBService{DB},
-		ServiceCartDB:    &ServiceCartDBService{DB},
 		CartDB:           &CartDBService{DB},
 		ProductDB:        &ProductDBService{DB},
 	}
@@ -59,8 +57,6 @@ type Datastore struct {
 	AssetDB          AssetDB
 	ServiceDB        ServiceDB
 	VendorCategoryDB VendorCategoryDB
-	ProductCartDB    ProductCartDB
-	ServiceCartDB    ServiceCartDB
 	CartDB           CartDB
 	ProductDB        ProductDB
 }

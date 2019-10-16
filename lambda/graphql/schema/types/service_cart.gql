@@ -1,8 +1,0 @@
-type ServiceCart {
-	id: ID!
-	vendorId: String
-	serviceId: Int
-  cartId: String
-  quantity: Int
-	service: Service
-}
