@@ -32,22 +32,14 @@ func (product *Product) BeforeCreate(scope *gorm.Scope) error {
 		scope.SetColumn("ID", cuid.New())
 	}
 
-	if product.CategoryID == "" {
-		scope.SetColumn("CategoryID", cuid.New())
-	}
-
-	if product.BrandID == "" {
-		scope.SetColumn("BrandID", cuid.New())
-	}
-
 	return nil
 }
 
 func (service *ProductDBService) CreateProduct(userID string, vendorID string, name string, categoryID string, brandID string, available int) (*Product, error) {
 	product := Product{
 		VendorID:    vendorID,
-		// CategoryID:  categoryID,
-		// BrandID:     brandID,
+		CategoryID:  categoryID,
+		BrandID:     brandID,
 		Name:        name,
 		Available:   available,
 	}
