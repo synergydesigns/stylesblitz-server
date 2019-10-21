@@ -23,3 +23,25 @@ type VendorCategoryInput struct {
 	Description *string `json:"description"`
 	VendorID    string  `json:"vendor_id"`
 }
+
+type ProductInput struct {
+	Name        string `json:"name"`
+	VendorID    string `json:"vendor_id"`
+	Available   int    `json:"available"`
+	CategoryID  string `json:"category_id"`
+	BrandID     string `json:"brand_id"`
+}
+
+type CartUpdateInput struct {
+	CartID   string  `json:"cart_id"`
+	Quantity int     `json:"quantity"`
+	TypeID   string  `json:"type_id"`
+	Type     string   `json:"type"`
+}
+
+type CartInput struct {
+	VendorID    string      `json:"vendor_id"`
+	TypeID      string      `json:"type_id"`
+	Type     		string      `json:"type"`
+	Quantity    int         `json:"quantity"`
+}

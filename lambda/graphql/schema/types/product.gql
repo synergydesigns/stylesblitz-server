@@ -1,0 +1,25 @@
+type Product {
+	id: ID!
+	name: String
+	categoryId: String
+	vendorId: String
+	available: Int
+	hot: Boolean
+  brandId: String
+}
+
+input ProductInput {
+	Name: String!
+	Available: Int!
+	VendorID: String
+	CategoryID: String
+	BrandID: String
+}
+
+extend type Mutation {
+	createProduct(input: ProductInput!): Product
+}
+
+extend type Query {
+	getProductsByVendor(vendorID: String!): [Product]
+}

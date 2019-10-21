@@ -14,15 +14,6 @@ import (
 )
 
 var vendorService = models.VendorCategoryDBService{models.Connect(config.LoadConfig())}
-var seed = seeder.New()
-var user models.User
-var vendor models.Vendor
-
-func init() {
-	seed.Tables = []string{"categories", "vendors", "users"}
-	user = seed.SeedUser("", "testuser", "testduser@gmail.com", nil)
-	vendor = seed.SeedVendor("", user.ID, "testvendor")
-}
 
 type VendorCategoryTestSuite struct {
 	suite.Suite
@@ -49,9 +40,9 @@ func (suite *VendorCategoryTestSuite) AfterTest() {
 
 func (suite *VendorCategoryTestSuite) TestGetAllCategoriesByVendorID() {
 	for _, value := range utils.MakeRange(1, 21) {
-		seed.VendorCategory(
+		suite.seed.VendorCategory(
 			0,
-			vendor.ID,
+			suite.vendor.ID,
 			fmt.Sprintf("testvendor %d", value),
 		)
 	}
@@ -63,7 +54,7 @@ func (suite *VendorCategoryTestSuite) TestGetAllCategoriesByVendorID() {
 	}{
 		{
 			Title:    "Should return 20 categories for the vendor",
-			VendorID: vendor.ID,
+			VendorID: suite.vendor.ID,
 			Expected: 20,
 		},
 		{
@@ -81,7 +72,7 @@ func (suite *VendorCategoryTestSuite) TestGetAllCategoriesByVendorID() {
 }
 
 func (suite *VendorCategoryTestSuite) TestCreateCategory() {
-	vendor2 := seed.SeedVendor("", user.ID, "testvendor2")
+	vendor2 := suite.seed.SeedVendor("", suite.user.ID, "testvendor2")
 
 	testCases := []struct {
 		Title       string
@@ -92,7 +83,7 @@ func (suite *VendorCategoryTestSuite) TestCreateCategory() {
 	}{
 		{
 			Title:       "Should create category",
-			VendorID:    vendor.ID,
+			VendorID:    suite.vendor.ID,
 			Name:        "Make up",
 			Description: "We provide awesome makeup",
 		},
@@ -104,7 +95,7 @@ func (suite *VendorCategoryTestSuite) TestCreateCategory() {
 		},
 		{
 			Title:       "Should return an error if category name already exist for a vendor",
-			VendorID:    vendor.ID,
+			VendorID:    suite.vendor.ID,
 			Name:        "Make up",
 			Description: "We provide awesome makeup",
 			Error:       "DuplicateField",
@@ -145,8 +136,8 @@ func (suite *VendorCategoryTestSuite) TestCreateCategory() {
 }
 
 func (suite *VendorCategoryTestSuite) TestUpdateCategory() {
-	category := suite.seed.VendorCategory(1, vendor.ID, "braiding")
-	category2 := suite.seed.VendorCategory(2, vendor.ID, "make up")
+	category := suite.seed.VendorCategory(1, suite.vendor.ID, "braiding")
+	category2 := suite.seed.VendorCategory(2, suite.vendor.ID, "make up")
 
 	testCases := []struct {
 		Title               string
@@ -193,7 +184,7 @@ func (suite *VendorCategoryTestSuite) TestUpdateCategory() {
 }
 
 func (suite *VendorCategoryTestSuite) TestDeleteCategory() {
-	category := seed.VendorCategory(1, vendor.ID, "braiding")
+	category := suite.seed.VendorCategory(1, suite.vendor.ID, "braiding")
 
 	testCases := []struct {
 		Title      string
@@ -217,5 +208,5 @@ func (suite *VendorCategoryTestSuite) TestDeleteCategory() {
 }
 
 func TestVendorCategorySuite(t *testing.T) {
-	suite.Run(t, new(CategoryServiceTestSuite))
+	suite.Run(t, new(VendorCategoryTestSuite))
 }

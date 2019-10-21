@@ -207,6 +207,44 @@ func (s *Seeder) SeedVendor(id string, userID, name string) models.Vendor {
 	return vendor
 }
 
+func (s *Seeder) SeedService(vendorID, name string, categoryID, duration int) models.Service {
+	service := models.Service{
+		Name:   name,
+		VendorID: vendorID,
+		CategoryID: uint64(categoryID),
+		Duration: uint(duration),
+		DurationType: "days",
+	}
+
+	s.DB.Create(&service)
+
+	return service
+}
+
+func (s *Seeder) SeedProduct(vendorID, name, categoryID string, available int) models.Product {
+	product := models.Product{
+		Name:   name,
+		VendorID: vendorID,
+		CategoryID: categoryID,
+		Available: available,
+	}
+
+	s.DB.Create(&product)
+
+	return product
+}
+
+func (s *Seeder) SeedCategory(vendorID, name string) models.VendorCategory {
+	category := models.VendorCategory{
+		Name:   name,
+		VendorID: vendorID,
+	}
+
+	s.DB.Create(&category)
+
+	return category
+}
+
 func (s *Seeder) VendorCategory(id uint64, vendorID, name string) models.VendorCategory {
 	category := models.VendorCategory{
 		Name:     name,
