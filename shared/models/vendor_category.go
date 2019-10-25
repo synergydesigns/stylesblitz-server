@@ -11,7 +11,7 @@ import (
 type VendorCategory struct {
 	ID          uint64 `gorm:"primary_key"`
 	Name        string
-	Description string
+	Description string `json:"description"`
 	VendorID    string `json:"vendor_id" gorm:"foreignkey:vendor_id"`
 	Vendor      Vendor
 }
