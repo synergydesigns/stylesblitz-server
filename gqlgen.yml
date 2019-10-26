@@ -55,6 +55,8 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.CartInput
   CartType:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.CartType
+  Autocomplete:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.Autocomplete
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go

@@ -1,0 +1,9 @@
+type Autocomplete {
+    type: String
+    query: String
+    url: String
+}
+
+extend type Query {
+    getSuggestions(query: String!): [Autocomplete]
+}
