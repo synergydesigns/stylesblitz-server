@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/synergydesigns/stylesblitz-server/shared/utils"
@@ -29,6 +30,12 @@ type VendorCategoryDB interface {
 
 func (VendorCategory) TableName() string {
 	return "categories"
+}
+
+func (category *VendorCategory) BeforeCreate(scope *gorm.Scope) error {
+	err := scope.SetColumn("Name", strings.ToLower(category.Name))
+
+	return err
 }
 
 func (service *VendorCategoryDBService) GetAllCategoriesByVendorID(vendorID string) ([]*VendorCategory, error) {

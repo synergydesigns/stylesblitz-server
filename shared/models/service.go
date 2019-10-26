@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -34,6 +35,12 @@ type ServiceDB interface {
 	UpdateService(id uint64, service ServiceInputUpdate) (*Service, error)
 	DeleteService(id uint64) (bool, error)
 	SearchService(lat *float64, lng *float64, name string, rating *SortRating, price *SortPrice) ([]*Service, error)
+}
+
+func (service *Service) BeforeCreate(scope *gorm.Scope) error {
+	err := scope.SetColumn("Name", strings.ToLower(service.Name))
+
+	return err
 }
 
 func (service *ServiceDBService) GetServices(serviceName string, lat float64, long float64, radius float64) ([]*Service, error) {
