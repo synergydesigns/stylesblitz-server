@@ -18,3 +18,5 @@ INSERT
   OR
 UPDATE
   ON vendors FOR EACH ROW EXECUTE PROCEDURE vendors_ts_trigger_func();
+
+CREATE INDEX index_tsv_on_vendor ON vendors USING gin(tsv);

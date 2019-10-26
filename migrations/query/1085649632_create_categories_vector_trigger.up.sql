@@ -18,3 +18,5 @@ INSERT
   OR
 UPDATE
   ON categories FOR EACH ROW EXECUTE PROCEDURE categories_ts_trigger_func();
+
+CREATE INDEX IF NOT EXISTS index_tsv_categories ON categories USING gin(tsv);

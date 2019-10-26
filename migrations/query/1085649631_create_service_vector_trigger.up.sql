@@ -25,3 +25,5 @@ INSERT
   OR
 UPDATE
   ON services FOR EACH ROW EXECUTE PROCEDURE ts_vector_services_trigger();
+
+CREATE INDEX IF NOT EXISTS index_tsv_services ON services USING gin(tsv);
