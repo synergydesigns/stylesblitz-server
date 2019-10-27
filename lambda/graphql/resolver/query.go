@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"log"
 	"regexp"
 	"strings"
 
@@ -20,13 +19,11 @@ func (resolver *queryResolver) GetSuggestions(ctx context.Context, query string)
 	for _, suggestion := range suggestions {
 		var reg = regexp.MustCompile(`\s+`)
 
-		log.Println(suggestion.Type)
-
 		if suggestion.Type == "vendors" || suggestion.Type == "categories" {
 			cleanQuery := reg.ReplaceAllString(strings.TrimSpace(suggestion.Query), "-")
 			suggestion.Url = "/" + suggestion.Type + "/" + suggestion.ID + "-" + cleanQuery
 		} else {
-			cleanQuery := reg.ReplaceAllString(strings.TrimSpace(suggestion.Query), "-")
+			cleanQuery := reg.ReplaceAllString(strings.TrimSpace(suggestion.Query), "+")
 			suggestion.Url = "/" + suggestion.Type + "?query=" + cleanQuery
 		}
 	}
