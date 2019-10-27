@@ -84,19 +84,19 @@ func (suite *VendorCategoryTestSuite) TestCreateCategory() {
 		{
 			Title:       "Should create category",
 			VendorID:    suite.vendor.ID,
-			Name:        "Make up",
+			Name:        "make up",
 			Description: "We provide awesome makeup",
 		},
 		{
 			Title:       "Should create new category category if already exist for another vendor",
 			VendorID:    vendor2.ID,
-			Name:        "Make up",
+			Name:        "make up",
 			Description: "We provide awesome braiding service",
 		},
 		{
 			Title:       "Should return an error if category name already exist for a vendor",
 			VendorID:    suite.vendor.ID,
-			Name:        "Make up",
+			Name:        "make up",
 			Description: "We provide awesome makeup",
 			Error:       "DuplicateField",
 		},
