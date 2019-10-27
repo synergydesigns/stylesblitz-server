@@ -1,0 +1,27 @@
+type ServiceReview {
+	id: ID!
+	userId: String
+	vendorID: String
+	createdAt: Timestamp
+	updatedAt: Timestamp
+  serviceID:  Int!
+	text:       String!
+	rating:     String
+	parentID:   Int
+}
+
+input ServiceReviewInput {
+	vendorID:   String!
+  serviceID:  Int!
+	text:       String!
+	rating:     String
+	parentID:   Int
+}
+
+extend type Mutation {
+	createReview(input: ServiceReviewInput!): ServiceReview
+}
+
+extend type Query {
+  getServiceReviews(service_id: Int!): [ServiceReview]
+}
