@@ -155,6 +155,7 @@ type ComplexityRoot struct {
 		ID        func(childComplexity int) int
 		ParentID  func(childComplexity int) int
 		Rating    func(childComplexity int) int
+		Replies   func(childComplexity int) int
 		ServiceID func(childComplexity int) int
 		Text      func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -899,6 +900,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ServiceReview.Rating(childComplexity), true
 
+	case "ServiceReview.Replies":
+		if e.complexity.ServiceReview.Replies == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.Replies(childComplexity), true
+
 	case "ServiceReview.serviceID":
 		if e.complexity.ServiceReview.ServiceID == nil {
 			break
@@ -1411,15 +1419,16 @@ extend type Query {
 }
 `},
 	&ast.Source{Name: "lambda/graphql/schema/types/service_review.gql", Input: `type ServiceReview {
-	id: ID!
-	userId: String
-	vendorID: String
-	createdAt: Timestamp
-	updatedAt: Timestamp
+	id:         ID!
+	userId:     String
+	vendorID:   String
+	createdAt:  Timestamp
+	updatedAt:  Timestamp
   serviceID:  Int!
 	text:       String!
 	rating:     String
 	parentID:   Int
+	Replies:    [ServiceReview]
 }
 
 input ServiceReviewInput {
@@ -4972,6 +4981,40 @@ func (ec *executionContext) _ServiceReview_parentID(ctx context.Context, field g
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ServiceReview_Replies(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Replies, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚕgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Shop_id(ctx context.Context, field graphql.CollectedField, obj *models.Shop) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -7974,6 +8017,8 @@ func (ec *executionContext) _ServiceReview(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._ServiceReview_rating(ctx, field, obj)
 		case "parentID":
 			out.Values[i] = ec._ServiceReview_parentID(ctx, field, obj)
+		case "Replies":
+			out.Values[i] = ec._ServiceReview_Replies(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9254,6 +9299,46 @@ func (ec *executionContext) marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋs
 
 func (ec *executionContext) marshalOServiceReview2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v models.ServiceReview) graphql.Marshaler {
 	return ec._ServiceReview(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOServiceReview2ᚕgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v []models.ServiceReview) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOServiceReview2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOServiceReview2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v []*models.ServiceReview) graphql.Marshaler {

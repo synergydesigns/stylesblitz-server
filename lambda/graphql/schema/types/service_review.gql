@@ -1,13 +1,14 @@
 type ServiceReview {
-	id: ID!
-	userId: String
-	vendorID: String
-	createdAt: Timestamp
-	updatedAt: Timestamp
+	id:         ID!
+	userId:     String
+	vendorID:   String
+	createdAt:  Timestamp
+	updatedAt:  Timestamp
   serviceID:  Int!
 	text:       String!
 	rating:     String
 	parentID:   Int
+	Replies:    [ServiceReview]
 }
 
 input ServiceReviewInput {
