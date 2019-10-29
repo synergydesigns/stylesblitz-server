@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	// _ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/synergydesigns/stylesblitz-server/shared/config"
 )
 
-// DB database abstraction
 type DB struct {
 	*gorm.DB
 }
@@ -48,6 +46,7 @@ func NewDB(config *config.Config) *Datastore {
 		VendorCategoryDB: &VendorCategoryDBService{DB},
 		CartDB:           &CartDBService{DB},
 		ProductDB:        &ProductDBService{DB},
+		AutocompleteDB:   &AutocompleteDBService{DB},
 	}
 }
 
@@ -59,4 +58,5 @@ type Datastore struct {
 	VendorCategoryDB VendorCategoryDB
 	CartDB           CartDB
 	ProductDB        ProductDB
+	AutocompleteDB   AutocompleteDB
 }

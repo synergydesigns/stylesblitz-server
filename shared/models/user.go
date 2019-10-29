@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -38,14 +39,37 @@ type UserDB interface {
 }
 
 func (user *User) BeforeCreate(scope *gorm.Scope) error {
-	if user.ID == "" {
-		scope.SetColumn("ID", cuid.New())
+	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+
+	if err != nil {
+		return err
 	}
 
-	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-	scope.SetColumn("Password", password)
+	err = scope.SetColumn("Firstname", strings.ToLower(user.Firstname))
 
-	return nil
+	if err != nil {
+		return err
+	}
+
+	err = scope.SetColumn("Lastname", strings.ToLower(user.Lastname))
+
+	if err != nil {
+		return err
+	}
+
+	err = scope.SetColumn("Email", strings.ToLower(user.Email))
+
+	if err != nil {
+		return err
+	}
+
+	err = scope.SetColumn("Password", password)
+
+	if user.ID == "" {
+		err = scope.SetColumn("ID", cuid.New())
+	}
+
+	return err
 }
 
 func (service *UserDbService) GetUserByID(id string) (*User, error) {

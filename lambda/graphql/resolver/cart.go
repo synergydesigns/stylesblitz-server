@@ -7,7 +7,7 @@ import (
 	"github.com/synergydesigns/stylesblitz-server/shared/models"
 )
 
-type CartResolver struct{*Resolver}
+type CartResolver struct{ *Resolver }
 
 func (mutation mutationResolver) CreateCart(ctx context.Context, input models.CartInput) (*models.Cart, error) {
 	service := config.GetServices(ctx)

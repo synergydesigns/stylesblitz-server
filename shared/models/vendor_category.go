@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/synergydesigns/stylesblitz-server/shared/utils"
@@ -11,7 +12,7 @@ import (
 type VendorCategory struct {
 	ID          uint64 `gorm:"primary_key"`
 	Name        string
-	Description string
+	Description string `json:"description"`
 	VendorID    string `json:"vendor_id" gorm:"foreignkey:vendor_id"`
 	Vendor      Vendor
 }
@@ -29,6 +30,12 @@ type VendorCategoryDB interface {
 
 func (VendorCategory) TableName() string {
 	return "categories"
+}
+
+func (category *VendorCategory) BeforeCreate(scope *gorm.Scope) error {
+	err := scope.SetColumn("Name", strings.ToLower(category.Name))
+
+	return err
 }
 
 func (service *VendorCategoryDBService) GetAllCategoriesByVendorID(vendorID string) ([]*VendorCategory, error) {

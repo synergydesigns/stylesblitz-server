@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -35,10 +36,23 @@ type VendorDB interface {
 }
 
 func (vendor *Vendor) BeforeCreate(scope *gorm.Scope) error {
-	if vendor.ID == "" {
-		scope.SetColumn("ID", cuid.New())
+	err := scope.SetColumn("Name", strings.ToLower(vendor.Name))
+
+	if err != nil {
+		return err
 	}
-	return nil
+
+	err = scope.SetColumn("Email", strings.ToLower(vendor.Email))
+
+	if err != nil {
+		return err
+	}
+
+	if vendor.ID == "" {
+		err = scope.SetColumn("ID", cuid.New())
+	}
+
+	return err
 }
 
 func (service *VendorDbService) GetVendorsByServiceAndLocation(serviceName string, lat float64, long float64, radius float64) ([]*Vendor, error) {

@@ -78,6 +78,12 @@ type ComplexityRoot struct {
 		UploadURL func(childComplexity int) int
 	}
 
+	Autocomplete struct {
+		Query func(childComplexity int) int
+		Type  func(childComplexity int) int
+		Url   func(childComplexity int) int
+	}
+
 	Cart struct {
 		CartType  func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
@@ -126,6 +132,7 @@ type ComplexityRoot struct {
 		GetAllVendorService func(childComplexity int, vendorID string) int
 		GetAsset            func(childComplexity int, id string) int
 		GetProductsByVendor func(childComplexity int, vendorID string) int
+		GetSuggestions      func(childComplexity int, query string) int
 		SearchServices      func(childComplexity int, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) int
 		User                func(childComplexity int, id string) int
 	}
@@ -202,6 +209,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
 	GetAsset(ctx context.Context, id string) (*models.Asset, error)
+	GetSuggestions(ctx context.Context, query string) ([]*models.Autocomplete, error)
 	GetAllCarts(ctx context.Context, userID *string) ([]*models.Cart, error)
 	GetAllCategories(ctx context.Context, vendorID *string) ([]*models.VendorCategory, error)
 	GetProductsByVendor(ctx context.Context, vendorID string) ([]*models.Product, error)
@@ -387,6 +395,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AssetUploadOutput.UploadURL(childComplexity), true
 
+	case "Autocomplete.query":
+		if e.complexity.Autocomplete.Query == nil {
+			break
+		}
+
+		return e.complexity.Autocomplete.Query(childComplexity), true
+
+	case "Autocomplete.type":
+		if e.complexity.Autocomplete.Type == nil {
+			break
+		}
+
+		return e.complexity.Autocomplete.Type(childComplexity), true
+
+	case "Autocomplete.url":
+		if e.complexity.Autocomplete.Url == nil {
+			break
+		}
+
+		return e.complexity.Autocomplete.Url(childComplexity), true
+
 	case "Cart.cartType":
 		if e.complexity.Cart.CartType == nil {
 			break
@@ -563,7 +592,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["category_id"].(int)), true
+		return e.complexity.Mutation.DeleteVendorCategory(childComplexity, args["categoryId"].(int)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -611,7 +640,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int)), true
+		return e.complexity.Mutation.UpdateVendorCategory(childComplexity, args["input"].(models.VendorCategoryInputUpdate), args["categoryId"].(int)), true
 
 	case "Product.available":
 		if e.complexity.Product.Available == nil {
@@ -721,6 +750,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetProductsByVendor(childComplexity, args["vendorID"].(string)), true
+
+	case "Query.getSuggestions":
+		if e.complexity.Query.GetSuggestions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getSuggestions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetSuggestions(childComplexity, args["query"].(string)), true
 
 	case "Query.searchServices":
 		if e.complexity.Query.SearchServices == nil {
@@ -1115,6 +1156,15 @@ extend type Query {
 extend type Mutation {
   createPresignedURL(input: [AssetInput]!, owner: AssetOwner!, id: String): [AssetUploadOutput]
 }`},
+	&ast.Source{Name: "lambda/graphql/schema/types/autocomplete.gql", Input: `type Autocomplete {
+    type: String
+    query: String
+    url: String
+}
+
+extend type Query {
+    getSuggestions(query: String!): [Autocomplete]
+}`},
 	&ast.Source{Name: "lambda/graphql/schema/types/cart.gql", Input: `type CartType {
 	product: Product
 	service: Service
@@ -1163,19 +1213,19 @@ extend type Query {
 input VendorCategoryInput {
 	name: String!
 	description: String
-	vendor_id: String!
+	vendorId: String!
 }
 
 input VendorCategoryInputUpdate {
-	vendor_id: String!
+	vendorId: String!
 	name: String
 	description: String
 }
 
 extend type Mutation {
 	createVendorCategory(input: VendorCategoryInput!): VendorCategory
-	updateVendorCategory(input: VendorCategoryInputUpdate!, category_id: Int!): VendorCategory
-	deleteVendorCategory(category_id: Int!): Boolean
+	updateVendorCategory(input: VendorCategoryInputUpdate!, categoryId: Int!): VendorCategory
+	deleteVendorCategory(categoryId: Int!): Boolean
 }
 
 extend type Query {
@@ -1439,13 +1489,13 @@ func (ec *executionContext) field_Mutation_deleteVendorCategory_args(ctx context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
-	if tmp, ok := rawArgs["category_id"]; ok {
+	if tmp, ok := rawArgs["categoryId"]; ok {
 		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["category_id"] = arg0
+	args["categoryId"] = arg0
 	return args, nil
 }
 
@@ -1519,13 +1569,13 @@ func (ec *executionContext) field_Mutation_updateVendorCategory_args(ctx context
 	}
 	args["input"] = arg0
 	var arg1 int
-	if tmp, ok := rawArgs["category_id"]; ok {
+	if tmp, ok := rawArgs["categoryId"]; ok {
 		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["category_id"] = arg1
+	args["categoryId"] = arg1
 	return args, nil
 }
 
@@ -1610,6 +1660,20 @@ func (ec *executionContext) field_Query_getProductsByVendor_args(ctx context.Con
 		}
 	}
 	args["vendorID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getSuggestions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["query"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["query"] = arg0
 	return args, nil
 }
 
@@ -2481,6 +2545,108 @@ func (ec *executionContext) _AssetUploadOutput_assetURL(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Autocomplete_type(ctx context.Context, field graphql.CollectedField, obj *models.Autocomplete) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Autocomplete",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Autocomplete_query(ctx context.Context, field graphql.CollectedField, obj *models.Autocomplete) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Autocomplete",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Query, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Autocomplete_url(ctx context.Context, field graphql.CollectedField, obj *models.Autocomplete) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Autocomplete",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Url, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Cart_id(ctx context.Context, field graphql.CollectedField, obj *models.Cart) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -3137,7 +3303,7 @@ func (ec *executionContext) _Mutation_updateVendorCategory(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInputUpdate), args["category_id"].(int))
+		return ec.resolvers.Mutation().UpdateVendorCategory(rctx, args["input"].(models.VendorCategoryInputUpdate), args["categoryId"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3178,7 +3344,7 @@ func (ec *executionContext) _Mutation_deleteVendorCategory(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["category_id"].(int))
+		return ec.resolvers.Mutation().DeleteVendorCategory(rctx, args["categoryId"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3678,6 +3844,47 @@ func (ec *executionContext) _Query_getAsset(ctx context.Context, field graphql.C
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOAsset2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAsset(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getSuggestions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getSuggestions_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetSuggestions(rctx, args["query"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Autocomplete)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOAutocomplete2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAutocomplete(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllCarts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6588,7 +6795,7 @@ func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-		case "vendor_id":
+		case "vendorId":
 			var err error
 			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -6606,7 +6813,7 @@ func (ec *executionContext) unmarshalInputVendorCategoryInputUpdate(ctx context.
 
 	for k, v := range asMap {
 		switch k {
-		case "vendor_id":
+		case "vendorId":
 			var err error
 			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
@@ -6779,6 +6986,34 @@ func (ec *executionContext) _AssetUploadOutput(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var autocompleteImplementors = []string{"Autocomplete"}
+
+func (ec *executionContext) _Autocomplete(ctx context.Context, sel ast.SelectionSet, obj *models.Autocomplete) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, autocompleteImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Autocomplete")
+		case "type":
+			out.Values[i] = ec._Autocomplete_type(ctx, field, obj)
+		case "query":
+			out.Values[i] = ec._Autocomplete_query(ctx, field, obj)
+		case "url":
+			out.Values[i] = ec._Autocomplete_url(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6983,6 +7218,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getAsset(ctx, field)
+				return res
+			})
+		case "getSuggestions":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getSuggestions(ctx, field)
 				return res
 			})
 		case "getAllCarts":
@@ -8034,6 +8280,57 @@ func (ec *executionContext) marshalOAssetUploadOutput2ᚖgithubᚗcomᚋsynergyd
 		return graphql.Null
 	}
 	return ec._AssetUploadOutput(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOAutocomplete2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAutocomplete(ctx context.Context, sel ast.SelectionSet, v models.Autocomplete) graphql.Marshaler {
+	return ec._Autocomplete(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOAutocomplete2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAutocomplete(ctx context.Context, sel ast.SelectionSet, v []*models.Autocomplete) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOAutocomplete2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAutocomplete(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOAutocomplete2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐAutocomplete(ctx context.Context, sel ast.SelectionSet, v *models.Autocomplete) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Autocomplete(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

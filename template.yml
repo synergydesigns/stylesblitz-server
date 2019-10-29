@@ -25,6 +25,7 @@ Resources:
           AWS_S3_BUCKET:
           AUTHENTICATION_SECRET:
           PASSWORD_SECRET:
+          GO_ENV:
       Events:
         GraphqlAPI:
           Type: Api

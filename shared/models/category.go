@@ -1,7 +1,5 @@
 package models
 
-// Category defines the category models for graphql
-// for getting a single category
 type Category struct {
 	ID          uint64 `gorm:"primary_key"`
 	Name        string
