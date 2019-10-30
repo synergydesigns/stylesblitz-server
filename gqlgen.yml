@@ -61,6 +61,8 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceReview
   ServiceReviewInput:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceReviewInput
+  ServiceReviewUpdateInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceReviewUpdateInput
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go

@@ -113,6 +113,7 @@ type ComplexityRoot struct {
 		DeleteVendorCategory func(childComplexity int, categoryID int) int
 		Login                func(childComplexity int, email string, password string) int
 		UpdateCart           func(childComplexity int, input models.CartUpdateInput) int
+		UpdateReview         func(childComplexity int, input models.ServiceReviewUpdateInput) int
 		UpdateService        func(childComplexity int, input models.ServiceInputUpdate, serviceID int) int
 		UpdateVendorCategory func(childComplexity int, input models.VendorCategoryInputUpdate, categoryID int) int
 	}
@@ -221,6 +222,7 @@ type MutationResolver interface {
 	UpdateService(ctx context.Context, input models.ServiceInputUpdate, serviceID int) (*models.Service, error)
 	DeleteService(ctx context.Context, serviceID int) (*bool, error)
 	CreateReview(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
+	UpdateReview(ctx context.Context, input models.ServiceReviewUpdateInput) (*models.ServiceReview, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -647,6 +649,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateCart(childComplexity, args["input"].(models.CartUpdateInput)), true
 
+	case "Mutation.UpdateReview":
+		if e.complexity.Mutation.UpdateReview == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_UpdateReview_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateReview(childComplexity, args["input"].(models.ServiceReviewUpdateInput)), true
+
 	case "Mutation.updateService":
 		if e.complexity.Mutation.UpdateService == nil {
 			break
@@ -900,7 +914,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ServiceReview.Rating(childComplexity), true
 
-	case "ServiceReview.Replies":
+	case "ServiceReview.replies":
 		if e.complexity.ServiceReview.Replies == nil {
 			break
 		}
@@ -1428,7 +1442,7 @@ extend type Query {
 	text:       String!
 	rating:     String
 	parentID:   Int
-	Replies:    [ServiceReview]
+	replies:    [ServiceReview]
 }
 
 input ServiceReviewInput {
@@ -1439,8 +1453,15 @@ input ServiceReviewInput {
 	parentID:   Int
 }
 
+input ServiceReviewUpdateInput {
+	id:         Int!
+	text:       String!
+	rating:     String
+}
+
 extend type Mutation {
 	createReview(input: ServiceReviewInput!): ServiceReview
+	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
 }
 
 extend type Query {
@@ -1484,6 +1505,20 @@ extend type Query {
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_UpdateReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceReviewUpdateInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceReviewUpdateInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewUpdateInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -3706,6 +3741,47 @@ func (ec *executionContext) _Mutation_createReview(ctx context.Context, field gr
 	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_UpdateReview(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_UpdateReview_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateReview(rctx, args["input"].(models.ServiceReviewUpdateInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Product_id(ctx context.Context, field graphql.CollectedField, obj *models.Product) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -4981,7 +5057,7 @@ func (ec *executionContext) _ServiceReview_parentID(ctx context.Context, field g
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ServiceReview_Replies(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+func (ec *executionContext) _ServiceReview_replies(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7392,6 +7468,36 @@ func (ec *executionContext) unmarshalInputServiceReviewInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputServiceReviewUpdateInput(ctx context.Context, obj interface{}) (models.ServiceReviewUpdateInput, error) {
+	var it models.ServiceReviewUpdateInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rating":
+			var err error
+			it.Rating, err = ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Context, obj interface{}) (models.VendorCategoryInput, error) {
 	var it models.VendorCategoryInput
 	var asMap = obj.(map[string]interface{})
@@ -7750,6 +7856,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_deleteService(ctx, field)
 		case "createReview":
 			out.Values[i] = ec._Mutation_createReview(ctx, field)
+		case "UpdateReview":
+			out.Values[i] = ec._Mutation_UpdateReview(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8017,8 +8125,8 @@ func (ec *executionContext) _ServiceReview(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._ServiceReview_rating(ctx, field, obj)
 		case "parentID":
 			out.Values[i] = ec._ServiceReview_parentID(ctx, field, obj)
-		case "Replies":
-			out.Values[i] = ec._ServiceReview_Replies(ctx, field, obj)
+		case "replies":
+			out.Values[i] = ec._ServiceReview_replies(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8576,6 +8684,10 @@ func (ec *executionContext) unmarshalNServiceInputUpdate2githubᚗcomᚋsynergyd
 
 func (ec *executionContext) unmarshalNServiceReviewInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewInput(ctx context.Context, v interface{}) (models.ServiceReviewInput, error) {
 	return ec.unmarshalInputServiceReviewInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNServiceReviewUpdateInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewUpdateInput(ctx context.Context, v interface{}) (models.ServiceReviewUpdateInput, error) {
+	return ec.unmarshalInputServiceReviewUpdateInput(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

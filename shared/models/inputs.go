@@ -53,3 +53,9 @@ type ServiceReviewInput struct {
 	Rating      string      `json:"rating"`
 	ParentID    int         `json:"parent_id"`
 }
+
+type ServiceReviewUpdateInput struct {
+	ID          int         `json:"id"`
+	Text     		string      `json:"text"`
+	Rating      string      `json:"rating"`
+}

@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS service_reviews (
   parent_id INT,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   FOREIGN KEY(user_id) REFERENCES users(id),
   FOREIGN KEY(vendor_id) REFERENCES vendors(id),
   FOREIGN KEY(service_id) REFERENCES services(id)

@@ -16,26 +16,11 @@ type ServiceReview struct {
 	ServiceID int       `json:"service_id"`
 	Text      string
 	Rating    string
-	Replies     []ServiceReview `gorm:"foreignkey:ParentID;association_foreignkey:ID"`
-	// Service     Service
-	// Child     Service `gorm:"foreignkey:ServiceID:association_foreignkey:ID"`
-	// Service   Service `gorm:"foreignkey:ServiceID:association_foreignkey:ID"`
-	// Service   Service `gorm:"foreignkey:ServiceID;association_foreignkey:ID""`
+	Replies   []ServiceReview `gorm:"foreignkey:ParentID;association_foreignkey:ID"`
 	ParentID  int 		  `json:"parent_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-}
-
-type ServiceReviewTest struct {
-	ID        uint64    `gorm:"primary_key"`
-	UserID    string    `json:"user_id"`
-	VendorID  string    `json:"vendor_id"`
-	ServiceID int       `json:"service_id"`
-	Text      string
-	Rating    string
-	ParentID  int 		  `json:"parent_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt *time.Time
 }
 
 type ServiceReviewDBService struct {
@@ -45,6 +30,7 @@ type ServiceReviewDBService struct {
 type ServiceReviewDB interface {
 	CreateReview(userID string, vendorID string, serviceID int, text string, rating string, parentID int) (*ServiceReview, error)
 	GetReviews(serviceID int) ([]*ServiceReview, error)
+	UpdateReview(userID string, text string, rating string, id int) (*ServiceReview, error)
 }
 
 func (service *ServiceReviewDBService) CreateReview (userID string, vendorID string, serviceID int, text string, rating string, parentID int) (*ServiceReview, error) {
@@ -93,7 +79,7 @@ func (service *ServiceReviewDBService) CreateReview (userID string, vendorID str
 
 func (service *ServiceReviewDBService) GetReviews(serviceID int) ([]*ServiceReview, error) {
 	var reviews []*ServiceReview
-	result := service.DB.Where("service_id = ?", serviceID).Preload("Replies").Limit(50).Find(&reviews)
+	result := service.DB.Where("service_id = ? AND parent_id = ?", serviceID, 0).Order("created_at desc").Preload("Replies").Limit(50).Find(&reviews)
 
 	if result.Error != nil {
 		log.Printf("An error occurred getting reviews %v", result.Error.Error())
@@ -101,4 +87,23 @@ func (service *ServiceReviewDBService) GetReviews(serviceID int) ([]*ServiceRevi
 	}
 
 	return reviews, nil
+}
+
+func (service *ServiceReviewDBService) UpdateReview (userID string, text string, rating string, id int) (*ServiceReview, error) {
+	review := ServiceReview{}
+	value := make(map[string]interface{})
+
+	value["rating"] = rating
+	value["text"] = text
+	result := service.DB.Model(&review).Where("id = ? AND user_id = ?", id, userID).Updates(value)
+
+	if result.Error != nil {
+		log.Printf("An error occurred updating review %v", result.Error.Error())
+
+		return &review, fmt.Errorf("an error occurred updating review %s", result.Error.Error())
+	}
+
+	result.First(&review, "id = ?", id)
+
+	return &review, nil
 }

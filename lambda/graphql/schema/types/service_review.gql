@@ -8,7 +8,7 @@ type ServiceReview {
 	text:       String!
 	rating:     String
 	parentID:   Int
-	Replies:    [ServiceReview]
+	replies:    [ServiceReview]
 }
 
 input ServiceReviewInput {
@@ -19,8 +19,15 @@ input ServiceReviewInput {
 	parentID:   Int
 }
 
+input ServiceReviewUpdateInput {
+	id:         Int!
+	text:       String!
+	rating:     String
+}
+
 extend type Mutation {
 	createReview(input: ServiceReviewInput!): ServiceReview
+	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
 }
 
 extend type Query {

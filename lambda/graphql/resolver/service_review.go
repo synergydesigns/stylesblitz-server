@@ -25,6 +25,20 @@ func (mutation mutationResolver) CreateReview(ctx context.Context, input models.
 	return review, err
 }
 
+func (mutation mutationResolver) UpdateReview(ctx context.Context, input models.ServiceReviewUpdateInput) (*models.ServiceReview, error) {
+	service := config.GetServices(ctx)
+	user := config.GetUser(ctx)
+
+	review, err := service.Datastore.ServiceReviewDB.UpdateReview(
+		user.ID,
+		input.Text,
+		input.Rating,
+		input.ID,
+	)
+
+	return review, err
+}
+
 func (query *queryResolver) GetServiceReviews(ctx context.Context, serviceID int) ([]*models.ServiceReview, error) {
 	service := config.GetServices(ctx)
 
