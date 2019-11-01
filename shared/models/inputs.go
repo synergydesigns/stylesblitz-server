@@ -56,6 +56,6 @@ type ServiceReviewInput struct {
 
 type ServiceReviewUpdateInput struct {
 	ID          int         `json:"id"`
-	Text     		string      `json:"text"`
+	Text        string      `json:"text"`
 	Rating      int         `json:"rating"`
 }

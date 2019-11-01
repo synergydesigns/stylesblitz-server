@@ -10,17 +10,17 @@ import (
 )
 
 type ServiceReview struct {
-	ID        uint64    `gorm:"primary_key"`
-	UserID    string    `json:"user_id"`
-	VendorID  string    `json:"vendor_id"`
-	ServiceID int       `json:"service_id"`
+	ID        uint64          `gorm:"primary_key"`
+	UserID    string          `json:"user_id"`
+	VendorID  string          `json:"vendor_id"`
+	ServiceID int             `json:"service_id"`
 	Text      string
 	Rating    int
 	Replies   []ServiceReview `gorm:"foreignkey:ParentID;association_foreignkey:ID"`
-	ParentID  int 		  `json:"parent_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	DeletedAt *time.Time
+	ParentID  int 		        `json:"parent_id"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
+	DeletedAt *time.Time      `json:"deleted_at"`
 }
 
 type ServiceReviewWithAverageRating struct {
@@ -48,6 +48,7 @@ func (service *ServiceReviewDBService) CreateReview (userID string, vendorID str
 		ParentID: parentID,
 	}
 
+	// For creating replies. Might need to be moved to a seperate method
 	if (parentID != 0) {
 		var foundReview ServiceReview
 		service.DB.Where("service_id = ? AND id = ?", serviceID, parentID).First(&foundReview)

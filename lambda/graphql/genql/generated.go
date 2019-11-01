@@ -134,8 +134,8 @@ type ComplexityRoot struct {
 		GetAllVendorService func(childComplexity int, vendorID string) int
 		GetAsset            func(childComplexity int, id string) int
 		GetProductsByVendor func(childComplexity int, vendorID string) int
-		GetSuggestions      func(childComplexity int, query string) int
 		GetServiceReviews   func(childComplexity int, serviceID int) int
+		GetSuggestions      func(childComplexity int, query string) int
 		SearchServices      func(childComplexity int, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) int
 		User                func(childComplexity int, id string) int
 	}
@@ -798,6 +798,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetProductsByVendor(childComplexity, args["vendorID"].(string)), true
+
+	case "Query.getServiceReviews":
+		if e.complexity.Query.GetServiceReviews == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getServiceReviews_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetServiceReviews(childComplexity, args["service_id"].(int)), true
 
 	case "Query.getSuggestions":
 		if e.complexity.Query.GetSuggestions == nil {
@@ -1861,6 +1873,20 @@ func (ec *executionContext) field_Query_getProductsByVendor_args(ctx context.Con
 		}
 	}
 	args["vendorID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getServiceReviews_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["service_id"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["service_id"] = arg0
 	return args, nil
 }
 

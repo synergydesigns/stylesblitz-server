@@ -4,7 +4,7 @@ type ServiceReview {
 	vendorID:   String
 	createdAt:  Timestamp
 	updatedAt:  Timestamp
-  serviceID:  Int!
+	serviceID:  Int!
 	text:       String!
 	rating:     Int
 	parentID:   Int
@@ -18,7 +18,7 @@ type ServiceReviewWithAverageRating {
 
 input ServiceReviewInput {
 	vendorID:   String!
-  serviceID:  Int!
+	serviceID:  Int!
 	text:       String!
 	rating:     Int
 	parentID:   Int
@@ -36,5 +36,5 @@ extend type Mutation {
 }
 
 extend type Query {
-  getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
+	getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
 }
