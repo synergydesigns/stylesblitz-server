@@ -39,12 +39,32 @@ func (mutation mutationResolver) UpdateReview(ctx context.Context, input models.
 	return review, err
 }
 
-func (query *queryResolver) GetServiceReviews(ctx context.Context, serviceID int) ([]*models.ServiceReview, error) {
+func (query *queryResolver) GetServiceReviews(ctx context.Context, serviceID int) (*models.ServiceReviewWithAverageRating, error) {
 	service := config.GetServices(ctx)
 
 	reviews, err := service.Datastore.ServiceReviewDB.GetReviews(
 		serviceID,
 	)
 
-	return reviews, err
+	var counter int
+	var total int
+	for _, review := range reviews {
+		if review.ParentID == 0 && review.Rating != 0 {
+			counter += 1
+			total += review.Rating
+		}
+	}
+
+	var averageRatings float64
+
+	if (counter > 0) {
+		averageRatings = float64(total/counter)
+	}
+
+	res := &models.ServiceReviewWithAverageRating {
+		Reviews: reviews,
+		AverageRatings: averageRatings,
+	}
+
+	return res, err
 }

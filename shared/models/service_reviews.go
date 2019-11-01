@@ -15,7 +15,7 @@ type ServiceReview struct {
 	VendorID  string    `json:"vendor_id"`
 	ServiceID int       `json:"service_id"`
 	Text      string
-	Rating    string
+	Rating    int
 	Replies   []ServiceReview `gorm:"foreignkey:ParentID;association_foreignkey:ID"`
 	ParentID  int 		  `json:"parent_id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -23,17 +23,22 @@ type ServiceReview struct {
 	DeletedAt *time.Time
 }
 
+type ServiceReviewWithAverageRating struct {
+	Reviews         []*ServiceReview
+	AverageRatings  float64
+}
+
 type ServiceReviewDBService struct {
 	DB *gorm.DB
 }
 
 type ServiceReviewDB interface {
-	CreateReview(userID string, vendorID string, serviceID int, text string, rating string, parentID int) (*ServiceReview, error)
+	CreateReview(userID string, vendorID string, serviceID int, text string, rating int, parentID int) (*ServiceReview, error)
 	GetReviews(serviceID int) ([]*ServiceReview, error)
-	UpdateReview(userID string, text string, rating string, id int) (*ServiceReview, error)
+	UpdateReview(userID string, text string, rating int, id int) (*ServiceReview, error)
 }
 
-func (service *ServiceReviewDBService) CreateReview (userID string, vendorID string, serviceID int, text string, rating string, parentID int) (*ServiceReview, error) {
+func (service *ServiceReviewDBService) CreateReview (userID string, vendorID string, serviceID int, text string, rating int, parentID int) (*ServiceReview, error) {
 	review := ServiceReview{
 		UserID: userID,
 		VendorID: vendorID,
@@ -55,7 +60,7 @@ func (service *ServiceReviewDBService) CreateReview (userID string, vendorID str
 			return nil, fmt.Errorf("An error occurred. You cannot reply a reply :)")
 		}
 
-		review.Rating = ""
+		review.Rating = 0
 		
 	}
 
@@ -89,7 +94,7 @@ func (service *ServiceReviewDBService) GetReviews(serviceID int) ([]*ServiceRevi
 	return reviews, nil
 }
 
-func (service *ServiceReviewDBService) UpdateReview (userID string, text string, rating string, id int) (*ServiceReview, error) {
+func (service *ServiceReviewDBService) UpdateReview (userID string, text string, rating int, id int) (*ServiceReview, error) {
 	review := ServiceReview{}
 	value := make(map[string]interface{})
 

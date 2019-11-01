@@ -164,6 +164,11 @@ type ComplexityRoot struct {
 		VendorID  func(childComplexity int) int
 	}
 
+	ServiceReviewWithAverageRating struct {
+		AverageRatings func(childComplexity int) int
+		Reviews        func(childComplexity int) int
+	}
+
 	Shop struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -233,7 +238,7 @@ type QueryResolver interface {
 	GetProductsByVendor(ctx context.Context, vendorID string) ([]*models.Product, error)
 	GetAllVendorService(ctx context.Context, vendorID string) ([]*models.Service, error)
 	SearchServices(ctx context.Context, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) ([]*models.Service, error)
-	GetServiceReviews(ctx context.Context, serviceID int) ([]*models.ServiceReview, error)
+	GetServiceReviews(ctx context.Context, serviceID int) (*models.ServiceReviewWithAverageRating, error)
 }
 type ServiceResolver interface {
 	Duration(ctx context.Context, obj *models.Service) (*int, error)
@@ -956,6 +961,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ServiceReview.VendorID(childComplexity), true
 
+	case "ServiceReviewWithAverageRating.averageRatings":
+		if e.complexity.ServiceReviewWithAverageRating.AverageRatings == nil {
+			break
+		}
+
+		return e.complexity.ServiceReviewWithAverageRating.AverageRatings(childComplexity), true
+
+	case "ServiceReviewWithAverageRating.reviews":
+		if e.complexity.ServiceReviewWithAverageRating.Reviews == nil {
+			break
+		}
+
+		return e.complexity.ServiceReviewWithAverageRating.Reviews(childComplexity), true
+
 	case "Shop.createdAt":
 		if e.complexity.Shop.CreatedAt == nil {
 			break
@@ -1440,23 +1459,28 @@ extend type Query {
 	updatedAt:  Timestamp
   serviceID:  Int!
 	text:       String!
-	rating:     String
+	rating:     Int
 	parentID:   Int
 	replies:    [ServiceReview]
+}
+
+type ServiceReviewWithAverageRating {
+	reviews: [ServiceReview]
+	averageRatings: Float
 }
 
 input ServiceReviewInput {
 	vendorID:   String!
   serviceID:  Int!
 	text:       String!
-	rating:     String
+	rating:     Int
 	parentID:   Int
 }
 
 input ServiceReviewUpdateInput {
 	id:         Int!
 	text:       String!
-	rating:     String
+	rating:     Int
 }
 
 extend type Mutation {
@@ -1465,7 +1489,7 @@ extend type Mutation {
 }
 
 extend type Query {
-  getServiceReviews(service_id: Int!): [ServiceReview]
+  getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
 }
 `},
 	&ast.Source{Name: "lambda/graphql/schema/types/shop.gql", Input: `type Shop {
@@ -4386,10 +4410,10 @@ func (ec *executionContext) _Query_getServiceReviews(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*models.ServiceReview)
+	res := resTmp.(*models.ServiceReviewWithAverageRating)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOServiceReview2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+	return ec.marshalOServiceReviewWithAverageRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewWithAverageRating(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5017,10 +5041,10 @@ func (ec *executionContext) _ServiceReview_rating(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ServiceReview_parentID(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
@@ -5089,6 +5113,74 @@ func (ec *executionContext) _ServiceReview_replies(ctx context.Context, field gr
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOServiceReview2ᚕgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReviewWithAverageRating_reviews(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReviewWithAverageRating) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReviewWithAverageRating",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reviews, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReviewWithAverageRating_averageRatings(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReviewWithAverageRating) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReviewWithAverageRating",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AverageRatings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Shop_id(ctx context.Context, field graphql.CollectedField, obj *models.Shop) (ret graphql.Marshaler) {
@@ -7452,7 +7544,7 @@ func (ec *executionContext) unmarshalInputServiceReviewInput(ctx context.Context
 			}
 		case "rating":
 			var err error
-			it.Rating, err = ec.unmarshalOString2string(ctx, v)
+			it.Rating, err = ec.unmarshalOInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7488,7 +7580,7 @@ func (ec *executionContext) unmarshalInputServiceReviewUpdateInput(ctx context.C
 			}
 		case "rating":
 			var err error
-			it.Rating, err = ec.unmarshalOString2string(ctx, v)
+			it.Rating, err = ec.unmarshalOInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8127,6 +8219,32 @@ func (ec *executionContext) _ServiceReview(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._ServiceReview_parentID(ctx, field, obj)
 		case "replies":
 			out.Values[i] = ec._ServiceReview_replies(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var serviceReviewWithAverageRatingImplementors = []string{"ServiceReviewWithAverageRating"}
+
+func (ec *executionContext) _ServiceReviewWithAverageRating(ctx context.Context, sel ast.SelectionSet, obj *models.ServiceReviewWithAverageRating) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, serviceReviewWithAverageRatingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServiceReviewWithAverageRating")
+		case "reviews":
+			out.Values[i] = ec._ServiceReviewWithAverageRating_reviews(ctx, field, obj)
+		case "averageRatings":
+			out.Values[i] = ec._ServiceReviewWithAverageRating_averageRatings(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9498,6 +9616,17 @@ func (ec *executionContext) marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesig
 		return graphql.Null
 	}
 	return ec._ServiceReview(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOServiceReviewWithAverageRating2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewWithAverageRating(ctx context.Context, sel ast.SelectionSet, v models.ServiceReviewWithAverageRating) graphql.Marshaler {
+	return ec._ServiceReviewWithAverageRating(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOServiceReviewWithAverageRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewWithAverageRating(ctx context.Context, sel ast.SelectionSet, v *models.ServiceReviewWithAverageRating) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ServiceReviewWithAverageRating(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOSortPrice2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx context.Context, v interface{}) (models.SortPrice, error) {

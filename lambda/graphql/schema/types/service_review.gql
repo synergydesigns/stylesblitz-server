@@ -6,23 +6,28 @@ type ServiceReview {
 	updatedAt:  Timestamp
   serviceID:  Int!
 	text:       String!
-	rating:     String
+	rating:     Int
 	parentID:   Int
 	replies:    [ServiceReview]
+}
+
+type ServiceReviewWithAverageRating {
+	reviews: [ServiceReview]
+	averageRatings: Float
 }
 
 input ServiceReviewInput {
 	vendorID:   String!
   serviceID:  Int!
 	text:       String!
-	rating:     String
+	rating:     Int
 	parentID:   Int
 }
 
 input ServiceReviewUpdateInput {
 	id:         Int!
 	text:       String!
-	rating:     String
+	rating:     Int
 }
 
 extend type Mutation {
@@ -31,5 +36,5 @@ extend type Mutation {
 }
 
 extend type Query {
-  getServiceReviews(service_id: Int!): [ServiceReview]
+  getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
 }
