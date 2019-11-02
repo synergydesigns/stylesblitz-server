@@ -21,6 +21,13 @@ type handlerFunc func(context.Context, events.APIGatewayProxyRequest) (events.AP
 
 func ServiceInitialize(next handlerFunc) handlerFunc {
 	return handlerFunc(func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+		if request.HTTPMethod == "OPTIONS" {
+			return events.APIGatewayProxyResponse{
+				StatusCode: 204,
+				Headers:    config.GetHeaders(),
+			}, nil
+		}
+
 		ctx = context.WithValue(ctx, config.CTXKeyservices, services)
 		ctx = context.WithValue(ctx, config.CTConfig, appConfig)
 
