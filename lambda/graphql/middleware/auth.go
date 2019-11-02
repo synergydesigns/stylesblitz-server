@@ -27,11 +27,7 @@ func AuthMiddleware(next handlerFunc) handlerFunc {
 		user, err := svc.JWT.DecodeToken(token[1])
 
 		if err != nil {
-			return events.APIGatewayProxyResponse{
-				Headers:    config.GetHeaders(),
-				StatusCode: 401,
-				Body:       config.AuthenticationError("Authentication failed: Invalid token"),
-			}, nil
+			return next(ctx, request)
 		}
 
 		ctx = context.WithValue(ctx, config.CTXKeyuser, user)
