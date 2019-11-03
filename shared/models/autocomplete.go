@@ -29,7 +29,7 @@ func (Autocomplete) TableName() string {
 func (service *AutocompleteDBService) GetSuggestions(query string) ([]*Autocomplete, error) {
 	var autocomplete []*Autocomplete
 
-	result := service.DB.Where("tsv @@ plainto_tsquery(?)", query).Find(&autocomplete)
+	result := service.DB.Where("tsv @@ to_tsquery(?)", query+":*").Find(&autocomplete)
 
 	if result.Error != nil {
 		log.Printf("An error occurred getting suggestions %v", result.Error.Error())
