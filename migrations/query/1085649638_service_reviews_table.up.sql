@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS service_reviews (
   vendor_id VARCHAR(25) NOT NULL,
   service_id INT NOT NULL,
   text TEXT,
-  rating INT,
+  rating SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
   parent_id INT,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,

@@ -41,6 +41,12 @@ func ForeignKeyNotExist(err error) bool {
 	return index > 0
 }
 
+func CheckConstraintFailure(err error) bool {
+	index := strings.Index(err.Error(), "violates check constraint")
+
+	return index > 0
+}
+
 func StructToInterface(value interface{}) map[string]interface{} {
 	in := make(map[string]interface{})
 

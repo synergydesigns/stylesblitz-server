@@ -32,6 +32,7 @@ input ServiceReviewUpdateInput {
 
 extend type Mutation {
 	createReview(input: ServiceReviewInput!): ServiceReview
+	createReply(input: ServiceReviewInput!): ServiceReview
 	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
 }
 

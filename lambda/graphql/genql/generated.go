@@ -105,6 +105,7 @@ type ComplexityRoot struct {
 		CreateCart           func(childComplexity int, input models.CartInput) int
 		CreatePresignedURL   func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
 		CreateProduct        func(childComplexity int, input models.ProductInput) int
+		CreateReply          func(childComplexity int, input models.ServiceReviewInput) int
 		CreateReview         func(childComplexity int, input models.ServiceReviewInput) int
 		CreateService        func(childComplexity int, input models.ServiceInput) int
 		CreateVendorCategory func(childComplexity int, input models.VendorCategoryInput) int
@@ -227,6 +228,7 @@ type MutationResolver interface {
 	UpdateService(ctx context.Context, input models.ServiceInputUpdate, serviceID int) (*models.Service, error)
 	DeleteService(ctx context.Context, serviceID int) (*bool, error)
 	CreateReview(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
+	CreateReply(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
 	UpdateReview(ctx context.Context, input models.ServiceReviewUpdateInput) (*models.ServiceReview, error)
 }
 type QueryResolver interface {
@@ -557,6 +559,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateProduct(childComplexity, args["input"].(models.ProductInput)), true
+
+	case "Mutation.createReply":
+		if e.complexity.Mutation.CreateReply == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createReply_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateReply(childComplexity, args["input"].(models.ServiceReviewInput)), true
 
 	case "Mutation.createReview":
 		if e.complexity.Mutation.CreateReview == nil {
@@ -1469,7 +1483,7 @@ extend type Query {
 	vendorID:   String
 	createdAt:  Timestamp
 	updatedAt:  Timestamp
-  serviceID:  Int!
+	serviceID:  Int!
 	text:       String!
 	rating:     Int
 	parentID:   Int
@@ -1483,7 +1497,7 @@ type ServiceReviewWithAverageRating {
 
 input ServiceReviewInput {
 	vendorID:   String!
-  serviceID:  Int!
+	serviceID:  Int!
 	text:       String!
 	rating:     Int
 	parentID:   Int
@@ -1497,11 +1511,12 @@ input ServiceReviewUpdateInput {
 
 extend type Mutation {
 	createReview(input: ServiceReviewInput!): ServiceReview
+	createReply(input: ServiceReviewInput!): ServiceReview
 	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
 }
 
 extend type Query {
-  getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
+	getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
 }
 `},
 	&ast.Source{Name: "lambda/graphql/schema/types/shop.gql", Input: `type Shop {
@@ -1620,6 +1635,20 @@ func (ec *executionContext) field_Mutation_createProduct_args(ctx context.Contex
 	var arg0 models.ProductInput
 	if tmp, ok := rawArgs["input"]; ok {
 		arg0, err = ec.unmarshalNProductInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐProductInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createReply_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceReviewInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceReviewInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3777,6 +3806,47 @@ func (ec *executionContext) _Mutation_createReview(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().CreateReview(rctx, args["input"].(models.ServiceReviewInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createReply(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createReply_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateReply(rctx, args["input"].(models.ServiceReviewInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7974,6 +8044,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_deleteService(ctx, field)
 		case "createReview":
 			out.Values[i] = ec._Mutation_createReview(ctx, field)
+		case "createReply":
+			out.Values[i] = ec._Mutation_createReply(ctx, field)
 		case "UpdateReview":
 			out.Values[i] = ec._Mutation_UpdateReview(ctx, field)
 		default:

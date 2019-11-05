@@ -33,36 +33,23 @@ type ServiceReviewDBService struct {
 }
 
 type ServiceReviewDB interface {
-	CreateReview(userID string, vendorID string, serviceID int, text string, rating int, parentID int) (*ServiceReview, error)
-	GetReviews(serviceID int) ([]*ServiceReview, error)
+	CreateReview(userID string, vendorID string, serviceID int, text string, rating int) (*ServiceReview, error)
+	CreateReply(userID string, vendorID string, serviceID int, text string, parentID int) (*ServiceReview, error)
+	GetReviews(serviceID int) (*ServiceReviewWithAverageRating, error)
 	UpdateReview(userID string, text string, rating int, id int) (*ServiceReview, error)
 }
 
-func (service *ServiceReviewDBService) CreateReview (userID string, vendorID string, serviceID int, text string, rating int, parentID int) (*ServiceReview, error) {
+func (service *ServiceReviewDBService) CreateReview (userID string, vendorID string, serviceID int, text string, rating int) (*ServiceReview, error) {
+	if rating <= 0 || rating > 5 {
+		return nil, fmt.Errorf("Rating must be between 1 and 5 inclusive")
+	}
+
 	review := ServiceReview{
 		UserID: userID,
 		VendorID: vendorID,
 		ServiceID: serviceID,
 		Text: text,
 		Rating: rating,
-		ParentID: parentID,
-	}
-
-	// For creating replies. Might need to be moved to a seperate method
-	if (parentID != 0) {
-		var foundReview ServiceReview
-		service.DB.Where("service_id = ? AND id = ?", serviceID, parentID).First(&foundReview)
-
-		if (foundReview.ServiceID == 0) {
-			return nil, fmt.Errorf("an error occurred creating review")
-		}
-
-		if (foundReview.ParentID != 0) {
-			return nil, fmt.Errorf("An error occurred. You cannot reply a reply :)")
-		}
-
-		review.Rating = 0
-		
 	}
 
 	result := service.DB.Create(&review)
@@ -74,7 +61,12 @@ func (service *ServiceReviewDBService) CreateReview (userID string, vendorID str
 			if utils.HasValue(result.Error.Error(), "vendor") {
 				return &review, fmt.Errorf("vendor with id %s does not exit", vendorID)
 			}
+		}
 
+		if utils.CheckConstraintFailure(result.Error) {
+			if utils.HasValue(result.Error.Error(), "service_reviews_rating_check") {
+				return &review, fmt.Errorf("Rating must be between 1 and 5 inclusive")
+			}
 		}
 
 		return &review, fmt.Errorf("an error occurred creating review %s", result.Error.Error())
@@ -83,16 +75,63 @@ func (service *ServiceReviewDBService) CreateReview (userID string, vendorID str
 	return &review, nil
 }
 
-func (service *ServiceReviewDBService) GetReviews(serviceID int) ([]*ServiceReview, error) {
+func (service *ServiceReviewDBService) CreateReply (userID string, vendorID string, serviceID int, text string, parentID int) (*ServiceReview, error) {
+	review := ServiceReview{
+		UserID: userID,
+		VendorID: vendorID,
+		ServiceID: serviceID,
+		Text: text,
+		ParentID: parentID,
+	}
+
+	var foundReview ServiceReview
+	service.DB.Where("service_id = ? AND id = ?", serviceID, parentID).First(&foundReview)
+
+	if (foundReview.ServiceID == 0) {
+		return nil, fmt.Errorf("an error occurred creating reply")
+	}
+
+	if (foundReview.ParentID != 0) {
+		return nil, fmt.Errorf("An error occurred. You cannot reply a reply :)")
+	}
+
+	result := service.DB.Create(&review)
+
+	if result.Error != nil {
+		log.Printf("An error occurred creating reply %v", result.Error.Error())
+
+		if utils.ForeignKeyNotExist(result.Error) {
+			if utils.HasValue(result.Error.Error(), "vendor") {
+				return &review, fmt.Errorf("vendor with id %s does not exit", vendorID)
+			}
+
+		}
+
+		return &review, fmt.Errorf("an error occurred creating reply %s", result.Error.Error())
+	}
+
+	return &review, nil
+}
+
+func (service *ServiceReviewDBService) GetReviews(serviceID int) (*ServiceReviewWithAverageRating, error) {
 	var reviews []*ServiceReview
 	result := service.DB.Where("service_id = ? AND parent_id = ?", serviceID, 0).Order("created_at desc").Preload("Replies").Limit(50).Find(&reviews)
 
 	if result.Error != nil {
 		log.Printf("An error occurred getting reviews %v", result.Error.Error())
-		return reviews, fmt.Errorf("An error occurred getting reviews %s", result.Error.Error())
+		return nil, fmt.Errorf("An error occurred getting reviews %s", result.Error.Error())
 	}
 
-	return reviews, nil
+	var avgRatings float64
+
+	service.DB.Table("service_reviews").Select("AVG(rating) as avg_rating").Where("service_id = ? AND parent_id = ?", serviceID, 0).Row().Scan(&avgRatings)
+
+	res := &ServiceReviewWithAverageRating {
+		Reviews: reviews,
+		AverageRatings: avgRatings,
+	}
+
+	return res, nil
 }
 
 func (service *ServiceReviewDBService) UpdateReview (userID string, text string, rating int, id int) (*ServiceReview, error) {
