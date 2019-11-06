@@ -45,3 +45,17 @@ type CartInput struct {
 	Type     		string      `json:"type"`
 	Quantity    int         `json:"quantity"`
 }
+
+type ServiceReviewInput struct {
+	VendorID    string      `json:"vendor_id"`
+	ServiceID   int         `json:"service_id"`
+	Text     		string      `json:"text"`
+	Rating      int         `json:"rating"`
+	ParentID    int         `json:"parent_id"`
+}
+
+type ServiceReviewUpdateInput struct {
+	ID          int         `json:"id"`
+	Text        string      `json:"text"`
+	Rating      int         `json:"rating"`
+}

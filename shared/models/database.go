@@ -47,6 +47,7 @@ func NewDB(config *config.Config) *Datastore {
 		CartDB:           &CartDBService{DB},
 		ProductDB:        &ProductDBService{DB},
 		AutocompleteDB:   &AutocompleteDBService{DB},
+		ServiceReviewDB:  &ServiceReviewDBService{DB},
 	}
 }
 
@@ -59,4 +60,5 @@ type Datastore struct {
 	CartDB           CartDB
 	ProductDB        ProductDB
 	AutocompleteDB   AutocompleteDB
+	ServiceReviewDB  ServiceReviewDB
 }

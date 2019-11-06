@@ -106,6 +106,8 @@ type ComplexityRoot struct {
 		CreateCart           func(childComplexity int, input models.CartInput) int
 		CreatePresignedURL   func(childComplexity int, input []*models.AssetInput, owner models.AssetOwner, id *string) int
 		CreateProduct        func(childComplexity int, input models.ProductInput) int
+		CreateReply          func(childComplexity int, input models.ServiceReviewInput) int
+		CreateReview         func(childComplexity int, input models.ServiceReviewInput) int
 		CreateService        func(childComplexity int, input models.ServiceInput) int
 		CreateVendorCategory func(childComplexity int, input models.VendorCategoryInput) int
 		DeleteCart           func(childComplexity int, cartID string) int
@@ -113,6 +115,7 @@ type ComplexityRoot struct {
 		DeleteVendorCategory func(childComplexity int, categoryID int) int
 		Login                func(childComplexity int, email string, password string) int
 		UpdateCart           func(childComplexity int, input models.CartUpdateInput) int
+		UpdateReview         func(childComplexity int, input models.ServiceReviewUpdateInput) int
 		UpdateService        func(childComplexity int, input models.ServiceInputUpdate, serviceID int) int
 		UpdateVendorCategory func(childComplexity int, input models.VendorCategoryInputUpdate, categoryID int) int
 	}
@@ -133,6 +136,7 @@ type ComplexityRoot struct {
 		GetAllVendorService func(childComplexity int, vendorID string) int
 		GetAsset            func(childComplexity int, id string) int
 		GetProductsByVendor func(childComplexity int, vendorID string) int
+		GetServiceReviews   func(childComplexity int, serviceID int) int
 		GetSuggestions      func(childComplexity int, query string) int
 		SearchServices      func(childComplexity int, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) int
 		User                func(childComplexity int, id string) int
@@ -147,6 +151,24 @@ type ComplexityRoot struct {
 		Price        func(childComplexity int) int
 		Trending     func(childComplexity int) int
 		VendorID     func(childComplexity int) int
+	}
+
+	ServiceReview struct {
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		ParentID  func(childComplexity int) int
+		Rating    func(childComplexity int) int
+		Replies   func(childComplexity int) int
+		ServiceID func(childComplexity int) int
+		Text      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		UserID    func(childComplexity int) int
+		VendorID  func(childComplexity int) int
+	}
+
+	ServiceReviewWithAverageRating struct {
+		AverageRatings func(childComplexity int) int
+		Reviews        func(childComplexity int) int
 	}
 
 	Shop struct {
@@ -206,6 +228,9 @@ type MutationResolver interface {
 	CreateService(ctx context.Context, input models.ServiceInput) (*models.Service, error)
 	UpdateService(ctx context.Context, input models.ServiceInputUpdate, serviceID int) (*models.Service, error)
 	DeleteService(ctx context.Context, serviceID int) (*bool, error)
+	CreateReview(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
+	CreateReply(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
+	UpdateReview(ctx context.Context, input models.ServiceReviewUpdateInput) (*models.ServiceReview, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -216,6 +241,7 @@ type QueryResolver interface {
 	GetProductsByVendor(ctx context.Context, vendorID string) ([]*models.Product, error)
 	GetAllVendorService(ctx context.Context, vendorID string) ([]*models.Service, error)
 	SearchServices(ctx context.Context, lat *float64, lng *float64, name string, rating *models.SortRating, price *models.SortPrice) ([]*models.Service, error)
+	GetServiceReviews(ctx context.Context, serviceID int) (*models.ServiceReviewWithAverageRating, error)
 }
 type ServiceResolver interface {
 	Duration(ctx context.Context, obj *models.Service) (*int, error)
@@ -535,6 +561,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateProduct(childComplexity, args["input"].(models.ProductInput)), true
 
+	case "Mutation.createReply":
+		if e.complexity.Mutation.CreateReply == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createReply_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateReply(childComplexity, args["input"].(models.ServiceReviewInput)), true
+
+	case "Mutation.createReview":
+		if e.complexity.Mutation.CreateReview == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createReview_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateReview(childComplexity, args["input"].(models.ServiceReviewInput)), true
+
 	case "Mutation.createService":
 		if e.complexity.Mutation.CreateService == nil {
 			break
@@ -618,6 +668,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateCart(childComplexity, args["input"].(models.CartUpdateInput)), true
+
+	case "Mutation.UpdateReview":
+		if e.complexity.Mutation.UpdateReview == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_UpdateReview_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateReview(childComplexity, args["input"].(models.ServiceReviewUpdateInput)), true
 
 	case "Mutation.updateService":
 		if e.complexity.Mutation.UpdateService == nil {
@@ -752,6 +814,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetProductsByVendor(childComplexity, args["vendorID"].(string)), true
 
+	case "Query.getServiceReviews":
+		if e.complexity.Query.GetServiceReviews == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getServiceReviews_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetServiceReviews(childComplexity, args["service_id"].(int)), true
+
 	case "Query.getSuggestions":
 		if e.complexity.Query.GetSuggestions == nil {
 			break
@@ -843,6 +917,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Service.VendorID(childComplexity), true
+
+	case "ServiceReview.createdAt":
+		if e.complexity.ServiceReview.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.CreatedAt(childComplexity), true
+
+	case "ServiceReview.id":
+		if e.complexity.ServiceReview.ID == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.ID(childComplexity), true
+
+	case "ServiceReview.parentID":
+		if e.complexity.ServiceReview.ParentID == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.ParentID(childComplexity), true
+
+	case "ServiceReview.rating":
+		if e.complexity.ServiceReview.Rating == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.Rating(childComplexity), true
+
+	case "ServiceReview.replies":
+		if e.complexity.ServiceReview.Replies == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.Replies(childComplexity), true
+
+	case "ServiceReview.serviceID":
+		if e.complexity.ServiceReview.ServiceID == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.ServiceID(childComplexity), true
+
+	case "ServiceReview.text":
+		if e.complexity.ServiceReview.Text == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.Text(childComplexity), true
+
+	case "ServiceReview.updatedAt":
+		if e.complexity.ServiceReview.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.UpdatedAt(childComplexity), true
+
+	case "ServiceReview.userId":
+		if e.complexity.ServiceReview.UserID == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.UserID(childComplexity), true
+
+	case "ServiceReview.vendorID":
+		if e.complexity.ServiceReview.VendorID == nil {
+			break
+		}
+
+		return e.complexity.ServiceReview.VendorID(childComplexity), true
+
+	case "ServiceReviewWithAverageRating.averageRatings":
+		if e.complexity.ServiceReviewWithAverageRating.AverageRatings == nil {
+			break
+		}
+
+		return e.complexity.ServiceReviewWithAverageRating.AverageRatings(childComplexity), true
+
+	case "ServiceReviewWithAverageRating.reviews":
+		if e.complexity.ServiceReviewWithAverageRating.Reviews == nil {
+			break
+		}
+
+		return e.complexity.ServiceReviewWithAverageRating.Reviews(childComplexity), true
 
 	case "Shop.createdAt":
 		if e.complexity.Shop.CreatedAt == nil {
@@ -1321,6 +1479,48 @@ extend type Query {
   ): [Service]
 }
 `},
+	&ast.Source{Name: "lambda/graphql/schema/types/service_review.gql", Input: `type ServiceReview {
+	id:         ID!
+	userId:     String
+	vendorID:   String
+	createdAt:  Timestamp
+	updatedAt:  Timestamp
+	serviceID:  Int!
+	text:       String!
+	rating:     Int
+	parentID:   Int
+	replies:    [ServiceReview]
+}
+
+type ServiceReviewWithAverageRating {
+	reviews: [ServiceReview]
+	averageRatings: Float
+}
+
+input ServiceReviewInput {
+	vendorID:   String!
+	serviceID:  Int!
+	text:       String!
+	rating:     Int
+	parentID:   Int
+}
+
+input ServiceReviewUpdateInput {
+	id:         Int!
+	text:       String!
+	rating:     Int
+}
+
+extend type Mutation {
+	createReview(input: ServiceReviewInput!): ServiceReview
+	createReply(input: ServiceReviewInput!): ServiceReview
+	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
+}
+
+extend type Query {
+	getServiceReviews(service_id: Int!): ServiceReviewWithAverageRating
+}
+`},
 	&ast.Source{Name: "lambda/graphql/schema/types/shop.gql", Input: `type Shop {
 	id: ID!
   name: String
@@ -1358,6 +1558,20 @@ extend type Query {
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_UpdateReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceReviewUpdateInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceReviewUpdateInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewUpdateInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -1423,6 +1637,34 @@ func (ec *executionContext) field_Mutation_createProduct_args(ctx context.Contex
 	var arg0 models.ProductInput
 	if tmp, ok := rawArgs["input"]; ok {
 		arg0, err = ec.unmarshalNProductInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐProductInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createReply_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceReviewInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceReviewInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ServiceReviewInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNServiceReviewInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1662,6 +1904,20 @@ func (ec *executionContext) field_Query_getProductsByVendor_args(ctx context.Con
 		}
 	}
 	args["vendorID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getServiceReviews_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["service_id"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["service_id"] = arg0
 	return args, nil
 }
 
@@ -3525,6 +3781,129 @@ func (ec *executionContext) _Mutation_deleteService(ctx context.Context, field g
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createReview(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createReview_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateReview(rctx, args["input"].(models.ServiceReviewInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createReply(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createReply_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateReply(rctx, args["input"].(models.ServiceReviewInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_UpdateReview(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_UpdateReview_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateReview(rctx, args["input"].(models.ServiceReviewUpdateInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Product_id(ctx context.Context, field graphql.CollectedField, obj *models.Product) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -4094,6 +4473,47 @@ func (ec *executionContext) _Query_searchServices(ctx context.Context, field gra
 	return ec.marshalOService2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐService(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getServiceReviews(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getServiceReviews_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetServiceReviews(rctx, args["service_id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.ServiceReviewWithAverageRating)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReviewWithAverageRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewWithAverageRating(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -4442,6 +4862,423 @@ func (ec *executionContext) _Service_CategoryId(ctx context.Context, field graph
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOID2uint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_id(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint64)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2uint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_userId(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_vendorID(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VendorID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOTimestamp2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOTimestamp2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_serviceID(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_text(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Text, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_rating(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rating, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_parentID(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ParentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReview_replies(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReview) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReview",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Replies, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚕgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReviewWithAverageRating_reviews(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReviewWithAverageRating) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReviewWithAverageRating",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reviews, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.ServiceReview)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOServiceReview2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServiceReviewWithAverageRating_averageRatings(ctx context.Context, field graphql.CollectedField, obj *models.ServiceReviewWithAverageRating) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "ServiceReviewWithAverageRating",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AverageRatings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Shop_id(ctx context.Context, field graphql.CollectedField, obj *models.Shop) (ret graphql.Marshaler) {
@@ -6779,6 +7616,78 @@ func (ec *executionContext) unmarshalInputServiceInputUpdate(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputServiceReviewInput(ctx context.Context, obj interface{}) (models.ServiceReviewInput, error) {
+	var it models.ServiceReviewInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "vendorID":
+			var err error
+			it.VendorID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "serviceID":
+			var err error
+			it.ServiceID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rating":
+			var err error
+			it.Rating, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "parentID":
+			var err error
+			it.ParentID, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputServiceReviewUpdateInput(ctx context.Context, obj interface{}) (models.ServiceReviewUpdateInput, error) {
+	var it models.ServiceReviewUpdateInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rating":
+			var err error
+			it.Rating, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputVendorCategoryInput(ctx context.Context, obj interface{}) (models.VendorCategoryInput, error) {
 	var it models.VendorCategoryInput
 	var asMap = obj.(map[string]interface{})
@@ -7135,6 +8044,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_updateService(ctx, field)
 		case "deleteService":
 			out.Values[i] = ec._Mutation_deleteService(ctx, field)
+		case "createReview":
+			out.Values[i] = ec._Mutation_createReview(ctx, field)
+		case "createReply":
+			out.Values[i] = ec._Mutation_createReply(ctx, field)
+		case "UpdateReview":
+			out.Values[i] = ec._Mutation_UpdateReview(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7288,6 +8203,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_searchServices(ctx, field)
 				return res
 			})
+		case "getServiceReviews":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getServiceReviews(ctx, field)
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -7342,6 +8268,83 @@ func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Service_VendorId(ctx, field, obj)
 		case "CategoryId":
 			out.Values[i] = ec._Service_CategoryId(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var serviceReviewImplementors = []string{"ServiceReview"}
+
+func (ec *executionContext) _ServiceReview(ctx context.Context, sel ast.SelectionSet, obj *models.ServiceReview) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, serviceReviewImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServiceReview")
+		case "id":
+			out.Values[i] = ec._ServiceReview_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._ServiceReview_userId(ctx, field, obj)
+		case "vendorID":
+			out.Values[i] = ec._ServiceReview_vendorID(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._ServiceReview_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._ServiceReview_updatedAt(ctx, field, obj)
+		case "serviceID":
+			out.Values[i] = ec._ServiceReview_serviceID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "text":
+			out.Values[i] = ec._ServiceReview_text(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "rating":
+			out.Values[i] = ec._ServiceReview_rating(ctx, field, obj)
+		case "parentID":
+			out.Values[i] = ec._ServiceReview_parentID(ctx, field, obj)
+		case "replies":
+			out.Values[i] = ec._ServiceReview_replies(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var serviceReviewWithAverageRatingImplementors = []string{"ServiceReviewWithAverageRating"}
+
+func (ec *executionContext) _ServiceReviewWithAverageRating(ctx context.Context, sel ast.SelectionSet, obj *models.ServiceReviewWithAverageRating) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, serviceReviewWithAverageRatingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServiceReviewWithAverageRating")
+		case "reviews":
+			out.Values[i] = ec._ServiceReviewWithAverageRating_reviews(ctx, field, obj)
+		case "averageRatings":
+			out.Values[i] = ec._ServiceReviewWithAverageRating_averageRatings(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7895,6 +8898,14 @@ func (ec *executionContext) unmarshalNServiceInput2githubᚗcomᚋsynergydesigns
 
 func (ec *executionContext) unmarshalNServiceInputUpdate2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceInputUpdate(ctx context.Context, v interface{}) (models.ServiceInputUpdate, error) {
 	return ec.unmarshalInputServiceInputUpdate(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNServiceReviewInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewInput(ctx context.Context, v interface{}) (models.ServiceReviewInput, error) {
+	return ec.unmarshalInputServiceReviewInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNServiceReviewUpdateInput2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewUpdateInput(ctx context.Context, v interface{}) (models.ServiceReviewUpdateInput, error) {
+	return ec.unmarshalInputServiceReviewUpdateInput(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -8614,6 +9625,108 @@ func (ec *executionContext) marshalOService2ᚖgithubᚗcomᚋsynergydesignsᚋs
 		return graphql.Null
 	}
 	return ec._Service(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOServiceReview2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v models.ServiceReview) graphql.Marshaler {
+	return ec._ServiceReview(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOServiceReview2ᚕgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v []models.ServiceReview) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOServiceReview2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOServiceReview2ᚕᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v []*models.ServiceReview) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx context.Context, sel ast.SelectionSet, v *models.ServiceReview) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ServiceReview(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOServiceReviewWithAverageRating2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewWithAverageRating(ctx context.Context, sel ast.SelectionSet, v models.ServiceReviewWithAverageRating) graphql.Marshaler {
+	return ec._ServiceReviewWithAverageRating(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOServiceReviewWithAverageRating2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReviewWithAverageRating(ctx context.Context, sel ast.SelectionSet, v *models.ServiceReviewWithAverageRating) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ServiceReviewWithAverageRating(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOSortPrice2githubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐSortPrice(ctx context.Context, v interface{}) (models.SortPrice, error) {
