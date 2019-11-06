@@ -25,5 +25,5 @@ dev-recompile:
 supervise:
 	supervisor --no-restart-on exit -e go -i bin --exec make -- dev-recompile
 
-start-local:
-	sam local start-api --profile serverless-pm --env-vars env.json -p 3001
+start:
+	sam local start-api --profile serverless-pm --env-vars env.json  --skip-pull-image -p 3001

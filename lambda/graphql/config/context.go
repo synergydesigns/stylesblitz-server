@@ -18,8 +18,15 @@ func GetServices(ctx context.Context) *service.Services {
 	return ctx.Value(CTXKeyservices).(*service.Services)
 }
 
-func GetUser(ctx context.Context) models.User {
-	return ctx.Value(CTXKeyuser).(models.User)
+func GetUser(ctx context.Context) *models.User {
+	userCTX := ctx.Value(CTXKeyuser)
+	if userCTX == nil {
+		return nil
+	}
+
+	user := userCTX.(models.User)
+
+	return &user
 }
 
 func GetConfig(ctx context.Context) *config.Config {

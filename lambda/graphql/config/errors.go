@@ -1,45 +1,19 @@
 package config
 
 import (
-	"encoding/json"
+	"context"
+
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/vektah/gqlparser/gqlerror"
 )
 
-type authenticationError struct {
-	AuthenticationError string `json:"authenticationError"`
-}
-
-type exception struct {
-	InvalidArgs []string `json:"invalidArgs,omitempty"`
-	Stacktrace  []string `json:"stacktrace,omitempty"`
-}
-
-type extensions struct {
-	Code      string    `json:"code,omitempty"`
-	Exception exception `json:"exception,omitempty"`
-}
-
-type errorDetails struct {
-	Message    string     `json:"message"`
-	Locations  []string   `json:"locations,omitempty"`
-	Path       []string   `json:"path,omitempty"`
-	Extensions extensions `json:"extentions"`
-}
-
-func parseError(err []errorDetails) string {
-	resp, _ := json.Marshal(err)
-
-	return string(resp)
-}
-
-func AuthenticationError(message string) string {
-	errorMessage := []errorDetails{
-		{
-			Message: message,
-			Extensions: extensions{
-				Code: "UNAUTHENTICATED",
-			},
+func AuthenticationError(cxt context.Context) *gqlerror.Error {
+	return &gqlerror.Error{
+		Message: "you need to be authenticated to access this data",
+		Extensions: map[string]interface{}{
+			"code":   401,
+			"status": "Authentication",
 		},
+		Path: graphql.GetResolverContext(cxt).Path(),
 	}
-
-	return parseError(errorMessage)
 }
