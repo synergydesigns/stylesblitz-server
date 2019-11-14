@@ -111,6 +111,7 @@ type ComplexityRoot struct {
 		CreateService        func(childComplexity int, input models.ServiceInput) int
 		CreateVendorCategory func(childComplexity int, input models.VendorCategoryInput) int
 		DeleteCart           func(childComplexity int, cartID string) int
+		DeleteReview         func(childComplexity int, id int) int
 		DeleteService        func(childComplexity int, serviceID int) int
 		DeleteVendorCategory func(childComplexity int, categoryID int) int
 		Login                func(childComplexity int, email string, password string) int
@@ -231,6 +232,7 @@ type MutationResolver interface {
 	CreateReview(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
 	CreateReply(ctx context.Context, input models.ServiceReviewInput) (*models.ServiceReview, error)
 	UpdateReview(ctx context.Context, input models.ServiceReviewUpdateInput) (*models.ServiceReview, error)
+	DeleteReview(ctx context.Context, id int) (*bool, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*models.User, error)
@@ -620,6 +622,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteCart(childComplexity, args["cart_id"].(string)), true
+
+	case "Mutation.DeleteReview":
+		if e.complexity.Mutation.DeleteReview == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_DeleteReview_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteReview(childComplexity, args["id"].(int)), true
 
 	case "Mutation.deleteService":
 		if e.complexity.Mutation.DeleteService == nil {
@@ -1515,6 +1529,7 @@ extend type Mutation {
 	createReview(input: ServiceReviewInput!): ServiceReview
 	createReply(input: ServiceReviewInput!): ServiceReview
 	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
+	DeleteReview(id: Int!): Boolean
 }
 
 extend type Query {
@@ -1558,6 +1573,20 @@ extend type Query {
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_DeleteReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_UpdateReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -3902,6 +3931,47 @@ func (ec *executionContext) _Mutation_UpdateReview(ctx context.Context, field gr
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOServiceReview2ᚖgithubᚗcomᚋsynergydesignsᚋstylesblitzᚑserverᚋsharedᚋmodelsᚐServiceReview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_DeleteReview(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_DeleteReview_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteReview(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_id(ctx context.Context, field graphql.CollectedField, obj *models.Product) (ret graphql.Marshaler) {
@@ -8050,6 +8120,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_createReply(ctx, field)
 		case "UpdateReview":
 			out.Values[i] = ec._Mutation_UpdateReview(ctx, field)
+		case "DeleteReview":
+			out.Values[i] = ec._Mutation_DeleteReview(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

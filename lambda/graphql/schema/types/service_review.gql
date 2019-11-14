@@ -34,6 +34,7 @@ extend type Mutation {
 	createReview(input: ServiceReviewInput!): ServiceReview
 	createReply(input: ServiceReviewInput!): ServiceReview
 	UpdateReview(input: ServiceReviewUpdateInput!): ServiceReview
+	DeleteReview(id: Int!): Boolean
 }
 
 extend type Query {

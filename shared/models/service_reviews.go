@@ -37,6 +37,7 @@ type ServiceReviewDB interface {
 	CreateReply(userID string, vendorID string, serviceID int, text string, parentID int) (*ServiceReview, error)
 	GetReviews(serviceID int) (*ServiceReviewWithAverageRating, error)
 	UpdateReview(userID string, text string, rating int, id int) (*ServiceReview, error)
+	DeleteReview(userID string, id int) (bool, error)
 }
 
 func (service *ServiceReviewDBService) CreateReview (userID string, vendorID string, serviceID int, text string, rating int) (*ServiceReview, error) {
@@ -135,6 +136,10 @@ func (service *ServiceReviewDBService) GetReviews(serviceID int) (*ServiceReview
 }
 
 func (service *ServiceReviewDBService) UpdateReview (userID string, text string, rating int, id int) (*ServiceReview, error) {
+	if rating <= 0 || rating > 5 {
+		return nil, fmt.Errorf("Rating must be between 1 and 5 inclusive")
+	}
+
 	review := ServiceReview{}
 	value := make(map[string]interface{})
 
@@ -145,10 +150,49 @@ func (service *ServiceReviewDBService) UpdateReview (userID string, text string,
 	if result.Error != nil {
 		log.Printf("An error occurred updating review %v", result.Error.Error())
 
+		if utils.CheckConstraintFailure(result.Error) {
+			if utils.HasValue(result.Error.Error(), "service_reviews_rating_check") {
+				return &review, fmt.Errorf("Rating must be between 1 and 5 inclusive")
+			}
+		}
+
 		return &review, fmt.Errorf("an error occurred updating review %s", result.Error.Error())
+	}
+
+	if (result.RowsAffected < 1) {
+		return &review, fmt.Errorf("An error occurred updating review")
 	}
 
 	result.First(&review, "id = ?", id)
 
 	return &review, nil
+}
+
+func (service *ServiceReviewDBService) DeleteReview(userID string, id int) (bool, error) {
+	var review ServiceReview
+	service.DB.Where("id = ? AND parent_id = ?", id, 0).Order("created_at desc").Preload("Replies").Limit(1).Find(&review)
+
+	if len(review.Replies) > 0 {
+		value := make(map[string]interface{})
+
+		value["deleted_at"] = time.Now()
+		value["text"] = "Review Deleted"
+		result := service.DB.Model(&review).Where("id = ? AND user_id = ?", id, userID).Updates(value)
+		if result.Error != nil {
+			log.Printf("An error occurred deleting review %v", result.Error.Error())
+			return false, fmt.Errorf("An error occurred deleting review. %s", result.Error.Error())
+		}
+		return true, nil
+	}
+
+	result := service.DB.Unscoped().Delete(&ServiceReview{}, "id = ? AND user_id = ?", id, userID)
+	if result.Error != nil {
+		log.Printf("An error occurred deleting review %v", result.Error.Error())
+		return false, fmt.Errorf("An error occurred deleting review. %s", result.Error.Error())
+	}
+	if (result.RowsAffected < 1) {
+		return false, fmt.Errorf("An error occurred deleting review")
+	}
+
+	return true, nil
 }
