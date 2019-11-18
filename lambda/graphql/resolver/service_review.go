@@ -62,3 +62,15 @@ func (query *queryResolver) GetServiceReviews(ctx context.Context, serviceID int
 
 	return reviews, err
 }
+
+func (mutation mutationResolver) DeleteReview(ctx context.Context, id int) (*bool, error) {
+	service := config.GetServices(ctx)
+	user := config.GetUser(ctx)
+
+	deleted, err := service.Datastore.ServiceReviewDB.DeleteReview(
+		user.ID,
+		id,
+	)
+
+	return &deleted, err
+}
