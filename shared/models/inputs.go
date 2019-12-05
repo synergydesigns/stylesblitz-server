@@ -59,3 +59,21 @@ type ServiceReviewUpdateInput struct {
 	Text        string      `json:"text"`
 	Rating      int         `json:"rating"`
 }
+
+type ProductCategoryInput struct {
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	VendorID    string  `json:"vendor_id"`
+	AssetID     string  `json:"asset_id"`
+	ShopID      string  `json:"shop_id"`
+	ParentID    string  `json:"parent_id"`
+}
+
+type ProductCategoryUpdateInput struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	VendorID    string  `json:"vendor_id"`
+	AssetID     string  `json:"asset_id"`
+	ShopID      string  `json:"shop_id"`
+}

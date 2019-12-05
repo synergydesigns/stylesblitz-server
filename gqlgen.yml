@@ -65,6 +65,12 @@ models:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceReviewUpdateInput
   ServiceReviewWithAverageRating:
     model: github.com/synergydesigns/stylesblitz-server/shared/models.ServiceReviewWithAverageRating
+  ProductCategory:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductCategory
+  ProductCategoryInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductCategoryInput
+  ProductCategoryUpdateInput:
+    model: github.com/synergydesigns/stylesblitz-server/shared/models.ProductCategoryUpdateInput
 
 resolver:
   filename: lambda/graphql/resolver/resolver.go
