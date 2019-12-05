@@ -31,7 +31,6 @@ type ProductCategoryDB interface {
 }
 
 func (category *ProductCategory) BeforeCreate(scope *gorm.Scope) error {
-
 	err := scope.SetColumn("ID", cuid.New())
 
 	return err
@@ -92,6 +91,10 @@ func (service *ProductCategoryDBService) UpdateCategory(id, vendorID, shopID, as
 
 	if description != "" {
 		value["description"] = description
+	}
+
+	if assetID != "" {
+		value["asset_id"] = assetID
 	}
 
 	result := service.DB.Model(&category).Where("id = ?", id).Where("vendor_id = ? AND shop_id = ?", vendorID, shopID).Updates(value)

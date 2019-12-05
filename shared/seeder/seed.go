@@ -280,6 +280,18 @@ func (s *Seeder) VendorService(id uint64, serviceInput models.ServiceInput) mode
 	return newService
 }
 
+func (s *Seeder) SeedShop(id, vendorID, name string) models.Shop {
+	shop := models.Shop{
+		ID:     id,
+		Name:   name,
+		VendorID: vendorID,
+	}
+
+	s.DB.Create(&shop)
+
+	return shop
+}
+
 func (s *Seeder) LoadAndSeed(fileName string) *Seeder {
 	s.LoadData(fileName).
 		Seed(fileName)
