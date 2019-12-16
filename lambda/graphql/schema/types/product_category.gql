@@ -1,0 +1,35 @@
+type ProductCategory {
+  id:           ID
+  name:         String
+  description:  String
+  shopId:       String
+  vendorId:     String
+  assetId:      String
+}
+
+input ProductCategoryInput {
+  name:         String!
+  description:  String!
+  shopId:       String!
+  vendorId:     String!
+  assetId:      String
+}
+
+input ProductCategoryUpdateInput {
+  id:           ID!
+  name:         String
+  description:  String
+  shopId:       String
+  vendorId:     String
+  assetId:      String
+}
+
+extend type Mutation {
+	CreateProductCategory(input: ProductCategoryInput!): ProductCategory
+	UpdateProductCategory(input: ProductCategoryUpdateInput!): ProductCategory
+	DeleteProductCategory(id: String!, userID: String!): Boolean
+}
+
+extend type Query {
+	GetAllProductCategories(vendorID: String!, shopID: String!): [ProductCategory]
+}

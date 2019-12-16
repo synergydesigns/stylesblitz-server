@@ -39,26 +39,28 @@ func NewDB(config *config.Config) *Datastore {
 	DB := Connect(config)
 
 	return &Datastore{
-		VendorDB:         &VendorDbService{DB},
-		UserDB:           &UserDbService{DB},
-		ServiceDB:        &ServiceDBService{DB},
-		AssetDB:          &AssetDBService{DB},
-		VendorCategoryDB: &VendorCategoryDBService{DB},
-		CartDB:           &CartDBService{DB},
-		ProductDB:        &ProductDBService{DB},
-		AutocompleteDB:   &AutocompleteDBService{DB},
-		ServiceReviewDB:  &ServiceReviewDBService{DB},
+		VendorDB:          &VendorDbService{DB},
+		UserDB:            &UserDbService{DB},
+		ServiceDB:         &ServiceDBService{DB},
+		AssetDB:           &AssetDBService{DB},
+		VendorCategoryDB:  &VendorCategoryDBService{DB},
+		CartDB:            &CartDBService{DB},
+		ProductDB:         &ProductDBService{DB},
+		AutocompleteDB:    &AutocompleteDBService{DB},
+		ServiceReviewDB:   &ServiceReviewDBService{DB},
+		ProductCategoryDB: &ProductCategoryDBService{DB},
 	}
 }
 
 type Datastore struct {
-	VendorDB         VendorDB
-	UserDB           UserDB
-	AssetDB          AssetDB
-	ServiceDB        ServiceDB
-	VendorCategoryDB VendorCategoryDB
-	CartDB           CartDB
-	ProductDB        ProductDB
-	AutocompleteDB   AutocompleteDB
-	ServiceReviewDB  ServiceReviewDB
+	VendorDB          VendorDB
+	UserDB            UserDB
+	AssetDB           AssetDB
+	ServiceDB         ServiceDB
+	VendorCategoryDB  VendorCategoryDB
+	CartDB            CartDB
+	ProductDB         ProductDB
+	AutocompleteDB    AutocompleteDB
+	ServiceReviewDB   ServiceReviewDB
+	ProductCategoryDB ProductCategoryDB
 }

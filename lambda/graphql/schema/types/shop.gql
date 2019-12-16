@@ -1,7 +1,7 @@
 type Shop {
 	id: ID!
   name: String
-	vendorId: Int
+	vendorId: String
 	createdAt: Timestamp
 	updatedAt: Timestamp
 }
